@@ -83,13 +83,45 @@ st.title("Sprottenflotte prediction model 🚲 x 🤖")
 st.write(
     "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
 )
-tab1, tab2 = st.tabs(["Prediction Plots", "Data Preview"])
+tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
 
 # Load data into a DataFrame
 df = data.get_predictions()
 
 with tab1:
-    # Check for necessary columns
+    # Show data preview
+    st.write("### Vorhersage")
+    st.dataframe(df.head())
+    
+with tab2:
+    # Coordinates of Kiel
+    latitude = 54.3233
+    longitude = 10.1228
+
+    # Create a DataFrame with coordinates (optional for more points)
+    data = pd.DataFrame({
+        'City': ['Kiel'],
+        'Latitude': [latitude],
+        'Longitude': [longitude]
+    })
+
+    # Plot the map
+    fig = px.scatter_mapbox(
+        data, 
+        lat='Latitude', 
+        lon='Longitude', 
+        hover_name='City', 
+        zoom=10,
+        height=600
+    )
+
+    # Set the Mapbox style (requires an internet connection)
+    fig.update_layout(mapbox_style="open-street-map")
+
+    # Show the map
+    st.plotly_chart(fig)
+
+
     if "actual" in df.columns and "predicted" in df.columns:
         # Calculate errors
         df["error"] = df["actual"] - df["predicted"]
@@ -119,11 +151,9 @@ with tab1:
     else:
         st.error("The uploaded file must contain 'actual' and 'predicted' columns.")
 
-with tab2:
-    # Show data preview
-    st.write("### Data Preview")
-    st.dataframe(df.head())
 
+with tab3:
+    st.write("### Historische Analyse")
 
 
 
