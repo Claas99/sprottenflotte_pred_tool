@@ -13,7 +13,7 @@ def get_predictions():
     return pd.DataFrame(data)
 
 
-# TODO 
+'''# TODO 
 def get_sprottenflotte_data():
     
 # TODO 
@@ -22,6 +22,6 @@ def get_weather_data():
 # TODO
 def data_to_dataframe() -> pd.DataFrame:
 
-
+'''
 
 
