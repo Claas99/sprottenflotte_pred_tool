@@ -11,6 +11,12 @@ import requests
 import streamlit as st
 import base64
 
+import logging
+
+st.set_option('logger.level', 'info')
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+log = logging.getLogger()
 
 link_data_file = "https://drive.google.com/file/d/1GeUkYnxxc-JPww0RW9ps39Qp4Y4j4yDZ/view?usp=sharing"
 output = "data"
@@ -262,6 +268,7 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
     # Entfernen dieser Zeilen
     old_data_temp = old_data_temp[~mask]
 
+    log.info('------------- process started')
     print('------------- process started')
     for station_id in STATION_IDS:
         # überprüfe für station_id, ob der zeitraum von START_DATE bis END_DATE in old_data_temp vorhanden ist:
@@ -313,7 +320,7 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         print(f'{total_new_records} new records fetched for {unique_stations} stations.')
         print(f'request start date: {request_start_date}')
         print(f'Data successfully loaded and saved for all STATION_IDS.')
-        st.success(f'{total_new_records} neue Datensätze für {unique_stations} Stationen abgerufen.')
+        st.success(f'{total_new_records} neue Datenpunkte für {unique_stations} Stationen abgerufen.')
     else:
         print('No new data to process, data for every station is available. Existing data used.')
         st.info('Es sind bereits Daten für alle Stationen vorhanden. Bestehende Daten werden verwendet.')
