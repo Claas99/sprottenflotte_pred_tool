@@ -109,7 +109,7 @@ with tab1:
     #st.dataframe(df.sort_values(['Teilbereich_delta', 'Teilbereich']))
     
 with tab2:
-    selected_option = st.selectbox("Wähle eine Station aus:", ss["subareas"])
+    selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"])
 
     subarea_df = stations[stations['subarea']==selected_option]
 
