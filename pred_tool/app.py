@@ -92,7 +92,7 @@ tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Ana
 
 # Load data into a DataFrame
 # df = data.get_predictions()
-stations = pd.read_csv("station_data_with_subareas_new.csv")
+stations = pd.read_csv("pred_tool/station_data_with_subareas_new.csv")
 st.dataframe(stations.head())
 
 #ss['stations'] = list(np.unique(df['Station']))
