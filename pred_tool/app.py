@@ -9,6 +9,7 @@ from streamlit import session_state as ss
 import plotly.express as px
 import data
 import plotly.graph_objects as go
+import numpy as np
 
 # --- Streamlit Configuration ---
 st.set_page_config(page_title="Sprottenflotte prediction model", page_icon="🚲", layout="wide")
@@ -58,6 +59,8 @@ def initialize_session_state():
         ss["download_enabled"] = False
     if "show_visuals" not in ss:
         ss["show_visuals"] = False  # Default to False (using full dataset)
+    if "stations" not in ss:
+        ss["stations"] = list()  # Default to False (using full dataset)
 
 
 initialize_session_state()
@@ -88,16 +91,18 @@ tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Ana
 # Load data into a DataFrame
 df = data.get_predictions()
 
+ss['stations'] = list(np.unique(df['Station']))
+
 with tab1:
     # Show data preview
     st.write("### Vorhersage")
-    st.dataframe(df.head())
+    st.dataframe(df.sort_values(['Teilbereich_delta', 'Teilbereich']))
     
 with tab2:
     # Coordinates of Kiel
     latitude = 54.3233
     longitude = 10.1228
-
+    selected_option = st.selectbox("Wähle eine Station aus:", ss["stations"])
     # Create a DataFrame with coordinates (optional for more points)
     data = pd.DataFrame({
         'City': ['Kiel'],
@@ -121,27 +126,26 @@ with tab2:
     # Show the map
     st.plotly_chart(fig)
 
+    if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
 
-    if "actual" in df.columns and "predicted" in df.columns:
-        # Calculate errors
-        df["error"] = df["actual"] - df["predicted"]
+        station_df = df[df['Station']==selected_option]
 
-        # Actual vs Predicted Plot
-        st.write("### Actual vs Predicted Plot")
-        fig_actual_vs_predicted = go.Figure()
-        fig_actual_vs_predicted.add_trace(go.Scatter(x=df.index, y=df["actual"], mode="lines+markers", name="Actual"))
-        fig_actual_vs_predicted.add_trace(go.Scatter(x=df.index, y=df["predicted"], mode="lines+markers", name="Predicted"))
-        fig_actual_vs_predicted.update_layout(
-            title="Actual vs Predicted Values",
+        # jetzt vs in_einer_Stunde Plot
+        st.write("### jetzt vs in_einer_Stunde Plot")
+        fig_jetzt_vs_in_einer_Stunde = go.Figure()
+        fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['jetzt'], name='jetzt'))
+        fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['in_einer_Stunde'], name='in_einer_Stunde'))
+        fig_jetzt_vs_in_einer_Stunde.update_layout(
+            title=f"jetzt vs in einer Stunde für Station {selected_option}",
             xaxis_title="Index",
             yaxis_title="Values",
             legend_title="Legend"
         )
-        st.plotly_chart(fig_actual_vs_predicted)
+        st.plotly_chart(fig_jetzt_vs_in_einer_Stunde)
 
         # Error Distribution Plot
         st.write("### Error Distribution Plot")
-        fig_error_dist = px.histogram(df, x="error", nbins=10, title="Error Distribution")
+        fig_error_dist = px.histogram(station_df, x="delta", nbins=10, title="Error Distribution")
         fig_error_dist.update_layout(
             xaxis_title="Error",
             yaxis_title="Frequency"
@@ -149,7 +153,7 @@ with tab2:
         st.plotly_chart(fig_error_dist)
 
     else:
-        st.error("The uploaded file must contain 'actual' and 'predicted' columns.")
+        st.error("The uploaded file must contain 'jetzt' and 'in_einer_Stunde' columns.")
 
 
 with tab3:
