@@ -84,13 +84,13 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
         token_data = response.json()
         access_token = token_data.get('access_token')
         if access_token:
-            print("Access Token successfully requested")
+            log.info("Access Token successfully requested")
             return access_token
         else:
-            print("Access token is not available in the response.")
+            log.info("Access token is not available in the response.")
             return None
     else:
-        print(f"Error: {response.status_code}, {response.text}")
+        log.info(f"Error: {response.status_code}, {response.text}")
         return None
     
 
@@ -137,12 +137,12 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
     response = requests.get(url, headers=headers, params=params)
 
     if response.status_code == 200:
-        # print(f'Got a response for station_id: {station_id}')
+        # log.info(f'Got a response for station_id: {station_id}')
         return response.json()
     else:
-        print(f'No response for station_id: {station_id}')
-        print('from date', from_date, 'to date', to_date)
-        print(f"Error: {response.status_code}, {response.text}")
+        log.info(f'No response for station_id: {station_id}')
+        log.info('from date', from_date, 'to date', to_date)
+        log.info(f"Error: {response.status_code}, {response.text}")
         return None
 
 def create_dataframe_from_api_data(data):
@@ -252,8 +252,8 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         # make entity id list
         STATION_IDS = stations_data['entityId'].tolist()
     except Exception as e:
-        print(f'No {STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, station_name, maximum_capacity, longitude, latitude, subarea')
-        print(f'Error: {e}')
+        log.info(f'No {STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, station_name, maximum_capacity, longitude, latitude, subarea')
+        log.info(f'Error: {e}')
 
     # - timedelta(hours=1), damit der request_start_date nicht gleich END_DATE ist
     # full_date_range = all timestamps (until now) of the timewindow needed for the model for prediction
@@ -268,7 +268,6 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
     old_data_temp = old_data_temp[~mask]
 
     log.info('------------- process started')
-    print('------------- process started')
     for station_id in STATION_IDS:
         # überprüfe für station_id, ob der zeitraum von START_DATE bis END_DATE in old_data_temp vorhanden ist:
         # select one station
@@ -292,8 +291,8 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
                     # und appende sie an das dataframe
                     dataframes.append(df)
             except Exception as e:
-                print(f'There was a problem retrieving the data for station {station_id}.')
-                print(f'Error: {e}')
+                log.info(f'There was a problem retrieving the data for station {station_id}.')
+                log.info(f'Error: {e}')
 
     if dataframes:
         # Alle neuen DataFrames der Stationen zusammenführen
@@ -316,17 +315,17 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         total_new_records = len(new_data_temp)
         unique_stations = new_data_temp['entityId'].nunique()
 
-        print(f'{total_new_records} new records fetched for {unique_stations} stations.')
-        print(f'request start date: {request_start_date}')
-        print(f'Data successfully loaded and saved for all STATION_IDS.')
+        log.info(f'{total_new_records} new records fetched for {unique_stations} stations.')
+        log.info(f'request start date: {request_start_date}')
+        log.info(f'Data successfully loaded and saved for all STATION_IDS.')
         st.success(f'{total_new_records} neue Datenpunkte für {unique_stations} Stationen abgerufen.')
     else:
-        print('No new data to process, data for every station is available. Existing data used.')
+        log.info('No new data to process, data for every station is available. Existing data used.')
         st.info('Es sind bereits Daten für alle Stationen vorhanden. Bestehende Daten werden verwendet.')
 
-    print('-------------')
-    print(f'Time in UTC:\nStart Date: {START_DATE}\nEnd Date: {END_DATE}')
-    print('------------- process completed')
+    log.info('-------------')
+    log.info(f'Time in UTC:\nStart Date: {START_DATE}\nEnd Date: {END_DATE}')
+    log.info('------------- process completed')
 
 
 
