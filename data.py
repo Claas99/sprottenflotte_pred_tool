@@ -313,8 +313,10 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         print(f'{total_new_records} new records fetched for {unique_stations} stations.')
         print(f'request start date: {request_start_date}')
         print(f'Data successfully loaded and saved for all STATION_IDS.')
+        st.success(f'{total_new_records} neue Datensätze für {unique_stations} Stationen abgerufen.')
     else:
         print('No new data to process, data for every station is available. Existing data used.')
+        st.info('Es sind bereits Daten für alle Stationen vorhanden. Bestehende Daten werden verwendet.')
 
     print('-------------')
     print(f'Time in UTC:\nStart Date: {START_DATE}\nEnd Date: {END_DATE}')
@@ -325,7 +327,7 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
 ### Configurations
 # .env
 # .env file anpassen, für application mit password, username email for access token
-config = dotenv.dotenv_values('.env')
+# config = dotenv.dotenv_values('.env')
 
 # PASSWORD = config['PASSWORD']
 # CLIENT_SECRET = config['CLIENT_SECRET']
