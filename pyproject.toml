@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pred_tool"
+name = "sprottenflotte_pred_tool"
 version = "0.1.0"
 description = ""
 authors = ["Claas Resow <claas.resow@dwins.de>"]
@@ -24,4 +24,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-main = "pred_tool.main:main"
+main = "sprottenflotte_pred_tool.main:main"
