@@ -165,7 +165,7 @@ def create_dataframe_from_api_data(data):
     return df
 
 
-def update_and_save_station_data(DATA_FILENAME, STATION_IDS, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN):
+def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN):
     """
     Updates and saves bike station data by fetching new data for specified stations and dates, then combining it with existing data.
 
@@ -175,8 +175,8 @@ def update_and_save_station_data(DATA_FILENAME, STATION_IDS, START_DATE, END_DAT
     The newly fetched data is then combined with the previously existing data, the combined data is sorted and saved back to the CSV file.
 
     Parameters:
-    - DATA_FILENAME (str): The file path for reading and writing station data.
-    - STATION_IDS (list of str): Identifiers for the stations which need data updates.
+    - DATA_FILENAME (str): The file path for reading and writing data.
+    - STATIONS_FILENAME (str): The file path for reading and writing station data.
     - START_DATE (datetime): The starting datetime from which data needs to be fetched.
     - END_DATE (datetime): The ending datetime until which data needs to be fetched.
     - BASE_URL (str): The base URL to which API requests should be made.
@@ -206,6 +206,16 @@ def update_and_save_station_data(DATA_FILENAME, STATION_IDS, START_DATE, END_DAT
     else:
         # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
         old_data_temp = pd.DataFrame(columns=['entityId', 'time_utc'])
+
+    # prüfen ob station_data.csv vorhanden
+    try:
+        # Laden des existierenden DataFrame
+        stations_data = pd.read_csv(STATIONS_FILENAME)
+        # make entity id list
+        STATION_IDS = stations_data['entityId'].tolist()
+    except Exception as e:
+        print(f'No {STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, station_name, maximum_capacity, longitude, latitude, subarea')
+        print(f'Error: {e}')
 
     # - timedelta(hours=1), damit der request_start_date nicht gleich END_DATE ist
     # full_date_range = all timestamps (until now) of the timewindow needed for the model for prediction
@@ -284,10 +294,6 @@ USERNAME_EMAIL = config['USERNAME_EMAIL']
 ACCESS_TOKEN = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
 BASE_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:BikeHireDockingStation:KielRegion:"
 
-STATION_IDS = [24370, 24397, 24367, 24399]  # Beispielliste von Station IDs
-# change to station ids from file einlesen, um änderungen zu haben
-# this file should contain also the name and lat lon for plotting etc.
-
 # API mit UTC time steps
 # Calculate the end date by rounding down to the closest whole hour in UTC !,
 # to make sure to get hourly averages for whole hours with API request
@@ -295,7 +301,8 @@ END_DATE = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
 START_DATE = END_DATE - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
 
 DATA_FILENAME = 'data/data_temp.csv'
+STATIONS_FILENAME = 'data/station_data_with_subareas_new.csv' # station ids from file einlesen, um änderungen zu haben
 
 
 ### Usage
-update_and_save_station_data(DATA_FILENAME, STATION_IDS, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN)
+update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN)
