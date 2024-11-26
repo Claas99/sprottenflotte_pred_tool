@@ -294,7 +294,7 @@ STATION_IDS = [24370, 24397, 24367, 24399]  # Beispielliste von Station IDs
 END_DATE = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
 START_DATE = END_DATE - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
 
-DATA_FILENAME = 'data_temp.csv'
+DATA_FILENAME = 'data/data_temp.csv'
 
 
 ### Usage

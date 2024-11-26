@@ -183,10 +183,10 @@ def update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, 
 
 
 ### Configurations
-DATA_FILENAME = 'data_temp.csv'
-MODEL_FILENAME = 'cnn_model.pth'
-SCALER_FILENAME = 'scaler.pkl'
-PREDICTIONS_FILENAME = 'predictions.csv'
+DATA_FILENAME = 'data/data_temp.csv'
+MODEL_FILENAME = 'data/cnn_model.pth'
+SCALER_FILENAME = 'data/scaler.pkl'
+PREDICTIONS_FILENAME = 'data/predictions.csv'
 
 
 ### Usage
