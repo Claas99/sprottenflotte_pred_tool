@@ -298,9 +298,10 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         # resete index
         combined_data_temp = combined_data_temp.reset_index(drop=True)
         # DataFrame in eine CSV-Datei speichern
-        csv_to_github = combined_data_temp.to_csv(DATA_FILENAME, index=False)
+        # csv_to_github = combined_data_temp.to_csv(DATA_FILENAME, index=False)
+        combined_data_temp.to_csv(DATA_FILENAME, index=False)
         # Update the csv-file in the github repo
-        update_csv_on_github(csv_to_github, DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
+        # update_csv_on_github(csv_to_github, DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
         # count new records and unique Ids 
         total_new_records = len(new_data_temp)
