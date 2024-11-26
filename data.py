@@ -324,7 +324,7 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         st.info('Es sind bereits Daten für alle Stationen vorhanden. Bestehende Daten werden verwendet.')
 
     log.info('-------------')
-    log.info(f'Time in UTC:\nStart Date: {START_DATE}\nEnd Date: {END_DATE}')
+    log.info(f'Time in UTC:\n   Start Date: {START_DATE}\n  End Date: {END_DATE}')
     log.info('------------- process completed')
 
 
