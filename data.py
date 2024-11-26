@@ -163,7 +163,7 @@ def create_dataframe_from_api_data(data):
 
     return df
 
-@st.cache_data
+
 def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN):
     """
     Updates and saves bike station data by fetching new data for specified stations and dates, then combining it with existing data.
