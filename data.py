@@ -13,7 +13,6 @@ import base64
 
 import logging
 
-st.set_option('logger.level', 'info')
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 log = logging.getLogger()
