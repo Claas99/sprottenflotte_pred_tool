@@ -34,7 +34,7 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
         "branch": branch,
     }
 
-# Update durchführen
+    # Update durchführen
     r = requests.put(url, json=payload, headers=headers)
     if r.status_code == 200:
         print("File updated successfully")
@@ -132,9 +132,11 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
     response = requests.get(url, headers=headers, params=params)
 
     if response.status_code == 200:
-        print(f'Got a response for station_id: {station_id}')
+        # print(f'Got a response for station_id: {station_id}')
         return response.json()
     else:
+        print(f'No response for station_id: {station_id}')
+        print('from date', from_date, 'to date', to_date)
         print(f"Error: {response.status_code}, {response.text}")
         return None
 
@@ -260,6 +262,7 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
     # Entfernen dieser Zeilen
     old_data_temp = old_data_temp[~mask]
 
+    print('------------- process started')
     for station_id in STATION_IDS:
         # überprüfe für station_id, ob der zeitraum von START_DATE bis END_DATE in old_data_temp vorhanden ist:
         # select one station
@@ -308,12 +311,14 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         unique_stations = new_data_temp['entityId'].nunique()
 
         print(f'{total_new_records} new records fetched for {unique_stations} stations.')
-        print(f'Data successfully loaded and saved for STATION_IDS:{STATION_IDS}')
+        print(f'request start date: {request_start_date}')
+        print(f'Data successfully loaded and saved for all STATION_IDS.')
     else:
         print('No new data to process, data for every station is available. Existing data used.')
 
     print('-------------')
     print(f'Time in UTC:\nStart Date: {START_DATE}\nEnd Date: {END_DATE}')
+    print('------------- process completed')
 
 
 
