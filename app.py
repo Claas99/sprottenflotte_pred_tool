@@ -7,11 +7,12 @@ import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 import plotly.express as px
-#import pred_tool.data as data
+import data as data
 import plotly.graph_objects as go
 import numpy as np
 
 file_station_name = "data/stations.csv"
+hist_bike_data_name = "data/data_temp.csv"
 
 # --- Streamlit Configuration ---
 st.set_page_config(page_title="Sprottenflotte prediction model", page_icon="🚲", layout="wide")
@@ -92,15 +93,17 @@ st.write(
 )
 tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
 
-# Load data into a DataFrame
-# df = data.get_predictions()
-stations = pd.read_csv(file_station_name)
-st.dataframe(stations.head())
 
-#ss['stations'] = list(np.unique(df['Station']))
-ss['subareas'] = list(np.unique(stations['subarea']))
 
 with tab1:
+
+    # Load data into a DataFrame
+    # df = data.get_predictions()
+    stations = pd.read_csv(file_station_name)
+    st.dataframe(stations)
+
+    #ss['stations'] = list(np.unique(df['Station']))
+    ss['subareas'] = list(np.unique(stations['subarea']))
     # Show data preview
     st.write("### Vorhersage")
     #st.dataframe(df.sort_values(['Teilbereich_delta', 'Teilbereich']))
@@ -158,7 +161,9 @@ with tab2:
 
 with tab3:
     st.write("### Historische Analyse")
-
+    data.update_and_save_station_data(data.DATA_FILENAME, data.STATIONS_FILENAME, data.START_DATE, data.END_DATE, data.BASE_URL, data.ACCESS_TOKEN)
+    hist_df = pd.read_csv(hist_bike_data_name)
+    st.dataframe(hist_df)
 
 
 
