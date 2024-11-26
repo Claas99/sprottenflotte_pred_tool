@@ -141,7 +141,7 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
         return response.json()
     else:
         log.info(f'No response for station_id: {station_id}')
-        log.info('from date', from_date, 'to date', to_date)
+        log.info(f'from date: {from_date}, to date: {to_date}')
         log.info(f"Error: {response.status_code}, {response.text}")
         return None
 
