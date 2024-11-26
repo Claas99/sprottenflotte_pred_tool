@@ -9,9 +9,39 @@ import dotenv
 import pandas as pd
 import requests
 import streamlit as st
+import base64
 
+
+link_data_file = "https://drive.google.com/file/d/1GeUkYnxxc-JPww0RW9ps39Qp4Y4j4yDZ/view?usp=sharing"
+output = "data"
 
 ### Functions
+def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
+    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+    headers = {'Authorization': f'token {token}'}
+
+    # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
+    r = requests.get(url, headers=headers)
+    old_content = r.json()
+    sha = old_content['sha']
+
+    # Update vorbereiten
+    content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
+    payload = {
+        "message": "Update CSV file",
+        "content": content_base64,
+        "sha": sha,
+        "branch": branch,
+    }
+
+# Update durchführen
+    r = requests.put(url, json=payload, headers=headers)
+    if r.status_code == 200:
+        print("File updated successfully")
+    else:
+        print("Failed to update file:", r.content)
+
+
 def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
     """
     Requests an access token using user credentials and client information from an authorization server.
@@ -57,6 +87,7 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
     else:
         print(f"Error: {response.status_code}, {response.text}")
         return None
+    
 
 def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
     """
@@ -164,6 +195,7 @@ def create_dataframe_from_api_data(data):
     return df
 
 
+
 def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN):
     """
     Updates and saves bike station data by fetching new data for specified stations and dates, then combining it with existing data.
@@ -266,7 +298,9 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         # resete index
         combined_data_temp = combined_data_temp.reset_index(drop=True)
         # DataFrame in eine CSV-Datei speichern
-        combined_data_temp.to_csv(DATA_FILENAME, index=False)
+        csv_to_github = combined_data_temp.to_csv(DATA_FILENAME, index=False)
+        # Update the csv-file in the github repo
+        update_csv_on_github(csv_to_github, DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
         # count new records and unique Ids 
         total_new_records = len(new_data_temp)
@@ -281,6 +315,7 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
     print(f'Time in UTC:\nStart Date: {START_DATE}\nEnd Date: {END_DATE}')
 
 
+
 ### Configurations
 # .env
 # .env file anpassen, für application mit password, username email for access token
@@ -293,6 +328,8 @@ config = dotenv.dotenv_values('.env')
 PASSWORD = st.secrets['PASSWORD']
 CLIENT_SECRET = st.secrets['CLIENT_SECRET']
 USERNAME_EMAIL = st.secrets['USERNAME_EMAIL']
+GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
+NAME_REPO = "Claas99/sprottenflotte_pred_tool"
 
 ACCESS_TOKEN = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
 BASE_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:BikeHireDockingStation:KielRegion:"
