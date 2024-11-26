@@ -11,6 +11,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 
+file_station_name = "data/stations.csv"
+
 # --- Streamlit Configuration ---
 st.set_page_config(page_title="Sprottenflotte prediction model", page_icon="🚲", layout="wide")
 
@@ -92,7 +94,7 @@ tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Ana
 
 # Load data into a DataFrame
 # df = data.get_predictions()
-stations = pd.read_csv("station_data_with_subareas_new.csv")
+stations = pd.read_csv(file_station_name)
 st.dataframe(stations.head())
 
 #ss['stations'] = list(np.unique(df['Station']))

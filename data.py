@@ -301,7 +301,7 @@ END_DATE = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
 START_DATE = END_DATE - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
 
 DATA_FILENAME = 'data/data_temp.csv'
-STATIONS_FILENAME = 'data/station_data_with_subareas_new.csv' # station ids from file einlesen, um änderungen zu haben
+STATIONS_FILENAME = 'data/stations.csv' # station ids from file einlesen, um änderungen zu haben
 
 
 ### Usage
