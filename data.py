@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 import dotenv
 import pandas as pd
 import requests
+import streamlit as st
 
 
 ### Functions
@@ -287,9 +288,13 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
 # .env file anpassen, für application mit password, username email for access token
 config = dotenv.dotenv_values('.env')
 
-PASSWORD = config['PASSWORD']
-CLIENT_SECRET = config['CLIENT_SECRET']
-USERNAME_EMAIL = config['USERNAME_EMAIL']
+# PASSWORD = config['PASSWORD']
+# CLIENT_SECRET = config['CLIENT_SECRET']
+# USERNAME_EMAIL = config['USERNAME_EMAIL']
+
+PASSWORD = st.secrets['PASSWORD']
+CLIENT_SECRET = st.secrets['CLIENT_SECRET']
+USERNAME_EMAIL = st.secrets['USERNAME_EMAIL']
 
 ACCESS_TOKEN = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
 BASE_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:BikeHireDockingStation:KielRegion:"
