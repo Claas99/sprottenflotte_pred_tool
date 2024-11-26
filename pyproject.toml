@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pred_tool"
+name = "sprottenflotte_pred_tool"
 version = "0.1.0"
 description = ""
 authors = ["Claas Resow <claas.resow@dwins.de>"]
@@ -12,6 +12,11 @@ pyyaml = "^6.0.2"
 pandas = "^2.2.2"
 plotly = "^5.24.1"
 numpy = "^2.1.3"
+requests = "^2.32.3"
+python-dotenv = "^1.0.1"
+torch = "^2.5.1"
+joblib = "^1.4.2"
+
 
 
 [build-system]
@@ -19,4 +24,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-main = "pred_tool.main:main"
+main = "sprottenflotte_pred_tool.main:main"

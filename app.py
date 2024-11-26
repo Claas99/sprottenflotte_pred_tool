@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 import plotly.express as px
-import data
+#import pred_tool.data as data
 import plotly.graph_objects as go
 import numpy as np
 
@@ -61,6 +61,8 @@ def initialize_session_state():
         ss["show_visuals"] = False  # Default to False (using full dataset)
     if "stations" not in ss:
         ss["stations"] = list()  # Default to False (using full dataset)
+    if "subareas" not in ss:
+            ss["subareas"] = list()  # Default to False (using full dataset)
 
 
 initialize_session_state()
@@ -89,33 +91,29 @@ st.write(
 tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
 
 # Load data into a DataFrame
-df = data.get_predictions()
+# df = data.get_predictions()
+stations = pd.read_csv("station_data_with_subareas_new.csv")
+st.dataframe(stations.head())
 
-ss['stations'] = list(np.unique(df['Station']))
+#ss['stations'] = list(np.unique(df['Station']))
+ss['subareas'] = list(np.unique(stations['subarea']))
 
 with tab1:
     # Show data preview
     st.write("### Vorhersage")
-    st.dataframe(df.sort_values(['Teilbereich_delta', 'Teilbereich']))
+    #st.dataframe(df.sort_values(['Teilbereich_delta', 'Teilbereich']))
     
 with tab2:
-    # Coordinates of Kiel
-    latitude = 54.3233
-    longitude = 10.1228
-    selected_option = st.selectbox("Wähle eine Station aus:", ss["stations"])
-    # Create a DataFrame with coordinates (optional for more points)
-    data = pd.DataFrame({
-        'City': ['Kiel'],
-        'Latitude': [latitude],
-        'Longitude': [longitude]
-    })
+    selected_option = st.selectbox("Wähle eine Station aus:", ss["subareas"])
+
+    subarea_df = stations[stations['subarea']==selected_option]
 
     # Plot the map
     fig = px.scatter_mapbox(
-        data, 
-        lat='Latitude', 
-        lon='Longitude', 
-        hover_name='City', 
+        subarea_df, 
+        lat='latitude', 
+        lon='longitude', 
+        hover_name='station_name', 
         zoom=10,
         height=600
     )
@@ -126,7 +124,7 @@ with tab2:
     # Show the map
     st.plotly_chart(fig)
 
-    if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
+''' if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
 
         station_df = df[df['Station']==selected_option]
 
@@ -154,7 +152,7 @@ with tab2:
 
     else:
         st.error("The uploaded file must contain 'jetzt' and 'in_einer_Stunde' columns.")
-
+'''
 
 with tab3:
     st.write("### Historische Analyse")

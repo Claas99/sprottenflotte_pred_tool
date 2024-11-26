@@ -1,4 +1,5 @@
 # sprottenflotte_pred_tool
+<<<<<<< HEAD
 
 A prediction model for sprottenflotte/kielregion
 
@@ -84,3 +85,6 @@ CLIENT_SECRET="fP81XZ5OTt5iRJ7qhyyTCv4eQtpGqc5i"
 USERNAME_EMAIL='email@website.de'
 
 ```
+=======
+A prediction model for sprottenflotte/kielregion
+>>>>>>> ffab171956a1d4ddfe6198014864e737cc81a0e3
