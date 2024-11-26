@@ -12,7 +12,6 @@ import streamlit as st
 
 
 ### Functions
-@st.cache_data
 def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
     """
     Requests an access token using user credentials and client information from an authorization server.
@@ -59,7 +58,6 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
         print(f"Error: {response.status_code}, {response.text}")
         return None
 
-@st.cache_data
 def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
     """
     Retrieves data for a specified bike hire docking station over a given time period.
@@ -109,7 +107,6 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
         print(f"Error: {response.status_code}, {response.text}")
         return None
 
-@st.cache_data
 def create_dataframe_from_api_data(data):
     """
     Converts data received from an API response into a structured pandas DataFrame.
