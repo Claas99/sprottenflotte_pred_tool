@@ -11,12 +11,12 @@ import requests
 
 
 ### Functions
-def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET, dotenv_path='.env'):
+def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
     """
     Requests an access token using user credentials and client information from an authorization server.
 
     This function posts user credentials and client details to the specified token URL of an OAuth authentication server,
-    and tries to retrieve an access token. If successful, the access token is saved to the specified dotenv file and returned.
+    and tries to retrieve an access token. If successful, the access token is returned.
 
     :param USERNAME_EMAIL: The username or email associated with the user account.
     :type USERNAME_EMAIL: str
@@ -24,8 +24,6 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET, dotenv_path='.
     :type PASSWORD: str
     :param CLIENT_SECRET: The secret key associated with the client application.
     :type CLIENT_SECRET: str
-    :param dotenv_path: Path to the dotenv file where the obtained access token will be saved, default is '.env'.
-    :type dotenv_path: str
 
     :return: The access token if successfully requested, otherwise None.
     :rtype: str or None
@@ -49,10 +47,8 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET, dotenv_path='.
     if response.status_code == 200:
         token_data = response.json()
         access_token = token_data.get('access_token')
-        print("Bearer Token successfully requested")
         if access_token:
-            dotenv.set_key(dotenv_path, 'ACCESS_TOKEN', access_token)
-            print("Access Token successfully written to the .env file.")
+            print("Access Token successfully requested")
             return access_token
         else:
             print("Access token is not available in the response.")
