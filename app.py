@@ -124,6 +124,7 @@ def main():
         st.dataframe(vorhersage_demo_df)
         
     with tab2:
+        st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"], index=0)
 
         subarea_df = stations[stations['subarea']==selected_option]
