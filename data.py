@@ -288,6 +288,11 @@ def update_station_data():
 
     log.info('------------- process started')
 
+    # date_saved = old_data_temp['time_utc'].max().date()
+    # today = datetime.now(timezone.utc).date()
+
+    # if date_saved != today:
+
     ACCESS_TOKEN = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
 
     for station_id in STATION_IDS:
@@ -345,7 +350,6 @@ def update_station_data():
         log.info('No new data to process, data for every station is available. Existing data used.')
         st.info('Es sind bereits Daten für alle Stationen vorhanden. Bestehende Daten werden verwendet.')
 
-    log.info('-------------')
     log.info(f'Time in UTC:\n          Start Date: {START_DATE}\n          End Date: {END_DATE}')
     log.info('------------- process completed')
 
