@@ -114,7 +114,7 @@ def main():
 
     vorhersage_demo_df = vorhersage_demo_df.sort_values('Prio', ascending=False)
 
-    ss['subareas'] = vorhersage_demo_df['subarea']
+    ss['subareas'] = vorhersage_demo_df['Teilbereich']
 
     tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
 
