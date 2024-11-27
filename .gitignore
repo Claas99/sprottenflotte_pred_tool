@@ -16,3 +16,5 @@ __pycache__
 # Ignore cache folder
 cache/
 
+# requirements file
+requirements.txt
