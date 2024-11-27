@@ -13,6 +13,7 @@ import joblib
 import requests
 import streamlit as st
 import base64
+import sklearn
 
 import logging
 
@@ -239,6 +240,8 @@ def update_predictions():
     except Exception as e:
         log.info(f'Error in function.')
         log.info(f'Error: {e}')
+
+        log.info('------------- Prediction process completed')
 
         return None
 
