@@ -129,6 +129,7 @@ def main():
 
         subarea_df = stations[stations['Teilbereich']==selected_option]
         subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
+        subarea_df = subarea_df.sort_values('Prio', ascending=False)
 
         # Plot the map
         fig = px.scatter_mapbox(
