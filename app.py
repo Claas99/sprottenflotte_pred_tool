@@ -127,14 +127,16 @@ def main():
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"], index=0)
 
-        subarea_df = stations[stations['subarea']==selected_option]
+        subarea_df = vorhersage_demo_df[vorhersage_demo_df['Teilbereich']==selected_option]
 
         # Plot the map
         fig = px.scatter_mapbox(
             subarea_df, 
             lat='latitude', 
             lon='longitude', 
-            hover_name='station_name', 
+            hover_name='station_name',
+            hover_data=['station_name', 'Teilbereich', 'Teilbereich_delta', 'Prio'],
+            color='Prio', 
             zoom=10,
             height=600
         )
