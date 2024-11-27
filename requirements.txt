@@ -1,0 +1,28 @@
+# Requirements for environment for using Sprottenflotte prediction tool
+
+ipykernel==6.29.5
+matplotlib==3.8
+numpy==1.26
+pandas #==2.1
+python-dotenv==0.2
+# mlxtend
+# pysubgroup
+# ucimlrepo
+# networkX
+
+# pytorch
+# requests==2.31
+# scikit-learn == 1.3.1
+# seaborn==0.13.0
+# tensorflow
+# tensorboard
+
+# torchattacks
+# opencv-python
+# ipywidgets
+# lime
+# scikit-image
+# statsmodels
+
+# pip install -r .\requirements.txt
+# pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124   
