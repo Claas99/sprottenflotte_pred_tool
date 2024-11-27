@@ -17,34 +17,47 @@ import logging
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 log = logging.getLogger()
 
-link_data_file = "https://drive.google.com/file/d/1GeUkYnxxc-JPww0RW9ps39Qp4Y4j4yDZ/view?usp=sharing"
-output = "data"
+### Configurations
+PASSWORD = st.secrets['PASSWORD']
+CLIENT_SECRET = st.secrets['CLIENT_SECRET']
+USERNAME_EMAIL = st.secrets['USERNAME_EMAIL']
+GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
+NAME_REPO = "Claas99/sprottenflotte_pred_tool"
+
+DATA_FILENAME = 'data/data_temp.csv'
+STATIONS_FILENAME = 'data/stations.csv' # station ids from file einlesen, um änderungen zu haben
+BASE_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:BikeHireDockingStation:KielRegion:"
+
+
+
+# link_data_file = "https://drive.google.com/file/d/1GeUkYnxxc-JPww0RW9ps39Qp4Y4j4yDZ/view?usp=sharing"
+# output = "data"
 
 ### Functions
-def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
-    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
-    headers = {'Authorization': f'token {token}'}
+# def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
+#     url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+#     headers = {'Authorization': f'token {token}'}
 
-    # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
-    r = requests.get(url, headers=headers)
-    old_content = r.json()
-    sha = old_content['sha']
+#     # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
+#     r = requests.get(url, headers=headers)
+#     old_content = r.json()
+#     sha = old_content['sha']
 
-    # Update vorbereiten
-    content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
-    payload = {
-        "message": "Update CSV file",
-        "content": content_base64,
-        "sha": sha,
-        "branch": branch,
-    }
+#     # Update vorbereiten
+#     content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
+#     payload = {
+#         "message": "Update CSV file",
+#         "content": content_base64,
+#         "sha": sha,
+#         "branch": branch,
+#     }
 
-    # Update durchführen
-    r = requests.put(url, json=payload, headers=headers)
-    if r.status_code == 200:
-        print("File updated successfully")
-    else:
-        print("Failed to update file:", r.content)
+#     # Update durchführen
+#     r = requests.put(url, json=payload, headers=headers)
+#     if r.status_code == 200:
+#         print("File updated successfully")
+#     else:
+#         print("Failed to update file:", r.content)
 
 
 def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
@@ -90,7 +103,7 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
             log.info("Access token is not available in the response.")
             return None
     else:
-        log.info(f"Error: {response.status_code}, {response.text}")
+        log.info(f"Error requesting Access Token: {response.status_code}, {response.text}")
         return None
     
 
@@ -140,10 +153,10 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
         # log.info(f'Got a response for station_id: {station_id}')
         return response.json()
     else:
-        log.info(f'No response for station_id: {station_id}')
-        log.info(f'from date: {from_date}, to date: {to_date}')
-        log.info(f"Error: {response.status_code}, {response.text}")
+        log.info(f'No response for station_id: {station_id}\nfrom date: {from_date}\nto date: {to_date}')
+        log.info(f"    Error: {response.status_code}, {response.text}")
         return None
+
 
 def create_dataframe_from_api_data(data):
     """
@@ -202,8 +215,7 @@ def create_dataframe_from_api_data(data):
     return df
 
 
-
-def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN):
+def update_station_data():
     """
     Updates and saves bike station data by fetching new data for specified stations and dates, then combining it with existing data.
 
@@ -232,6 +244,9 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
     - API requests sent to a remote service.
     - Potentially modifies global state if global variables or mutable data types are passed and manipulated.
     """
+
+    # Get the current start and end dates
+    START_DATE, END_DATE = get_current_dates()
 
     # Prüfen, ob data_temp.csv vorhanden ist
     if os.path.exists(DATA_FILENAME):
@@ -268,6 +283,9 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
     old_data_temp = old_data_temp[~mask]
 
     log.info('------------- process started')
+
+    ACCESS_TOKEN = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
+
     for station_id in STATION_IDS:
         # überprüfe für station_id, ob der zeitraum von START_DATE bis END_DATE in old_data_temp vorhanden ist:
         # select one station
@@ -284,15 +302,11 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         if not missing_dates.empty:
             request_start_date = missing_dates[0]
             # und requeste die nicht vorhandenen stunden bis zum END_DATE
-            try:
-                data = fetch_station_data(station_id, request_start_date, END_DATE, BASE_URL, ACCESS_TOKEN)
-                if data:
-                    df = create_dataframe_from_api_data(data)
-                    # und appende sie an das dataframe
-                    dataframes.append(df)
-            except Exception as e:
-                log.info(f'There was a problem retrieving the data for station {station_id}.')
-                log.info(f'Error: {e}')
+            data = fetch_station_data(station_id, request_start_date, END_DATE, BASE_URL, ACCESS_TOKEN)
+            if data:
+                df = create_dataframe_from_api_data(data)
+                # und appende sie an das dataframe
+                dataframes.append(df)
 
     if dataframes:
         # Alle neuen DataFrames der Stationen zusammenführen
@@ -304,12 +318,19 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         # Sortieren, nach entitiyId und time_utc
         combined_data_temp = combined_data_temp.sort_values(by=['entityId', 'time_utc'])
         # resete index
-        combined_data_temp = combined_data_temp.reset_index(drop=True)
+        updated_data_temp = combined_data_temp.reset_index(drop=True)
+        
+        # save
+        # save_station_data(updated_data_temp)
+        
         # DataFrame in eine CSV-Datei speichern
-        # csv_to_github = combined_data_temp.to_csv(DATA_FILENAME, index=False)
-        combined_data_temp.to_csv(DATA_FILENAME, index=False)
+        # updated_data_temp.to_csv(DATA_FILENAME, index=False)
+
         # Update the csv-file in the github repo
+        # csv_to_github = updated_data_temp.to_csv(DATA_FILENAME, index=False)
         # update_csv_on_github(csv_to_github, DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
+
+        data_temp_df = updated_data_temp.copy()
 
         # count new records and unique Ids 
         total_new_records = len(new_data_temp)
@@ -320,6 +341,8 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
         log.info(f'Data successfully loaded and saved for all STATION_IDS.')
         st.success(f'{total_new_records} neue Datenpunkte für {unique_stations} Stationen abgerufen.')
     else:
+        data_temp_df = old_data_temp.copy()
+
         log.info('No new data to process, data for every station is available. Existing data used.')
         st.info('Es sind bereits Daten für alle Stationen vorhanden. Bestehende Daten werden verwendet.')
 
@@ -327,35 +350,26 @@ def update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, E
     log.info(f'Time in UTC:\n   Start Date: {START_DATE}\n  End Date: {END_DATE}')
     log.info('------------- process completed')
 
+    return data_temp_df
 
 
-### Configurations
-# .env
-# .env file anpassen, für application mit password, username email for access token
-# config = dotenv.dotenv_values('.env')
+def save_station_data(data):
+    pass
 
-# PASSWORD = config['PASSWORD']
-# CLIENT_SECRET = config['CLIENT_SECRET']
-# USERNAME_EMAIL = config['USERNAME_EMAIL']
 
-PASSWORD = st.secrets['PASSWORD']
-CLIENT_SECRET = st.secrets['CLIENT_SECRET']
-USERNAME_EMAIL = st.secrets['USERNAME_EMAIL']
-GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
-NAME_REPO = "Claas99/sprottenflotte_pred_tool"
+def get_current_dates():
+    """Calculate the current start and end dates for data fetching."""
+    # API mit UTC time steps
+    # Calculate the end date by rounding down to the closest whole hour in UTC !,
+    # to make sure to get hourly averages for whole hours with API request
 
-ACCESS_TOKEN = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
-BASE_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:BikeHireDockingStation:KielRegion:"
+    # Calculate the end date as the current time rounded down to the nearest hour
+    end_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    # Set start_date as 24 hours before the end_date
+    start_date = end_date - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
 
-# API mit UTC time steps
-# Calculate the end date by rounding down to the closest whole hour in UTC !,
-# to make sure to get hourly averages for whole hours with API request
-END_DATE = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
-START_DATE = END_DATE - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
-
-DATA_FILENAME = 'data/data_temp.csv'
-STATIONS_FILENAME = 'data/stations.csv' # station ids from file einlesen, um änderungen zu haben
+    return start_date, end_date
 
 
 ### Usage
-update_and_save_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN)
+# update_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN)

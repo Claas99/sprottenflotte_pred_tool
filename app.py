@@ -11,8 +11,6 @@ import data as data
 import plotly.graph_objects as go
 import numpy as np
 
-file_station_name = "data/stations.csv"
-hist_bike_data_name = "data/data_temp.csv"
 
 # --- Streamlit Configuration ---
 st.set_page_config(page_title="Sprottenflotte prediction model", page_icon="🚲", layout="wide")
@@ -87,6 +85,9 @@ def increment_edit_table_id():
 
 
 # --- Main App Logic ---
+file_station_name = "data/stations.csv"
+hist_bike_data_name = "data/data_temp.csv"
+
 st.title("Sprottenflotte prediction model 🚲 x 🤖")
 st.write(
     "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
@@ -161,9 +162,15 @@ with tab2:
 
 with tab3:
     st.write("### Historische Analyse")
-    data.update_and_save_station_data(data.DATA_FILENAME, data.STATIONS_FILENAME, data.START_DATE, data.END_DATE, data.BASE_URL, data.ACCESS_TOKEN)
-    hist_df = pd.read_csv(hist_bike_data_name)
-    st.dataframe(hist_df)
+    # data.update_and_save_station_data(data.DATA_FILENAME, data.STATIONS_FILENAME, data.START_DATE, data.END_DATE, data.BASE_URL, data.ACCESS_TOKEN)
+    # hist_df = pd.read_csv(hist_bike_data_name)
+    # st.dataframe(hist_df)
+
+    hist_df = data.update_station_data()
+    if hist_df is not None:
+        st.dataframe(hist_df)
+    else:
+        st.error("Failed to load historical data.")
 
 
 
