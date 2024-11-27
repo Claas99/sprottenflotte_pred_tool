@@ -325,6 +325,7 @@ def update_station_data():
         updated_data_temp = combined_data_temp.reset_index(drop=True)
 
         # Update the csv-file in the github repo
+        log.info("----- Start updating file on GitHub -----")
         csv_to_github = updated_data_temp.to_csv(index=False)
         update_csv_on_github(csv_to_github, DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 

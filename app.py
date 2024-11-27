@@ -131,35 +131,35 @@ def main():
         # Show the map
         st.plotly_chart(fig)
 
-    ''' if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
+        ''' if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
 
-            station_df = df[df['Station']==selected_option]
+                station_df = df[df['Station']==selected_option]
 
-            # jetzt vs in_einer_Stunde Plot
-            st.write("### jetzt vs in_einer_Stunde Plot")
-            fig_jetzt_vs_in_einer_Stunde = go.Figure()
-            fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['jetzt'], name='jetzt'))
-            fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['in_einer_Stunde'], name='in_einer_Stunde'))
-            fig_jetzt_vs_in_einer_Stunde.update_layout(
-                title=f"jetzt vs in einer Stunde für Station {selected_option}",
-                xaxis_title="Index",
-                yaxis_title="Values",
-                legend_title="Legend"
-            )
-            st.plotly_chart(fig_jetzt_vs_in_einer_Stunde)
+                # jetzt vs in_einer_Stunde Plot
+                st.write("### jetzt vs in_einer_Stunde Plot")
+                fig_jetzt_vs_in_einer_Stunde = go.Figure()
+                fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['jetzt'], name='jetzt'))
+                fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['in_einer_Stunde'], name='in_einer_Stunde'))
+                fig_jetzt_vs_in_einer_Stunde.update_layout(
+                    title=f"jetzt vs in einer Stunde für Station {selected_option}",
+                    xaxis_title="Index",
+                    yaxis_title="Values",
+                    legend_title="Legend"
+                )
+                st.plotly_chart(fig_jetzt_vs_in_einer_Stunde)
 
-            # Error Distribution Plot
-            st.write("### Error Distribution Plot")
-            fig_error_dist = px.histogram(station_df, x="delta", nbins=10, title="Error Distribution")
-            fig_error_dist.update_layout(
-                xaxis_title="Error",
-                yaxis_title="Frequency"
-            )
-            st.plotly_chart(fig_error_dist)
+                # Error Distribution Plot
+                st.write("### Error Distribution Plot")
+                fig_error_dist = px.histogram(station_df, x="delta", nbins=10, title="Error Distribution")
+                fig_error_dist.update_layout(
+                    xaxis_title="Error",
+                    yaxis_title="Frequency"
+                )
+                st.plotly_chart(fig_error_dist)
 
-        else:
-            st.error("The uploaded file must contain 'jetzt' and 'in_einer_Stunde' columns.")
-    '''
+            else:
+                st.error("The uploaded file must contain 'jetzt' and 'in_einer_Stunde' columns.")
+        '''
 
     with tab3:
         st.write("### Historische Analyse")
