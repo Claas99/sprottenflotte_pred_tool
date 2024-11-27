@@ -66,7 +66,7 @@ def initialize_session_state():
             ss["subareas"] = list()  # Default to False (using full dataset)
 
 
-initialize_session_state()
+# initialize_session_state()
 
 
 # --- Helper Functions ---
@@ -86,6 +86,8 @@ def increment_edit_table_id():
 
 # --- Main App Logic ---
 def main():
+    initialize_session_state() # initialize_session_state()
+
     file_station_name = "data/stations.csv"
     hist_bike_data_name = "data/data_temp.csv"
 
