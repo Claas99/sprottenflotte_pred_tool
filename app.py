@@ -144,7 +144,7 @@ def main():
             lon='longitude', 
             hover_name='station_name',
             hover_data=['Teilbereich_delta', 'maximum_capacity'], 
-            zoom=12,
+            zoom=10.5,
             height=600
         )
 
