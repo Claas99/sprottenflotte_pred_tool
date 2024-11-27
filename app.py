@@ -96,10 +96,11 @@ def main():
 
     stations = pd.read_csv(file_station_name)
     stations['subarea'] = stations['subarea'].str.replace('√∂', 'ö')
-    
+    subareas = list(np.unique(stations['subarea']))
+
     vorhersage_demo_df = pd.DataFrame({
-        'Teilbereich': list(np.unique(stations['subarea'])),
-        'Teilbereich_delta': [np.random.randint(-10, 10) for _ in range(len(ss['subareas']))]
+        'Teilbereich': subareas,
+        'Teilbereich_delta': [np.random.randint(-10, 10) for _ in range(len(subareas))]
     })
     conditions = [
     vorhersage_demo_df['Teilbereich_delta'] >= 7,
