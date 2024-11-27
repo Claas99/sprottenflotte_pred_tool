@@ -135,7 +135,7 @@ def main():
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         # Use the cached function
-        subarea_df = get_subarea_data(selected_option)
+        subarea_df = get_subarea_data(selected_option, stations, vorhersage_demo_df)
 
         # Plot the map
         fig = px.scatter_mapbox(
