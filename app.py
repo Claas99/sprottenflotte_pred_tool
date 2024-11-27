@@ -125,7 +125,7 @@ def main():
         
     with tab2:
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
-        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", vorhersage_demo_df['Teilbereich'], index=0)
+        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         subarea_df = stations[stations['Teilbereich']==selected_option]
         subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
@@ -137,8 +137,7 @@ def main():
             lat='latitude', 
             lon='longitude', 
             hover_name='station_name',
-            hover_data=['station_name', 'Teilbereich', 'Teilbereich_delta', 'Prio'],
-            color='Prio', 
+            hover_data=['Teilbereich_delta', 'maximum_capacity'], 
             zoom=10,
             height=600
         )
