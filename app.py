@@ -93,22 +93,31 @@ def main():
     st.write(
         "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
     )
+
+    stations = pd.read_csv(file_station_name)
+    #ss['stations'] = list(np.unique(df['Station']))
+    ss['subareas'] = list(np.unique(stations['subarea']))
+    vorhersage_demo_df = pd.DataFrame({
+        'Teilbereich': ss['subareas'],
+        'Teilbereich_delta': [np.random.randint(-10, 10) for _ in range(len(ss['subareas']))]
+    }).sort_values('Teilbereich_delta', ascending=False)
+    if vorhersage_demo_df['Telbereich_delta'] >= 7:
+        vorhersage_demo_df['Prio'] = '❗️❗️❗️'
+    elif vorhersage_demo_df['Telbereich_delta'] < -7:
+        vorhersage_demo_df['Prio'] = '❗️❗️❗️'
+    elif vorhersage_demo_df['Telbereich_delta'] < -5:
+        vorhersage_demo_df['Prio'] = '❗️❗️'
+    elif vorhersage_demo_df['Telbereich_delta'] >= 5:
+        vorhersage_demo_df['Prio'] = '❗️❗️'
+
+
+
     tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
 
-
-
     with tab1:
-
+        st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
         # Load data into a DataFrame
-        # df = data.get_predictions()
-        stations = pd.read_csv(file_station_name)
-        st.dataframe(stations)
-
-        #ss['stations'] = list(np.unique(df['Station']))
-        ss['subareas'] = list(np.unique(stations['subarea']))
-        # Show data preview
-        st.write("### Vorhersage")
-        #st.dataframe(df.sort_values(['Teilbereich_delta', 'Teilbereich']))
+        st.dataframe(vorhersage_demo_df)
         
     with tab2:
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"])
