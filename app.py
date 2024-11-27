@@ -136,7 +136,7 @@ def main():
     with tab1:
         st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
         # Load data into a DataFrame
-        styled_df = vorhersage_demo_df.style.applymap(color_cols)
+        styled_df = vorhersage_demo_df['Teilbereich_delta'].style.applymap(color_cols)
         #st.dataframe(styled_df, use_container_width=True)
         st.write(styled_df.to_html(), unsafe_allow_html=True)
         
