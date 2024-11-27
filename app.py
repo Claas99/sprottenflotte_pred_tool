@@ -95,7 +95,7 @@ def main():
     )
 
     stations = pd.read_csv(file_station_name)
-    stations['Teilbereich'] = stations['Teilbereich'].str.replace('√∂', 'ö')
+    stations['Teilbereich'] = stations['subarea'].str.replace('√∂', 'ö')
     subareas = list(np.unique(stations['Teilbereich']))
 
     vorhersage_demo_df = pd.DataFrame({
