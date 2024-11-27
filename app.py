@@ -118,7 +118,7 @@ def main():
     with tab1:
         st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
         # Load data into a DataFrame
-        st.dataframe(vorhersage_demo_df.sort_values('Prio'))
+        st.dataframe(vorhersage_demo_df.sort_values('Prio'), ascending=False)
         
     with tab2:
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"])
