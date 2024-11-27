@@ -59,9 +59,9 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     # Update durchführen
     r = requests.put(url, json=payload, headers=headers)
     if r.status_code == 200:
-        log.info("File updated successfully on GitHub")
+        log.info("----- File updated successfully on GitHub -----")
     else:
-        log.error(f"Failed to update file on GitHub: {r.content}")
+        log.error(f"----- Failed to update file on GitHub: {r.content} ------")
 
 
 def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
@@ -336,7 +336,7 @@ def update_station_data():
 
         log.info(f'{total_new_records} new records fetched for {unique_stations} stations.')
         log.info(f'request start date: {request_start_date}')
-        log.info(f'Data successfully loaded and saved for all STATION_IDS.')
+        log.info(f'Data successfully fetched and saved for all STATION_IDS.')
         st.success(f'{total_new_records} neue Datenpunkte für {unique_stations} Stationen abgerufen.')
     else:
         data_temp_df = old_data_temp.copy()
@@ -345,7 +345,7 @@ def update_station_data():
         st.info('Es sind bereits Daten für alle Stationen vorhanden. Bestehende Daten werden verwendet.')
 
     log.info('-------------')
-    log.info(f'Time in UTC:\n   Start Date: {START_DATE}\n  End Date: {END_DATE}')
+    log.info(f'Time in UTC:\n          Start Date: {START_DATE}\n          End Date: {END_DATE}')
     log.info('------------- process completed')
 
     return data_temp_df

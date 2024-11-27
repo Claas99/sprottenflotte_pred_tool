@@ -85,93 +85,97 @@ def increment_edit_table_id():
 
 
 # --- Main App Logic ---
-file_station_name = "data/stations.csv"
-hist_bike_data_name = "data/data_temp.csv"
+def main():
+    file_station_name = "data/stations.csv"
+    hist_bike_data_name = "data/data_temp.csv"
 
-st.title("Sprottenflotte prediction model 🚲 x 🤖")
-st.write(
-    "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
-)
-tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
-
-
-
-with tab1:
-
-    # Load data into a DataFrame
-    # df = data.get_predictions()
-    stations = pd.read_csv(file_station_name)
-    st.dataframe(stations)
-
-    #ss['stations'] = list(np.unique(df['Station']))
-    ss['subareas'] = list(np.unique(stations['subarea']))
-    # Show data preview
-    st.write("### Vorhersage")
-    #st.dataframe(df.sort_values(['Teilbereich_delta', 'Teilbereich']))
-    
-with tab2:
-    selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"])
-
-    subarea_df = stations[stations['subarea']==selected_option]
-
-    # Plot the map
-    fig = px.scatter_mapbox(
-        subarea_df, 
-        lat='latitude', 
-        lon='longitude', 
-        hover_name='station_name', 
-        zoom=10,
-        height=600
+    st.title("Sprottenflotte prediction model 🚲 x 🤖")
+    st.write(
+        "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
     )
+    tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
 
-    # Set the Mapbox style (requires an internet connection)
-    fig.update_layout(mapbox_style="open-street-map")
 
-    # Show the map
-    st.plotly_chart(fig)
 
-''' if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
+    with tab1:
 
-        station_df = df[df['Station']==selected_option]
+        # Load data into a DataFrame
+        # df = data.get_predictions()
+        stations = pd.read_csv(file_station_name)
+        st.dataframe(stations)
 
-        # jetzt vs in_einer_Stunde Plot
-        st.write("### jetzt vs in_einer_Stunde Plot")
-        fig_jetzt_vs_in_einer_Stunde = go.Figure()
-        fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['jetzt'], name='jetzt'))
-        fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['in_einer_Stunde'], name='in_einer_Stunde'))
-        fig_jetzt_vs_in_einer_Stunde.update_layout(
-            title=f"jetzt vs in einer Stunde für Station {selected_option}",
-            xaxis_title="Index",
-            yaxis_title="Values",
-            legend_title="Legend"
+        #ss['stations'] = list(np.unique(df['Station']))
+        ss['subareas'] = list(np.unique(stations['subarea']))
+        # Show data preview
+        st.write("### Vorhersage")
+        #st.dataframe(df.sort_values(['Teilbereich_delta', 'Teilbereich']))
+        
+    with tab2:
+        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"])
+
+        subarea_df = stations[stations['subarea']==selected_option]
+
+        # Plot the map
+        fig = px.scatter_mapbox(
+            subarea_df, 
+            lat='latitude', 
+            lon='longitude', 
+            hover_name='station_name', 
+            zoom=10,
+            height=600
         )
-        st.plotly_chart(fig_jetzt_vs_in_einer_Stunde)
 
-        # Error Distribution Plot
-        st.write("### Error Distribution Plot")
-        fig_error_dist = px.histogram(station_df, x="delta", nbins=10, title="Error Distribution")
-        fig_error_dist.update_layout(
-            xaxis_title="Error",
-            yaxis_title="Frequency"
-        )
-        st.plotly_chart(fig_error_dist)
+        # Set the Mapbox style (requires an internet connection)
+        fig.update_layout(mapbox_style="open-street-map")
 
-    else:
-        st.error("The uploaded file must contain 'jetzt' and 'in_einer_Stunde' columns.")
-'''
+        # Show the map
+        st.plotly_chart(fig)
 
-with tab3:
-    st.write("### Historische Analyse")
-    # data.update_and_save_station_data(data.DATA_FILENAME, data.STATIONS_FILENAME, data.START_DATE, data.END_DATE, data.BASE_URL, data.ACCESS_TOKEN)
-    # hist_df = pd.read_csv(hist_bike_data_name)
-    # st.dataframe(hist_df)
+    ''' if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
 
-    hist_df = data.update_station_data()
-    if hist_df is not None:
-        st.dataframe(hist_df)
-    else:
-        st.error("Failed to load historical data.")
+            station_df = df[df['Station']==selected_option]
 
+            # jetzt vs in_einer_Stunde Plot
+            st.write("### jetzt vs in_einer_Stunde Plot")
+            fig_jetzt_vs_in_einer_Stunde = go.Figure()
+            fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['jetzt'], name='jetzt'))
+            fig_jetzt_vs_in_einer_Stunde.add_trace(go.Bar(base=station_df, y=station_df['in_einer_Stunde'], name='in_einer_Stunde'))
+            fig_jetzt_vs_in_einer_Stunde.update_layout(
+                title=f"jetzt vs in einer Stunde für Station {selected_option}",
+                xaxis_title="Index",
+                yaxis_title="Values",
+                legend_title="Legend"
+            )
+            st.plotly_chart(fig_jetzt_vs_in_einer_Stunde)
 
+            # Error Distribution Plot
+            st.write("### Error Distribution Plot")
+            fig_error_dist = px.histogram(station_df, x="delta", nbins=10, title="Error Distribution")
+            fig_error_dist.update_layout(
+                xaxis_title="Error",
+                yaxis_title="Frequency"
+            )
+            st.plotly_chart(fig_error_dist)
 
-st.button("Reset App", on_click=reset_app)
+        else:
+            st.error("The uploaded file must contain 'jetzt' and 'in_einer_Stunde' columns.")
+    '''
+
+    with tab3:
+        st.write("### Historische Analyse")
+        # data.update_and_save_station_data(data.DATA_FILENAME, data.STATIONS_FILENAME, data.START_DATE, data.END_DATE, data.BASE_URL, data.ACCESS_TOKEN)
+        # hist_df = pd.read_csv(hist_bike_data_name)
+        # st.dataframe(hist_df)
+
+        hist_df = data.update_station_data()
+        if hist_df is not None:
+            st.dataframe(hist_df)
+        else:
+            st.error("Failed to load historical data.")
+
+    st.button("Reset App", on_click=reset_app)
+
+# --- Entry Point ---
+if __name__ == "__main__":
+    main()
+
