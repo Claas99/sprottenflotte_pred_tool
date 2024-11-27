@@ -95,8 +95,8 @@ def main():
     )
 
     stations = pd.read_csv(file_station_name)
-    stations['subarea'] = stations['subarea'].str.replace('√∂', 'ö')
-    subareas = list(np.unique(stations['subarea']))
+    stations['Teilbereich'] = stations['Teilbereich'].str.replace('√∂', 'ö')
+    subareas = list(np.unique(stations['Teilbereich']))
 
     vorhersage_demo_df = pd.DataFrame({
         'Teilbereich': subareas,
@@ -127,7 +127,8 @@ def main():
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"], index=0)
 
-        subarea_df = vorhersage_demo_df[vorhersage_demo_df['Teilbereich']==selected_option]
+        subarea_df = stations[stations['Teilbereich']==selected_option]
+        subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
 
         # Plot the map
         fig = px.scatter_mapbox(
