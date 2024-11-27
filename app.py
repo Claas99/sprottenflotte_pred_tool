@@ -96,10 +96,9 @@ def main():
 
     stations = pd.read_csv(file_station_name)
     stations['subarea'] = stations['subarea'].str.replace('√∂', 'ö')
-    #ss['stations'] = list(np.unique(df['Station']))
-    ss['subareas'] = list(np.unique(stations['subarea']))
+    
     vorhersage_demo_df = pd.DataFrame({
-        'Teilbereich': ss['subareas'],
+        'Teilbereich': list(np.unique(stations['subarea'])),
         'Teilbereich_delta': [np.random.randint(-10, 10) for _ in range(len(ss['subareas']))]
     })
     conditions = [
@@ -112,16 +111,19 @@ def main():
 
     vorhersage_demo_df['Prio'] = np.select(conditions, choices, default='')
 
+    vorhersage_demo_df = vorhersage_demo_df.sort_values('Prio', ascending=False)
+
+    ss['subareas'] = vorhersage_demo_df['subarea']
 
     tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
 
     with tab1:
         st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
         # Load data into a DataFrame
-        st.dataframe(vorhersage_demo_df.sort_values('Prio', ascending=False))
+        st.dataframe(vorhersage_demo_df)
         
     with tab2:
-        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"])
+        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"], index=0)
 
         subarea_df = stations[stations['subarea']==selected_option]
 
