@@ -83,6 +83,15 @@ def increment_edit_table_id():
     """Increments the edit table ID."""
     ss["edit_table_id"] = ss["edit_table_id"] + 1
 
+file_station_name = "data/stations.csv"
+stations = pd.read_csv(file_station_name)
+stations['Teilbereich'] = stations['subarea'].str.replace('√∂', 'ö')
+subareas = list(np.unique(stations['Teilbereich']))
+vorhersage_demo_df = pd.DataFrame({
+        'Teilbereich': subareas,
+        'Teilbereich_delta': [np.random.randint(-10, 10) for _ in range(len(subareas))]
+    })
+
 @st.cache_data
 def get_subarea_data(selected_option):
     subarea_df = stations[stations['Teilbereich'] == selected_option]
@@ -100,15 +109,7 @@ def main():
     st.write(
         "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
     )
-
-    stations = pd.read_csv(file_station_name)
-    stations['Teilbereich'] = stations['subarea'].str.replace('√∂', 'ö')
-    subareas = list(np.unique(stations['Teilbereich']))
-
-    vorhersage_demo_df = pd.DataFrame({
-        'Teilbereich': subareas,
-        'Teilbereich_delta': [np.random.randint(-10, 10) for _ in range(len(subareas))]
-    })
+    
     conditions = [
     vorhersage_demo_df['Teilbereich_delta'] >= 7,
     vorhersage_demo_df['Teilbereich_delta'] < -7,
