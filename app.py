@@ -65,12 +65,8 @@ def initialize_session_state():
     if "subareas" not in ss:
             ss["subareas"] = list()  # Default to False (using full dataset)
 
-def setup():
-    if "initialized" not in ss:
-        initialize_session_state()
-        ss["initialized"] = True
 
-# initialize_session_state()
+initialize_session_state()
 
 
 # --- Helper Functions ---
@@ -90,8 +86,6 @@ def increment_edit_table_id():
 
 # --- Main App Logic ---
 def main():
-    setup() 
-
     file_station_name = "data/stations.csv"
     hist_bike_data_name = "data/data_temp.csv"
 
