@@ -101,15 +101,15 @@ def main():
         'Teilbereich': ss['subareas'],
         'Teilbereich_delta': [np.random.randint(-10, 10) for _ in range(len(ss['subareas']))]
     }).sort_values('Teilbereich_delta', ascending=False)
-    if vorhersage_demo_df['Teilbereich_delta'] >= 7:
-        vorhersage_demo_df['Prio'] = '❗️❗️❗️'
-    elif vorhersage_demo_df['Teilbereich_delta'] < -7:
-        vorhersage_demo_df['Prio'] = '❗️❗️❗️'
-    elif vorhersage_demo_df['Teilbereich_delta'] < -5:
-        vorhersage_demo_df['Prio'] = '❗️❗️'
-    elif vorhersage_demo_df['Teilbereich_delta'] >= 5:
-        vorhersage_demo_df['Prio'] = '❗️❗️'
+    conditions = [
+    vorhersage_demo_df['Teilbereich_delta'] >= 7,
+    vorhersage_demo_df['Teilbereich_delta'] < -7,
+    vorhersage_demo_df['Teilbereich_delta'] < -5,
+    vorhersage_demo_df['Teilbereich_delta'] >= 5
+]
+    choices = ['❗️❗️❗️', '❗️❗️❗️', '❗️❗️', '❗️❗️']
 
+    vorhersage_demo_df['Prio'] = np.select(conditions, choices, default='')
 
 
     tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
