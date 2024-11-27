@@ -34,30 +34,34 @@ BASE_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:BikeHire
 # output = "data"
 
 ### Functions
-# def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
-#     url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
-#     headers = {'Authorization': f'token {token}'}
+def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
+    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+    headers = {'Authorization': f'token {token}'}
 
-#     # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
-#     r = requests.get(url, headers=headers)
-#     old_content = r.json()
-#     sha = old_content['sha']
+    # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
+    r = requests.get(url, headers=headers)
+    if r.status_code != 200:
+        log.error(f"Failed to get file info: {r.content}")
+        return
+    
+    old_content = r.json()
+    sha = old_content['sha']
 
-#     # Update vorbereiten
-#     content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
-#     payload = {
-#         "message": "Update CSV file",
-#         "content": content_base64,
-#         "sha": sha,
-#         "branch": branch,
-#     }
+    # Update vorbereiten
+    content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
+    payload = {
+        "message": "Update CSV file",
+        "content": content_base64,
+        "sha": sha,
+        "branch": branch,
+    }
 
-#     # Update durchführen
-#     r = requests.put(url, json=payload, headers=headers)
-#     if r.status_code == 200:
-#         print("File updated successfully")
-#     else:
-#         print("Failed to update file:", r.content)
+    # Update durchführen
+    r = requests.put(url, json=payload, headers=headers)
+    if r.status_code == 200:
+        log.info("File updated successfully on GitHub")
+    else:
+        log.error(f"Failed to update file on GitHub: {r.content}")
 
 
 def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
@@ -319,16 +323,10 @@ def update_station_data():
         combined_data_temp = combined_data_temp.sort_values(by=['entityId', 'time_utc'])
         # resete index
         updated_data_temp = combined_data_temp.reset_index(drop=True)
-        
-        # save
-        # save_station_data(updated_data_temp)
-        
-        # DataFrame in eine CSV-Datei speichern
-        # updated_data_temp.to_csv(DATA_FILENAME, index=False)
 
         # Update the csv-file in the github repo
-        # csv_to_github = updated_data_temp.to_csv(DATA_FILENAME, index=False)
-        # update_csv_on_github(csv_to_github, DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
+        csv_to_github = updated_data_temp.to_csv(index=False)
+        update_csv_on_github(csv_to_github, DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
         data_temp_df = updated_data_temp.copy()
 
@@ -351,10 +349,6 @@ def update_station_data():
     log.info('------------- process completed')
 
     return data_temp_df
-
-
-def save_station_data(data):
-    pass
 
 
 def get_current_dates():
