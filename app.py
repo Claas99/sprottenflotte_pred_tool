@@ -107,7 +107,7 @@ def main():
     subareas = list(np.unique(stations['Teilbereich']))
     vorhersage_demo_df = pd.DataFrame({
             'Teilbereich': subareas,
-            'Teilbereich_delta': [np.random.randint(-10, 10) for _ in range(len(subareas))]
+            'Teilbereich_delta': [-3,-9,4,5,1,0,7,9,4]
         })
     conditions = [
     vorhersage_demo_df['Teilbereich_delta'] >= 7,
