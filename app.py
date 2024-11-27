@@ -8,6 +8,7 @@ import streamlit as st
 from streamlit import session_state as ss
 import plotly.express as px
 import data as data
+import predictions as predictions
 import plotly.graph_objects as go
 import numpy as np
 
@@ -127,7 +128,7 @@ def main():
 
     ss['subareas'] = vorhersage_demo_df['Teilbereich']
 
-    tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions"])
 
     with tab1:
         st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
@@ -197,11 +198,21 @@ def main():
         # hist_df = pd.read_csv(hist_bike_data_name)
         # st.dataframe(hist_df)
 
-        hist_df = data.update_station_data()
+        hist_df = data.update_station_data() # als erstes
         if hist_df is not None:
             st.dataframe(hist_df)
         else:
             st.error("Failed to load historical data.")
+
+    with tab4:
+        st.write("###Predictions")
+
+        predictions_df = predictions.update_predictions() # als erstes
+        if predictions_df is not None:
+            st.dataframe(predictions_df)
+        else:
+            st.error("Failed to load prediction data.")
+
 
     st.button("Reset App", on_click=reset_app)
 

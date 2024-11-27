@@ -50,7 +50,7 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     # Update vorbereiten
     content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
     payload = {
-        "message": "Update CSV file",
+        "message": "Update Data CSV file",
         "content": content_base64,
         "sha": sha,
         "branch": branch,
@@ -59,9 +59,9 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     # Update durchführen
     r = requests.put(url, json=payload, headers=headers)
     if r.status_code == 200:
-        log.info("----- File updated successfully on GitHub -----")
+        log.info("----- Data file updated successfully on GitHub -----")
     else:
-        log.error(f"----- Failed to update file on GitHub: {r.content} ------")
+        log.error(f"----- Failed to update Data file on GitHub: {r.content} ------")
 
 
 def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
@@ -157,8 +157,8 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
         # log.info(f'Got a response for station_id: {station_id}')
         return response.json()
     else:
-        log.info(f'No response for station_id: {station_id}\nfrom date: {from_date}\nto date: {to_date}')
-        log.info(f"    Error: {response.status_code}, {response.text}")
+        log.info(f'No response for station_id: {station_id}\n          from date: {from_date}\n          to date: {to_date}')
+        log.info(f"Error: {response.status_code}, {response.text}")
         return None
 
 
@@ -249,6 +249,8 @@ def update_station_data():
     - Potentially modifies global state if global variables or mutable data types are passed and manipulated.
     """
 
+    log.info('------------- Data-fetching process started')
+
     # Get the current start and end dates
     START_DATE, END_DATE = get_current_dates()
 
@@ -285,8 +287,6 @@ def update_station_data():
     mask = ~old_data_temp['entityId'].isin(STATION_IDS)
     # Entfernen dieser Zeilen
     old_data_temp = old_data_temp[~mask]
-
-    log.info('------------- process started')
 
     # date_saved = old_data_temp['time_utc'].max().date()
     # today = datetime.now(timezone.utc).date()
@@ -348,10 +348,10 @@ def update_station_data():
         data_temp_df = old_data_temp.copy()
 
         log.info('No new data to process, data for every station is available. Existing data used.')
-        st.info('Es sind bereits Daten für alle Stationen vorhanden. Bestehende Daten werden verwendet.')
+        st.info('Es sind bereits Daten für alle Stationen vorhanden.')
 
     log.info(f'Time in UTC:\n          Start Date: {START_DATE}\n          End Date: {END_DATE}')
-    log.info('------------- process completed')
+    log.info('------------- Data-fetching process completed')
 
     return data_temp_df
 

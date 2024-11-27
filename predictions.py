@@ -10,6 +10,23 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import joblib
+import requests
+import streamlit as st
+import base64
+
+import logging
+
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+log = logging.getLogger()
+
+### Configurations
+DATA_FILENAME = 'data/data_temp.csv'
+MODEL_FILENAME = 'data/cnn_model.pth'
+SCALER_FILENAME = 'data/scaler.pkl'
+PREDICTIONS_FILENAME = 'data/predictions.csv'
+GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
+NAME_REPO = "Claas99/sprottenflotte_pred_tool"
 
 ### Model
 # Model hyperparameters
@@ -53,6 +70,35 @@ class ConvModel(nn.Module):
     
 
 ### Functions
+def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
+    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+    headers = {'Authorization': f'token {token}'}
+
+    # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
+    r = requests.get(url, headers=headers)
+    if r.status_code != 200:
+        log.error(f"Failed to get file info: {r.content}")
+        return
+    
+    old_content = r.json()
+    sha = old_content['sha']
+
+    # Update vorbereiten
+    content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
+    payload = {
+        "message": "Update Prediction CSV file",
+        "content": content_base64,
+        "sha": sha,
+        "branch": branch,
+    }
+
+    # Update durchführen
+    r = requests.put(url, json=payload, headers=headers)
+    if r.status_code == 200:
+        log.info("----- Prediction file updated successfully on GitHub -----")
+    else:
+        log.error(f"----- Failed to update Prediction file on GitHub: {r.content} ------")
+
 def inverse_scale_target(scaler, scaled_target, target_feature_index, original_feature_count):
     # Prepare a dummy matrix with zeros
     dummy = np.zeros((scaled_target.shape[0], original_feature_count))
@@ -74,7 +120,10 @@ def predict(model, data):
         return model(data)
 
 
-def update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, PREDICTIONS_FILENAME):
+def update_predictions():
+    
+    log.info('------------- Prediction process started')
+
     # make überprüfung, ob predictions needed at this time? otherwise the predictions would be generated every time the application gets refreshed
     try:
         # load in data_temp
@@ -83,8 +132,8 @@ def update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, 
         data_temp['time_utc'] = pd.to_datetime(data_temp['time_utc'])
         latest_data_time = data_temp['time_utc'].max()
     except Exception as e:
-        print(f'No {DATA_FILENAME} file found.')
-        print(f'Error: {e}')
+        log.info(f'No {DATA_FILENAME} file found.')
+        log.info(f'Error: {e}')
         
     # Prüfen, ob predictions.csv vorhanden ist
     if os.path.exists(PREDICTIONS_FILENAME):
@@ -94,10 +143,11 @@ def update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, 
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
         # überprüfen ob neue predictions necessary
         if earliest_prediction_time > latest_data_time:
-            print("No new predictions necessary, predictions are up to date.")
-            print('-------------')
-            print(f'Time in UTC:\nEarliest Prediction for: {earliest_prediction_time}\nLatest Data for: {latest_data_time}')
-            return  # Beenden der Funktion, wenn keine neuen Predictions nötig sind
+            log.info("No new predictions necessary, predictions are up to date.")
+            st.info('Es sind bereits Predictions für alle Stationen vorhanden.')
+            log.info('-------------')
+            log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n         Latest Data for: {latest_data_time}')
+            return data_temp_predictions # Beenden der Funktion, wenn keine neuen Predictions nötig sind
         else:
             # Altes Daten löschen, da neue Predictions notwendig sind
             data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
@@ -115,8 +165,8 @@ def update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, 
         loaded_model.load_state_dict(torch.load(MODEL_FILENAME, weights_only=True))
 
     except Exception as e:
-        print(f'No {MODEL_FILENAME} file found.')
-        print(f'Error: {e}')
+        log.info(f'No {MODEL_FILENAME} file found.')
+        log.info(f'Error: {e}')
 
     try:
             # scalar saved joblib.dump(scaler, 'scaler.pkl')
@@ -124,8 +174,8 @@ def update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, 
         scaler = joblib.load(SCALER_FILENAME)
 
     except Exception as e:
-        print(f'No {SCALER_FILENAME} file found.')
-        print(f'Error: {e}')
+        log.info(f'No {SCALER_FILENAME} file found.')
+        log.info(f'Error: {e}')
 
     # make predictions
     try:
@@ -168,27 +218,30 @@ def update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, 
 
         # Zusammenführen aller temporären DataFrames zu einem finalen DataFrame
         data_temp_predictions = pd.concat(dataframes, ignore_index=True)
-        # save them in predictions.csv
-        data_temp_predictions.to_csv(PREDICTIONS_FILENAME, index=False)
+
+        # Update the csv-file in the github repo
+        log.info("----- Start updating file on GitHub -----")
+        csv_to_github = data_temp_predictions.to_csv(index=False)
+        update_csv_on_github(csv_to_github, PREDICTIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
+        
+        st.success("Es wurden neue Predictions für alle Stationen gemacht.")
+        
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
 
-        print(f'Predictions made successfully and saved for STATION_IDS:{entityId_list}')
-        print('-------------')
-        print(f'Time in UTC:\nEarliest Prediction for: {earliest_prediction_time}\nLatest Data for: {latest_data_time}')
+        log.info('Predictions made successfully and saved for all STATION_IDS.')
+        log.info('-------------')
+        log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for: {latest_data_time}')
 
+        log.info('------------- Prediction process completed')
+
+        return data_temp_predictions
 
     except Exception as e:
-        print(f'Error in function.')
-        print(f'Error: {e}')
+        log.info(f'Error in function.')
+        log.info(f'Error: {e}')
 
-
-### Configurations
-DATA_FILENAME = 'data/data_temp.csv'
-MODEL_FILENAME = 'data/cnn_model.pth'
-SCALER_FILENAME = 'data/scaler.pkl'
-PREDICTIONS_FILENAME = 'data/predictions.csv'
-
+        return None
 
 ### Usage
 
-update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, PREDICTIONS_FILENAME)
+# update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, PREDICTIONS_FILENAME)
