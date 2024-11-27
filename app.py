@@ -83,6 +83,13 @@ def increment_edit_table_id():
     """Increments the edit table ID."""
     ss["edit_table_id"] = ss["edit_table_id"] + 1
 
+@st.cache_data
+def get_subarea_data(selected_option):
+    subarea_df = stations[stations['Teilbereich'] == selected_option]
+    subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
+    return subarea_df.sort_values('Prio', ascending=False)
+
+
 
 # --- Main App Logic ---
 def main():
@@ -127,9 +134,8 @@ def main():
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
-        subarea_df = stations[stations['Teilbereich']==selected_option]
-        subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
-        subarea_df = subarea_df.sort_values('Prio', ascending=False)
+        # Use the cached function
+        subarea_df = get_subarea_data(selected_option)
 
         # Plot the map
         fig = px.scatter_mapbox(
