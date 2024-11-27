@@ -125,7 +125,7 @@ def main():
         
     with tab2:
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
-        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", subareas, index=0)
+        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", vorhersage_demo_df['Teilbereich'], index=0)
 
         subarea_df = stations[stations['Teilbereich']==selected_option]
         subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
