@@ -103,6 +103,10 @@ def main():
     
     file_station_name = "data/stations.csv"
     stations = pd.read_csv(file_station_name)
+
+    file_bikes_per_station_name = "data/stations.csv"
+    bikes_per_station = pd.read_csv(file_bikes_per_station_name)
+
     stations['Teilbereich'] = stations['subarea'].str.replace('√∂', 'ö')
     subareas = list(np.unique(stations['Teilbereich']))
     vorhersage_demo_df = pd.DataFrame({
@@ -121,6 +125,10 @@ def main():
 
     vorhersage_demo_df = vorhersage_demo_df.sort_values('Prio', ascending=False)
 
+    def color_cols(val):
+        color = 'red' if abs(val) > 5 else 'blue'
+        return f'color: {color}'
+
     ss['subareas'] = vorhersage_demo_df['Teilbereich']
 
     tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
@@ -128,7 +136,9 @@ def main():
     with tab1:
         st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
         # Load data into a DataFrame
-        st.dataframe(vorhersage_demo_df)
+        styled_df = vorhersage_demo_df.style.applymap(color_cols)
+        #st.dataframe(styled_df, use_container_width=True)
+        st.write(styled_df.to_html(), unsafe_allow_html=True)
         
     with tab2:
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
@@ -144,7 +154,7 @@ def main():
             lon='longitude', 
             hover_name='station_name',
             hover_data=['Teilbereich_delta', 'maximum_capacity'], 
-            zoom=10.5,
+            zoom=10.2,
             height=600
         )
 
@@ -153,6 +163,8 @@ def main():
 
         # Show the map
         st.plotly_chart(fig)
+
+        st.dataframe(subarea_df)
 
         ''' if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
 
