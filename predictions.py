@@ -237,7 +237,6 @@ def update_predictions():
         return data_temp_predictions
 
     except Exception as e:
-        log.info(f'Error in function.')
         log.info(f'Error: {e}')
 
         log.info('------------- Prediction process completed')

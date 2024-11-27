@@ -124,7 +124,7 @@ def main():
 
     vorhersage_demo_df['Prio'] = np.select(conditions, choices, default='')
 
-    vorhersage_demo_df = vorhersage_demo_df.sort_values('Prio', ascending=False)
+    vorhersage_demo_df = vorhersage_demo_df.sort_values('Prio', ascending=False).reset_index(drop=True)
 
     ss['subareas'] = vorhersage_demo_df['Teilbereich']
 
@@ -205,7 +205,7 @@ def main():
             st.error("Failed to load historical data.")
 
     with tab4:
-        st.write("###Predictions")
+        st.write("### Predictions")
 
         predictions_df = predictions.update_predictions() # als erstes
         if predictions_df is not None:
