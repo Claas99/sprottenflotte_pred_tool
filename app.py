@@ -94,7 +94,7 @@ def main():
         "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
     )
 
-    stations = pd.read_csv(file_station_name)
+    stations = pd.read_csv(file_station_name, encoding='ISO-8859-1')
     #ss['stations'] = list(np.unique(df['Station']))
     ss['subareas'] = list(np.unique(stations['subarea']))
     vorhersage_demo_df = pd.DataFrame({
