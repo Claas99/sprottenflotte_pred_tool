@@ -101,7 +101,7 @@ def main():
     vorhersage_demo_df = pd.DataFrame({
         'Teilbereich': ss['subareas'],
         'Teilbereich_delta': [np.random.randint(-10, 10) for _ in range(len(ss['subareas']))]
-    }).sort_values('Teilbereich_delta', ascending=False)
+    })
     conditions = [
     vorhersage_demo_df['Teilbereich_delta'] >= 7,
     vorhersage_demo_df['Teilbereich_delta'] < -7,
@@ -118,7 +118,7 @@ def main():
     with tab1:
         st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
         # Load data into a DataFrame
-        st.dataframe(vorhersage_demo_df)
+        st.dataframe(vorhersage_demo_df.sort_values('Prio'))
         
     with tab2:
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss["subareas"])
