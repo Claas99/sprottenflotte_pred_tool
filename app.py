@@ -125,10 +125,6 @@ def main():
 
     vorhersage_demo_df = vorhersage_demo_df.sort_values('Prio', ascending=False)
 
-    def color_cols(val):
-        color = 'red' if abs(val) > 5 else 'blue'
-        return f'color: {color}'
-
     ss['subareas'] = vorhersage_demo_df['Teilbereich']
 
     tab1, tab2, tab3 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse"])
@@ -136,9 +132,8 @@ def main():
     with tab1:
         st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
         # Load data into a DataFrame
-        styled_df = vorhersage_demo_df['Teilbereich_delta'].style.applymap(color_cols)
-        #st.dataframe(styled_df, use_container_width=True)
-        st.write(styled_df.to_html(), unsafe_allow_html=True)
+        st.dataframe(vorhersage_demo_df, use_container_width=True)
+    
         
     with tab2:
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
