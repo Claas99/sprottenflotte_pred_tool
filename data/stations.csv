@@ -1,4 +1,4 @@
-﻿entityId,station_name,maximum_capacity,latitude,longitude,subarea
+entityId,station_name,maximum_capacity,latitude,longitude,subarea
 30434,Felde Gemeindezentrum,18,54.299552,9.933817,Felde
 30207,Sporthalle Saxtorfer Weg,15,54.487005,9.835833,Eckernf√∂rde
 30151,Eiche Daenischenhagen,15,54.424663,10.127872,Kiel
@@ -12,7 +12,6 @@
 30025,Stadtwerke   Buergerhaus Klausdorf,15,54.303372,10.215618,Kiel
 30024,Bahnhof Raisdorf,15,54.28116,10.242978,Kiel Umland
 30022,Rathaus Schwentinental,15,54.2843,10.240566,Kiel Umland
-30011,Pop up Seewiese Buensdorf,0,54.370443,9.744189,Rendsburg
 29965,B502 Schoenkirchener Strasse ,10,54.329658,10.196194,Kiel
 29964,Langer Rehm P R,10,54.339102,10.19016,Kiel
 29963,Langer Rehm  Rewe ,10,54.336643,10.189744,Kiel
