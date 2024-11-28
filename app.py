@@ -110,16 +110,19 @@ def main():
 
     stations['Teilbereich'] = stations['subarea'].str.replace('√∂', 'ö')
     subareas = list(np.unique(stations['Teilbereich']))
+
     vorhersage_demo_df = pd.DataFrame({
             'Teilbereich': subareas,
+            'Aktuelle_Kapazität': [10, 5, 12, 21, 11, 11, 4, 6, 12, 19],
             'Teilbereich_delta': [-3,-9,4,5,1,0,7,9,4,2]
         })
+    
     conditions = [
-    vorhersage_demo_df['Teilbereich_delta'] >= 7,
-    vorhersage_demo_df['Teilbereich_delta'] < -7,
-    vorhersage_demo_df['Teilbereich_delta'] < -5,
-    vorhersage_demo_df['Teilbereich_delta'] >= 5
-]
+        vorhersage_demo_df['Teilbereich_delta'] >= 7,
+        vorhersage_demo_df['Teilbereich_delta'] < -7,
+        vorhersage_demo_df['Teilbereich_delta'] < -5,
+        vorhersage_demo_df['Teilbereich_delta'] >= 5
+    ]
     choices = ['❗️❗️❗️', '❗️❗️❗️', '❗️❗️', '❗️❗️']
 
     vorhersage_demo_df['Prio'] = np.select(conditions, choices, default='')
@@ -150,8 +153,9 @@ def main():
             lon='longitude', 
             hover_name='station_name',
             hover_data={
-                'Teilbereich_delta': True, 
-                'maximum_capacity': True, 
+                'Aktuelle_Kapazität':True,
+                'maximum_capacity': True,
+                'Teilbereich_delta': True,
                 'latitude': False,  # Disable latitude hover
                 'longitude': False  # Disable longitude hover
             },
@@ -165,7 +169,9 @@ def main():
         # Show the map
         st.plotly_chart(fig)
 
-        columns_to_show = ['Teilbereich', 'station_name', 'maximum_capacity',  'Teilbereich_delta', 'Prio']
+        st.dataframe(subarea_df)
+
+        columns_to_show = ['Teilbereich', 'station_name', 'Aktuelle_Kapazität', 'maximum_capacity',  'Teilbereich_delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
 
         # ''' if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
