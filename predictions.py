@@ -13,6 +13,7 @@ import joblib
 import requests
 import streamlit as st
 import base64
+import sklearn
 
 import logging
 
