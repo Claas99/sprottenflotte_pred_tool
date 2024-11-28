@@ -190,11 +190,11 @@ def main():
             hover_data={
                 'Aktuelle_Kapazität':True,
                 'maximum_capacity': True,
-                'Teilbereich_delta': True,
+                'Delta': True,
                 'latitude': False,  # Disable latitude hover
                 'longitude': False  # Disable longitude hover
             },
-            color='Teilbereich_delta_color',  # Use the new column for colors
+            color='Delta_color',  # Use the new column for colors
             zoom=10.2,
             height=600
         )
