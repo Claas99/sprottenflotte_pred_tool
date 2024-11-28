@@ -135,7 +135,7 @@ def main():
 
     # Add a new column to categorize Teilbereich_delta
     stations['Delta_color'] = stations['Delta'].apply(
-        lambda x: 'red' if x >= 5 else ('blue' if x <= -5 else 'green')
+        lambda x: 'überfüllt' if x >= 5 else ('zu leer' if x <= -5 else 'okay')
     )
     # neu --
 
@@ -198,9 +198,9 @@ def main():
             },
             color='Delta_color',  # Use the new column for colors
             color_discrete_map={
-                    'red': 'red',
-                    'blue': 'blue',
-                    'green': 'green'
+                    'überfüllt': 'red',
+                    'zu leer': 'blue',
+                    'okay': 'green'
                 },
             zoom=10.2,
             height=600
