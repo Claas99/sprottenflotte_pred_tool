@@ -353,7 +353,7 @@ def update_station_data():
 
     process_time = time.time() - start_time
     log.info(f'Time in UTC:\n          Start Date: {START_DATE}\n          End Date: {END_DATE}')
-    log.info(f'------------- Data-fetching process completed in {process_time}')
+    log.info(f'------------- Data-fetching process completed in {round(process_time, 2)} seconds.')
 
     return data_temp_df
 
