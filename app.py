@@ -120,18 +120,23 @@ def main():
     stations['Aktuelle_Kapazität'] = np.random.randint(0, stations['maximum_capacity'] + 5, size=stations.shape[0])
 
     # Berechne das Delta zu max_capacity
-    stations['Teilbereich_delta'] = stations['Aktuelle_Kapazität'] - stations['maximum_capacity']
+    stations['Delta'] = stations['Aktuelle_Kapazität'] - stations['maximum_capacity']
 
     # Bedingungen und Priorität festlegen
     conditions = [
-        stations['Teilbereich_delta'] >= 7,
-        stations['Teilbereich_delta'] < -7,
-        stations['Teilbereich_delta'] < -5,
-        stations['Teilbereich_delta'] >= 5
+        stations['Delta'] >= 7,
+        stations['Delta'] < -7,
+        stations['Delta'] < -5,
+        stations['Delta'] >= 5
     ]
     choices = ['❗️❗️❗️', '❗️❗️❗️', '❗️❗️', '❗️❗️']
 
     stations['Prio'] = np.select(conditions, choices, default='')
+
+    # Add a new column to categorize Teilbereich_delta
+    stations['Delta_color'] = stations['Delta'].apply(
+        lambda x: 'red' if x >= 5 else ('blue' if x <= -5 else 'grey')
+    )
     # neu --
 
 
@@ -189,6 +194,7 @@ def main():
                 'latitude': False,  # Disable latitude hover
                 'longitude': False  # Disable longitude hover
             },
+            color='Teilbereich_delta_color',  # Use the new column for colors
             zoom=10.2,
             height=600
         )
@@ -201,7 +207,7 @@ def main():
 
         st.dataframe(subarea_df)
 
-        columns_to_show = ['Teilbereich', 'station_name', 'Aktuelle_Kapazität', 'maximum_capacity',  'Teilbereich_delta', 'Prio']
+        columns_to_show = ['Teilbereich', 'station_name', 'Aktuelle_Kapazität', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
 
         # ''' if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
