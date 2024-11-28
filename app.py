@@ -117,7 +117,7 @@ def main():
 
     # neu --
     # Generiere aktuelle Werte für jede Station
-    stations['Aktuelle_Kapazität'] = np.random.randint(0, stations['maximum_capacity'] + 5, size=stations.shape[0])
+    stations['Aktuelle_Kapazität'] = np.random.randint(0, stations['maximum_capacity'] + 10, size=stations.shape[0])
 
     # Berechne das Delta zu max_capacity
     stations['Delta'] = stations['Aktuelle_Kapazität'] - stations['maximum_capacity']
@@ -192,9 +192,15 @@ def main():
                 'maximum_capacity': True,
                 'Delta': True,
                 'latitude': False,  # Disable latitude hover
-                'longitude': False  # Disable longitude hover
+                'longitude': False,  # Disable longitude hover
+                'Delta_color': True
             },
             color='Delta_color',  # Use the new column for colors
+            color_discrete_map={
+                    'red': 'red',
+                    'blue': 'blue',
+                    'grey': 'grey'
+                },
             zoom=10.2,
             height=600
         )
@@ -202,10 +208,9 @@ def main():
         # Set the Mapbox style (requires an internet connection)
         fig.update_layout(mapbox_style="open-street-map")
 
-        # Adjust the hoverlabel color
+        # Adjust the hoverlabel color # bgcolor=subarea_df['Delta_color'],
         fig.update_traces(marker=dict(size=12), 
-                        hoverlabel=dict(bgcolor=subarea_df['Delta_color'],  
-                                        font=dict(
+                        hoverlabel=dict(font=dict(
                                             family='Arial', 
                                             size=12,
                                             color='black'
