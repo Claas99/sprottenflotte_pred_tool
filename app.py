@@ -116,10 +116,10 @@ def main():
 
     # neu --
     # Generiere aktuelle Werte für jede Station
-    stations['Aktuelle_Kapazität'] = np.random.randint(0, stations['max_capacity'] + 5, size=stations.shape[0])
+    stations['Aktuelle_Kapazität'] = np.random.randint(0, stations['maximum_capacity'] + 5, size=stations.shape[0])
 
     # Berechne das Delta zu max_capacity
-    stations['Teilbereich_delta'] = stations['Aktuelle_Kapazität'] - stations['max_capacity']
+    stations['Teilbereich_delta'] = stations['Aktuelle_Kapazität'] - stations['maximum_capacity']
 
     # Bedingungen und Priorität festlegen
     conditions = [
