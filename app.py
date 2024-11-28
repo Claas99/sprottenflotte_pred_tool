@@ -199,7 +199,7 @@ def main():
             color_discrete_map={
                     'red': 'red',
                     'blue': 'blue',
-                    'grey': 'grey'
+                    'green': 'green'
                 },
             zoom=10.2,
             height=600
