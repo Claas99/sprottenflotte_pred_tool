@@ -135,7 +135,7 @@ def main():
 
     # Add a new column to categorize Teilbereich_delta
     stations['Delta_color'] = stations['Delta'].apply(
-        lambda x: 'red' if x >= 5 else ('blue' if x <= -5 else 'grey')
+        lambda x: 'red' if x >= 5 else ('blue' if x <= -5 else 'green')
     )
     # neu --
 
@@ -201,6 +201,13 @@ def main():
 
         # Set the Mapbox style (requires an internet connection)
         fig.update_layout(mapbox_style="open-street-map")
+
+        # Adjust the hoverlabel color
+        fig.update_traces(marker=dict(size=12), 
+                        hoverlabel=dict(bgcolor='rgba(0, 0, 0, 0)',  # Transparent to use marker color
+                                        font_family='Arial', 
+                                        font_size=12,
+                                        font=dict(color=subarea_df['Delta_color'])))
 
         # Show the map
         st.plotly_chart(fig)
