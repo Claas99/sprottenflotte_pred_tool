@@ -193,7 +193,7 @@ def main():
                 'Delta': True,
                 'latitude': False,  # Disable latitude hover
                 'longitude': False,  # Disable longitude hover
-                'Delta_color': True
+                'Delta_color': False
             },
             color='Delta_color',  # Use the new column for colors
             color_discrete_map={
