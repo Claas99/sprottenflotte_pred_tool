@@ -85,11 +85,11 @@ def increment_edit_table_id():
     ss["edit_table_id"] = ss["edit_table_id"] + 1
 
 
-@st.cache_data
-def get_subarea_data(selected_option, stations, vorhersage_demo_df):
-    subarea_df = stations[stations['Teilbereich'] == selected_option]
-    subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
-    return subarea_df.sort_values('Prio', ascending=False)
+# @st.cache_data
+# def get_subarea_data(selected_option, stations, vorhersage_demo_df):
+#     subarea_df = stations[stations['Teilbereich'] == selected_option]
+#     subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
+#     return subarea_df.sort_values('Prio', ascending=False)
 
 @st.cache_data
 def make_dataframe_of_subarea(selected_option, stations_df):
@@ -167,9 +167,10 @@ def main():
 
     # --- tab 1 ---
     with tab1:
-        st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
+        st.write("### Vorhersage - Teilgebiete nach Handlungsbedarf")
         # Load data into a DataFrame
         # st.dataframe(vorhersage_demo_df, use_container_width=True)
+        st.info('to be done')
     
     # --- tab 2 ---
     with tab2:
@@ -219,10 +220,10 @@ def main():
         # Show the map
         st.plotly_chart(fig)
 
-        st.dataframe(subarea_df)
-
         columns_to_show = ['Teilbereich', 'station_name', 'Aktuelle_Kapazität', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
+
+        st.dataframe(subarea_df)
 
         # ''' if "jetzt" in df.columns and "in_einer_Stunde" in df.columns:
 
