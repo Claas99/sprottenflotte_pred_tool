@@ -91,10 +91,11 @@ def get_subarea_data(selected_option, stations, vorhersage_demo_df):
     subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
     return subarea_df.sort_values('Prio', ascending=False)
 
+@st.cache_data
 def make_dataframe_of_subarea(selected_option, stations_df):
     """Creates a DataFrame for the selected subarea based on the 'Teilbereich' column."""
     subarea_df = stations_df[stations_df['Teilbereich'] == selected_option]
-    return subarea_df
+    return subarea_df.sort_values('Prio', ascending=False)
 
 
 # --- Main App Logic ---
