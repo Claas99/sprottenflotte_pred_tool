@@ -374,3 +374,38 @@ def get_current_dates():
 
 ### Usage
 # update_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN)
+
+
+def get_max_capacity(stationID:int) -> int:
+    """
+    Retrieves the maximum capacity of a station based on its station ID.
+
+    This function searches for a station in a predefined DataFrame of stations
+    and returns its maximum capacity. If the station is not found, it returns 0.
+
+    :param stationID: The ID of the station whose maximum capacity is to be retrieved.
+    :type stationID: str
+
+    :return: The maximum capacity of the station as an integer. Returns 0 if the station is not found.
+    :rtype: int
+
+    :raises ValueError: If the input stationID is not a string.
+    """
+
+    if not isinstance(stationID, int):
+        raise ValueError("stationID must be a int")
+
+    # Laden des existierenden DataFrame
+    stations_data = pd.read_csv(STATIONS_FILENAME)
+
+    # Suche nach der Station mit der gegebenen ID
+    station = stations_data[stations_data['entityId'] == stationID]
+
+    # Überprüfen, ob die Station gefunden wurde
+    if not station.empty:
+        # Extrahieren der maximalen Kapazität
+        max_capacity = station['maximum_capacity'].iloc[0]
+        return int(max_capacity)
+    else:
+        # Rückgabe von 0, wenn die Station nicht gefunden wurde
+        return 0

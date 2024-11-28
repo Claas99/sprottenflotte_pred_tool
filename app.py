@@ -97,6 +97,45 @@ def make_dataframe_of_subarea(selected_option, stations_df):
     subarea_df = stations_df[stations_df['Teilbereich'] == selected_option]
     return subarea_df.sort_values('Prio', ascending=False)
 
+# Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
+def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
+    predictions_df = predictions.update_predictions() 
+
+    def measure_überfüllt(stationID:int) -> int:
+        # get max capacity of station
+        max_capacity = data.get_max_capacity(stationID)
+        # return variable
+        hours_überfüllt = 0
+
+        for pred_value in predictions_df[predictions_df['entityID']==stationID]:
+            if pred_value >= (max_capacity*0.8):
+                hours_überfüllt += 1
+
+        # return hours_überfüllt
+        return hours_überfüllt
+    
+    def measure_zu_leer(stationID:int) -> int:
+        # get max capacity of station
+        max_capacity = data.get_max_capacity(stationID)
+        # return variable
+        hours_zu_leer = 0
+
+        for pred_value in predictions_df[predictions_df['entityID']==stationID]:
+            if pred_value <= (max_capacity*0.2):
+                hours_zu_leer += 1
+
+        # return hours_zu_leer
+        return hours_zu_leer
+    
+    result_df = pd.DataFrame(columns=['Teilgebiet', 'Prio'])
+    for station in subarea_df['entityId']:
+        überfüllt = measure_überfüllt(station)
+        zu_leer = measure_zu_leer(station)
+        prio = überfüllt + zu_leer
+        result_df = pd.concat([result_df, pd.DataFrame({'Teilgebiet': [station], 'Prio': [prio]})], ignore_index=True)
+    
+    return result_df
+
 
 # --- Main App Logic ---
 def main():
