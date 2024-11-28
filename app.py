@@ -213,6 +213,12 @@ def main():
         else:
             st.error("Failed to load prediction data.")
 
+        if hist_df is not None:
+            pivot_df = hist_df.pivot(index='entityId', columns='time_utc', values='availableBikeNumber')
+            st.dataframe(pivot_df)
+        else:
+            st.error("Failed to data.")
+
 
     st.button("Reset App", on_click=reset_app)
 

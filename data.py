@@ -10,7 +10,7 @@ import pandas as pd
 import requests
 import streamlit as st
 import base64
-
+import time
 import logging
 
 
@@ -250,6 +250,7 @@ def update_station_data():
     """
 
     log.info('------------- Data-fetching process started')
+    start_time = time.time()
 
     # Get the current start and end dates
     START_DATE, END_DATE = get_current_dates()
@@ -350,8 +351,9 @@ def update_station_data():
         log.info('No new data to process, data for every station is available. Existing data used.')
         st.info('Es sind bereits Daten für alle Stationen vorhanden.')
 
+    process_time = time.time() - start_time
     log.info(f'Time in UTC:\n          Start Date: {START_DATE}\n          End Date: {END_DATE}')
-    log.info('------------- Data-fetching process completed')
+    log.info(f'------------- Data-fetching process completed in {process_time}')
 
     return data_temp_df
 
