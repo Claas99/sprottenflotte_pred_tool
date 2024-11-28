@@ -150,8 +150,8 @@ def main():
             lon='longitude', 
             hover_name='station_name',
             hover_data={
-                'Teilbereich_delta': 'Delta', 
-                'maximum_capacity': 'Maximale Kapazität', 
+                'Teilbereich_delta': True, 
+                'maximum_capacity': True, 
                 'latitude': False,  # Disable latitude hover
                 'longitude': False  # Disable longitude hover
             },
