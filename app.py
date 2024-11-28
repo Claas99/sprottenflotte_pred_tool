@@ -67,7 +67,7 @@ def initialize_session_state():
             ss["subareas"] = list()  # Default to False (using full dataset)
 
 
-initialize_session_state()
+initialize_session_state() # needs to be here?
 
 
 # --- Helper Functions ---
@@ -91,60 +91,89 @@ def get_subarea_data(selected_option, stations, vorhersage_demo_df):
     subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
     return subarea_df.sort_values('Prio', ascending=False)
 
+def make_dataframe_of_subarea(selected_option, stations_df):
+    """Creates a DataFrame for the selected subarea based on the 'Teilbereich' column."""
+    subarea_df = stations_df[stations_df['Teilbereich'] == selected_option]
+    return subarea_df
+
 
 # --- Main App Logic ---
 def main():
-    file_station_name = "data/stations.csv"
-    hist_bike_data_name = "data/data_temp.csv"
+    stations_filename = "data/stations.csv"
+    data_filename = "data/data_temp.csv"
 
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
     st.write(
         "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
     )
     
-    file_station_name = "data/stations.csv"
-    stations = pd.read_csv(file_station_name)
-
-    file_bikes_per_station_name = "data/stations.csv"
-    bikes_per_station = pd.read_csv(file_bikes_per_station_name)
+    stations = pd.read_csv(stations_filename)
+    # data_temp = pd.read_csv(data_filename)
 
     stations['Teilbereich'] = stations['subarea'].str.replace('√∂', 'ö')
     subareas = list(np.unique(stations['Teilbereich']))
 
-    vorhersage_demo_df = pd.DataFrame({
-            'Teilbereich': subareas,
-            'Aktuelle_Kapazität': [10, 5, 12, 21, 11, 11, 4, 6, 12, 19],
-            'Teilbereich_delta': [-3,-9,4,5,1,0,7,9,4,2]
-        })
-    
+
+    # neu --
+    # Generiere aktuelle Werte für jede Station
+    stations['Aktuelle_Kapazität'] = np.random.randint(0, stations['max_capacity'] + 5, size=stations.shape[0])
+
+    # Berechne das Delta zu max_capacity
+    stations['Teilbereich_delta'] = stations['Aktuelle_Kapazität'] - stations['max_capacity']
+
+    # Bedingungen und Priorität festlegen
     conditions = [
-        vorhersage_demo_df['Teilbereich_delta'] >= 7,
-        vorhersage_demo_df['Teilbereich_delta'] < -7,
-        vorhersage_demo_df['Teilbereich_delta'] < -5,
-        vorhersage_demo_df['Teilbereich_delta'] >= 5
+        stations['Teilbereich_delta'] >= 7,
+        stations['Teilbereich_delta'] < -7,
+        stations['Teilbereich_delta'] < -5,
+        stations['Teilbereich_delta'] >= 5
     ]
     choices = ['❗️❗️❗️', '❗️❗️❗️', '❗️❗️', '❗️❗️']
 
-    vorhersage_demo_df['Prio'] = np.select(conditions, choices, default='')
+    stations['Prio'] = np.select(conditions, choices, default='')
+    # neu --
 
-    vorhersage_demo_df = vorhersage_demo_df.sort_values('Prio', ascending=False).reset_index(drop=True)
 
-    ss['subareas'] = vorhersage_demo_df['Teilbereich']
+    # vorhersage_demo_df = pd.DataFrame({
+    #         'Teilbereich': subareas,
+    #         'Aktuelle_Kapazität': [10, 5, 12, 21, 11, 11, 4, 6, 12, 19],
+    #         'Teilbereich_delta': [-3,-9,4,5,1,0,7,9,4,2]
+    #     })
+    
+    # conditions = [
+    #     vorhersage_demo_df['Teilbereich_delta'] >= 7,
+    #     vorhersage_demo_df['Teilbereich_delta'] < -7,
+    #     vorhersage_demo_df['Teilbereich_delta'] < -5,
+    #     vorhersage_demo_df['Teilbereich_delta'] >= 5
+    # ]
+    # choices = ['❗️❗️❗️', '❗️❗️❗️', '❗️❗️', '❗️❗️']
+
+    # vorhersage_demo_df['Prio'] = np.select(conditions, choices, default='')
+
+    # vorhersage_demo_df = vorhersage_demo_df.sort_values('Prio', ascending=False).reset_index(drop=True)
+
+    # ss['subareas'] = vorhersage_demo_df['Teilbereich']
+
+
+
 
     tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions"])
 
+    # --- tab 1 ---
     with tab1:
         st.write("### (DEMO) Vorhersage - Teilgebiete nach Handlungsbedarf (DEMO)")
         # Load data into a DataFrame
-        st.dataframe(vorhersage_demo_df, use_container_width=True)
+        # st.dataframe(vorhersage_demo_df, use_container_width=True)
     
-        
+    # --- tab 2 ---
     with tab2:
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         # Use the cached function
-        subarea_df = get_subarea_data(selected_option, stations, vorhersage_demo_df)
+        # subarea_df = get_subarea_data(selected_option, stations, vorhersage_demo_df)
+
+        subarea_df = make_dataframe_of_subarea(selected_option, stations)
 
         # Plot the map
         fig = px.scatter_mapbox(
@@ -204,11 +233,9 @@ def main():
         #         st.error("The uploaded file must contain 'jetzt' and 'in_einer_Stunde' columns.")
         # '''
 
+    # --- tab 3 ---
     with tab3:
         st.write("### Historische Analyse")
-        # data.update_and_save_station_data(data.DATA_FILENAME, data.STATIONS_FILENAME, data.START_DATE, data.END_DATE, data.BASE_URL, data.ACCESS_TOKEN)
-        # hist_df = pd.read_csv(hist_bike_data_name)
-        # st.dataframe(hist_df)
 
         hist_df = data.update_station_data() # als erstes
         if hist_df is not None:
@@ -216,10 +243,12 @@ def main():
         else:
             st.error("Failed to load historical data.")
 
+    # --- tab 4 ---
     with tab4:
         st.write("### Predictions")
 
         predictions_df = predictions.update_predictions() # als erstes
+
         if predictions_df is not None:
             st.dataframe(predictions_df)
         else:
