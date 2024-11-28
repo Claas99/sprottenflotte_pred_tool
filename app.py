@@ -204,10 +204,12 @@ def main():
 
         # Adjust the hoverlabel color
         fig.update_traces(marker=dict(size=12), 
-                        hoverlabel=dict(bgcolor='rgba(0, 0, 0, 0)',  # Transparent to use marker color
-                                        font_family='Arial', 
-                                        font_size=12,
-                                        font=dict(color=subarea_df['Delta_color'])))
+                        hoverlabel=dict(bgcolor=subarea_df['Delta_color'],  
+                                        font=dict(
+                                            family='Arial', 
+                                            size=12,
+                                            color='black'
+                                        )))
 
         # Show the map
         st.plotly_chart(fig)
