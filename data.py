@@ -95,7 +95,8 @@ def request_access_token_if_needed():
         access_token_cache['token'] = new_token
         access_token_cache['expires_at'] = current_time + token_validity_duration
 
-        log.info(f"---------- Access Token valid until {access_token_cache['expires_at']}")
+        expiration_time = datetime.fromtimestamp(access_token_cache['expires_at']).replace(microsecond=0)
+        log.info(f"---------- Access Token valid until: {expiration_time}")
 
     # # Check if cached token is valid
     # if st.session_state['access_token'] and current_time < st.session_state['expires_at']:
