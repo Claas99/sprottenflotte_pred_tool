@@ -99,7 +99,7 @@ def make_dataframe_of_subarea(selected_option, stations_df):
     subarea_df = stations_df[stations_df['Teilbereich'] == selected_option]
     subarea_df = subarea_df.sort_values(
         ['Prio', 'Delta'],
-        ascending=[False, True],  # Sortiere 'Prio' absteigend und 'Delta' in Bezug auf den absoluten Wert
+        ascending=[False, False],  # Sortiere 'Prio' absteigend und 'Delta' in Bezug auf den absoluten Wert
         key=lambda col: (col if col.name != 'Delta' else abs(col))
     )
     return subarea_df.reset_index(drop=True)
