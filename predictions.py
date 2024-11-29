@@ -145,11 +145,12 @@ def update_predictions():
         # überprüfen ob neue predictions necessary
         if earliest_prediction_time > latest_data_time:
             log.info("No new predictions necessary, predictions are up to date.")
-            prediction_info = st.info('Es sind bereits Predictions für alle Stationen vorhanden.')
+            message_type = 'info'
+            message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
             log.info('-------------')
             log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for:         {latest_data_time}')
             log.info('------------- Prediction process completed')
-            return data_temp_predictions, prediction_info # Beenden der Funktion, wenn keine neuen Predictions nötig sind
+            return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
         else:
             # Altes Daten löschen, da neue Predictions notwendig sind
             data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
@@ -226,7 +227,8 @@ def update_predictions():
         csv_to_github = data_temp_predictions.to_csv(index=False)
         update_csv_on_github(csv_to_github, PREDICTIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
         
-        prediction_info = st.success("Es wurden neue Predictions für alle Stationen gemacht.")
+        message_type = 'success'
+        message_text = 'Es wurden neue Predictions für alle Stationen gemacht.'
         
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
 
@@ -236,15 +238,16 @@ def update_predictions():
 
         log.info('------------- Prediction process completed')
 
-        return data_temp_predictions, prediction_info
+        return data_temp_predictions, message_type, message_text
 
     except Exception as e:
         log.info(f'Error: {e}')
-        prediction_info = st.error('Fehler beim machen der Predictions.')
+        message_type = 'error'
+        message_text = 'Fehler beim machen der Predictions.'
 
         log.info('------------- Prediction process completed')
 
-        return None, prediction_info
+        return None, message_type, message_text
 
 ### Usage
 

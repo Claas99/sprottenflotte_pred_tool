@@ -84,6 +84,14 @@ def increment_edit_table_id():
     """Increments the edit table ID."""
     ss["edit_table_id"] = ss["edit_table_id"] + 1
 
+def print_message(message_type, message_text):
+    if message_type == 'info':
+        return st.info(message_text)
+    elif message_type == 'success':
+        return st.success(message_text)
+    elif message_type == 'error':
+        return st.error(message_text)
+
 
 @st.cache_data
 def make_dataframe_of_subarea(selected_option, stations_df):
@@ -137,7 +145,7 @@ def main():
     data_filename = "data/data_temp.csv"
 
     hist_df = data.update_station_data()
-    predictions_df, prediction_info = predictions.update_predictions()
+    predictions_df, message_type, message_text = predictions.update_predictions()
 
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
     st.write(
@@ -281,7 +289,7 @@ def main():
     # --- tab 4 ---
     with tab4:
         st.write("### Predictions")
-        st.write(prediction_info)
+        print_message(message_type, message_text)
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
