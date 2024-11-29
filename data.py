@@ -28,7 +28,11 @@ DATA_FILENAME = 'data/data_temp.csv'
 STATIONS_FILENAME = 'data/stations.csv' # station ids from file einlesen, um änderungen zu haben
 BASE_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:BikeHireDockingStation:KielRegion:"
 
-
+# Global variable to store the access token and its expiration time
+access_token_cache = {
+    'token': None,
+    'expires_at': None
+}
 
 # link_data_file = "https://drive.google.com/file/d/1GeUkYnxxc-JPww0RW9ps39Qp4Y4j4yDZ/view?usp=sharing"
 # output = "data"
@@ -62,6 +66,36 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
         log.info("----- Data file updated successfully on GitHub -----")
     else:
         log.error(f"----- Failed to update Data file on GitHub: {r.content} ------")
+
+
+def request_access_token_if_needed():
+    """
+    Requests and returns an access token, only if needed, based on expiration.
+
+    This function checks if the current access token is valid and returns it.
+    If no valid token is present, it requests a new one.
+    """
+    global access_token_cache
+
+    # Current time in seconds
+    current_time = time.time()
+
+    # Check if cached token is valid
+    if access_token_cache['token'] and current_time < access_token_cache['expires_at']:
+        return access_token_cache['token']
+
+    # If not, request a new token
+    new_token = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
+
+    if new_token:
+        # Token validity in seconds. Set similar to your OAuth provider's token lifespan
+        token_validity_duration = 86400  # 24 hours
+
+        # Update the cache with the new token and its expiry time
+        access_token_cache['token'] = new_token
+        access_token_cache['expires_at'] = current_time + token_validity_duration
+
+    return new_token
 
 
 def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
@@ -294,7 +328,8 @@ def update_station_data():
 
     # if date_saved != today:
 
-    ACCESS_TOKEN = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
+    # ACCESS_TOKEN = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
+    ACCESS_TOKEN = request_access_token_if_needed()
 
     for station_id in STATION_IDS:
         # überprüfe für station_id, ob der zeitraum von START_DATE bis END_DATE in old_data_temp vorhanden ist:
