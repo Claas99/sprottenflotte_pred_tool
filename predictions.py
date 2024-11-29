@@ -129,6 +129,7 @@ def update_predictions():
         # load in data_temp
         # Laden des existierenden DataFrame
         data_temp = pd.read_csv(DATA_FILENAME)
+        # data_temp = hist_df.copy()
         data_temp['time_utc'] = pd.to_datetime(data_temp['time_utc'])
         latest_data_time = data_temp['time_utc'].max()
     except Exception as e:
@@ -146,7 +147,7 @@ def update_predictions():
             log.info("No new predictions necessary, predictions are up to date.")
             st.info('Es sind bereits Predictions für alle Stationen vorhanden.')
             log.info('-------------')
-            log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n         Latest Data for: {latest_data_time}')
+            log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for:      {latest_data_time}')
             return data_temp_predictions # Beenden der Funktion, wenn keine neuen Predictions nötig sind
         else:
             # Altes Daten löschen, da neue Predictions notwendig sind

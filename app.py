@@ -85,12 +85,6 @@ def increment_edit_table_id():
     ss["edit_table_id"] = ss["edit_table_id"] + 1
 
 
-# @st.cache_data
-# def get_subarea_data(selected_option, stations, vorhersage_demo_df):
-#     subarea_df = stations[stations['Teilbereich'] == selected_option]
-#     subarea_df = subarea_df.merge(vorhersage_demo_df, on='Teilbereich', how='left')
-#     return subarea_df.sort_values('Prio', ascending=False)
-
 @st.cache_data
 def make_dataframe_of_subarea(selected_option, stations_df):
     """Creates a DataFrame for the selected subarea based on the 'Teilbereich' column."""
@@ -142,6 +136,9 @@ def main():
     stations_filename = "data/stations.csv"
     data_filename = "data/data_temp.csv"
 
+    hist_df = data.update_station_data()
+    predictions_df = predictions.update_predictions()
+
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
     st.write(
         "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
@@ -156,6 +153,7 @@ def main():
 
     # neu --
     # Generiere aktuelle Werte für jede Station
+    # add code, to get the latest number for every station instead of random generating numbers
     stations['Aktuelle_Kapazität'] = np.random.randint(0, stations['maximum_capacity'] + 10, size=stations.shape[0])
 
     # Berechne das Delta zu max_capacity
@@ -177,29 +175,6 @@ def main():
         lambda x: 'überfüllt' if x >= 5 else ('zu leer' if x <= -5 else 'okay')
     )
     # neu --
-
-
-    # vorhersage_demo_df = pd.DataFrame({
-    #         'Teilbereich': subareas,
-    #         'Aktuelle_Kapazität': [10, 5, 12, 21, 11, 11, 4, 6, 12, 19],
-    #         'Teilbereich_delta': [-3,-9,4,5,1,0,7,9,4,2]
-    #     })
-    
-    # conditions = [
-    #     vorhersage_demo_df['Teilbereich_delta'] >= 7,
-    #     vorhersage_demo_df['Teilbereich_delta'] < -7,
-    #     vorhersage_demo_df['Teilbereich_delta'] < -5,
-    #     vorhersage_demo_df['Teilbereich_delta'] >= 5
-    # ]
-    # choices = ['❗️❗️❗️', '❗️❗️❗️', '❗️❗️', '❗️❗️']
-
-    # vorhersage_demo_df['Prio'] = np.select(conditions, choices, default='')
-
-    # vorhersage_demo_df = vorhersage_demo_df.sort_values('Prio', ascending=False).reset_index(drop=True)
-
-    # ss['subareas'] = vorhersage_demo_df['Teilbereich']
-
-
 
 
     tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions"])
@@ -298,7 +273,6 @@ def main():
     with tab3:
         st.write("### Historische Analyse")
 
-        hist_df = data.update_station_data() # als erstes
         if hist_df is not None:
             st.dataframe(hist_df)
         else:
@@ -307,8 +281,6 @@ def main():
     # --- tab 4 ---
     with tab4:
         st.write("### Predictions")
-
-        predictions_df = predictions.update_predictions() # als erstes
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
