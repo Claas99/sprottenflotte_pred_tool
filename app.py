@@ -142,15 +142,10 @@ def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
 # --- Main App Logic ---
 def main():
     stations_filename = "data/stations.csv"
-    
     stations_df = pd.read_csv(stations_filename)
-    data_df, data_message_type, data_message_text = data.update_station_data()
-    predictions_df, pred_message_type, pred_message_text = predictions.update_predictions()
 
-    st.title("Sprottenflotte prediction model 🚲 x 🤖")
-    st.write("""Thank you for using the Sprottenflotte prediciton model! This model is still in beta
-              - We are happy to hear your feedback.
-             Please report any issues to Claas Resow.""")
+    data_df, data_message_type, data_message_text = data.update_station_data()
+    predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
 
     stations_df['Teilbereich'] = stations_df['subarea'].str.replace('√∂', 'ö')
     ss['subareas'] = list(np.unique(stations_df['Teilbereich']))
@@ -178,6 +173,12 @@ def main():
         lambda x: 'überfüllt' if x >= 5 else ('zu leer' if x <= -5 else 'okay')
     )
 
+    # Initialise Streamlit Interface
+    st.title("Sprottenflotte prediction model 🚲 x 🤖")
+    st.write("""Thank you for using the Sprottenflotte prediciton model! This model is still in beta
+              - We are happy to hear your feedback.
+             Please report any issues to Claas Resow.""")
+    
     # initialise tabs
     tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions"])
 

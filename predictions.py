@@ -120,7 +120,7 @@ def predict(model, data):
         return model(data)
 
 
-def update_predictions():
+def update_predictions(data_df):
     
     log.info('------------- Prediction process started')
 
@@ -128,8 +128,8 @@ def update_predictions():
     try:
         # load in data_temp
         # Laden des existierenden DataFrame
-        data_temp = pd.read_csv(DATA_FILENAME)
-        # data_temp = hist_df.copy()
+        # data_temp = pd.read_csv(DATA_FILENAME)
+        data_temp = data_df.copy()
         data_temp['time_utc'] = pd.to_datetime(data_temp['time_utc'])
         latest_data_time = data_temp['time_utc'].max()
     except Exception as e:
