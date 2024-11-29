@@ -151,7 +151,7 @@ def main():
     # data_temp = pd.read_csv(data_filename)
 
     stations['Teilbereich'] = stations['subarea'].str.replace('√∂', 'ö')
-    subareas = list(np.unique(stations['Teilbereich']))
+    ss['subareas'] = list(np.unique(stations['Teilbereich']))
 
 
     # neu --
