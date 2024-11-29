@@ -102,7 +102,9 @@ def make_dataframe_of_subarea(selected_option, stations_df):
         ascending=[False, False],  # Sortiere 'Prio' absteigend und 'Delta' in Bezug auf den absoluten Wert
         key=lambda col: (col if col.name != 'Delta' else abs(col))
     )
-    return subarea_df.reset_index(drop=True)
+    subarea_df.reset_index(drop=True)
+    subarea_df.index += 1  # Setze den Index auf 1 beginnend
+    return subarea_df
 
 def make_subareas_dataframe(stations_df):
     """Creates a DataFrame for the subareas, mean delta, and sort"""
