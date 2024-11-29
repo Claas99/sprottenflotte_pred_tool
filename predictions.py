@@ -147,8 +147,6 @@ def update_predictions(data_df):
             log.info("No new predictions necessary, predictions are up to date.")
             message_type = 'info'
             message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
-            log.info('-------------')
-            log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for:         {latest_data_time}')
             log.info('------------- Prediction process completed')
             return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
         else:
@@ -233,9 +231,7 @@ def update_predictions(data_df):
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
 
         log.info('Predictions made successfully and saved for all STATION_IDS.')
-        log.info('-------------')
-        log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for: {latest_data_time}')
-
+        log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for:         {latest_data_time}')
         log.info('------------- Prediction process completed')
 
         return data_temp_predictions, message_type, message_text
@@ -244,7 +240,6 @@ def update_predictions(data_df):
         log.info(f'Error: {e}')
         message_type = 'error'
         message_text = 'Fehler beim machen der Predictions.'
-
         log.info('------------- Prediction process completed')
 
         return None, message_type, message_text

@@ -346,6 +346,7 @@ def update_station_data():
         log.info(f'Data successfully fetched and saved for all STATION_IDS.')
         message_type = 'success'
         message_text = f'{total_new_records} neue Datenpunkte für {unique_stations} Stationen abgerufen.'
+        log.info(f'Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:    {END_DATE}')
     else:
         data_temp_df = old_data_temp.copy()
 
@@ -354,7 +355,6 @@ def update_station_data():
         message_text = 'Es sind bereits Daten für alle Stationen vorhanden.'
 
     process_time = time.time() - start_time
-    log.info(f'Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:    {END_DATE}')
     log.info(f'------------- Data-fetching process completed in {round(process_time, 2)} seconds.')
 
     return data_temp_df, message_type, message_text
