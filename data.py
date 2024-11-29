@@ -323,12 +323,6 @@ def update_station_data():
     # Entfernen dieser Zeilen
     old_data_temp = old_data_temp[~mask]
 
-    # date_saved = old_data_temp['time_utc'].max().date()
-    # today = datetime.now(timezone.utc).date()
-
-    # if date_saved != today:
-
-    # ACCESS_TOKEN = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
     ACCESS_TOKEN = request_access_token_if_needed()
 
     for station_id in STATION_IDS:
