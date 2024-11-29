@@ -105,12 +105,14 @@ def make_dataframe_of_subarea(selected_option, stations_df):
     subarea_df.index += 1  # Setze den Index auf 1 beginnend
     return subarea_df
 
+
 def make_subareas_dataframe(stations_df):
     """Creates a DataFrame for the subareas, mean delta, and sort"""
     result_df = stations_df.groupby('Teilbereich')['Delta'].apply(lambda x: x.abs().mean()).reset_index(name='Mean Absolute Delta')
     result_df = result_df.sort_values('Mean Absolute Delta', ascending=False).reset_index(drop=True)
     result_df.index += 1
     return result_df
+
 
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
