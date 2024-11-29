@@ -232,7 +232,10 @@ def main():
                     'okay': 'green'
                 },
             zoom=10.2,
-            height=600
+            height=600,
+            labels={
+                'Delta_color': 'Station Info'  # Change title of the legend
+            }
         )
 
         # Set the Mapbox style (requires an internet connection)
