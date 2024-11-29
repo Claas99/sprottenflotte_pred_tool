@@ -300,11 +300,11 @@ def main():
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
-            pivot_df = predictions_df.pivot(index='entityId', columns='time_utc', values='availableBikeNumber')
+            pivot_df = predictions_df.pivot(index='entityId', columns='prediction_time_utc', values='prediction_availableBikeNumber')
             st.dataframe(pivot_df)
         else:
             st.error("Failed to load prediction data.")
-            
+
 
     st.button("Reset App", on_click=reset_app)
 
