@@ -194,7 +194,7 @@ def main():
         # st.dataframe(vorhersage_demo_df, use_container_width=True)
 
         subareas = make_subareas_dataframe(stations_df)
-        ss['subareas'] = subareas['teilbereich'].tolist()
+        ss['subareas'] = subareas['Teilbereich'].tolist()
 
         st.dataframe(subareas, use_container_width=True)
 
