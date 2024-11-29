@@ -65,9 +65,6 @@ def initialize_session_state():
         ss["stations"] = list()  # Default to False (using full dataset)
     if "subareas" not in ss:
         ss["subareas"] = list()  # Default to False (using full dataset)
-    if 'access_token' not in ss:
-        ss['access_token'] = None
-        ss['expires_at'] = None
 
 
 initialize_session_state() # needs to be here?
