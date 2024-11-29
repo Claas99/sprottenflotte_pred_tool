@@ -196,11 +196,10 @@ def main():
 
         st.dataframe(subareas, use_container_width=True)
 
-        st.info('to be done')
-        st.success('to be done')
-        st.error('to be done')
-        st.warning('to be done')
-        st.loginfo('to be done')
+        st.info('st.info')
+        st.success('st.success')
+        st.error('st.error')
+        st.warning('st.warning')
     
     # --- tab 2 ---
     with tab2:
