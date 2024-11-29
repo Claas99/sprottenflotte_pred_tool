@@ -226,7 +226,7 @@ def update_predictions():
         csv_to_github = data_temp_predictions.to_csv(index=False)
         update_csv_on_github(csv_to_github, PREDICTIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
         
-        st.success("Es wurden neue Predictions für alle Stationen gemacht.")
+        prediction_info = st.success("Es wurden neue Predictions für alle Stationen gemacht.")
         
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
 
@@ -236,15 +236,15 @@ def update_predictions():
 
         log.info('------------- Prediction process completed')
 
-        return data_temp_predictions
+        return data_temp_predictions, prediction_info
 
     except Exception as e:
         log.info(f'Error: {e}')
-        st.error('Fehler beim machen der Predictions.')
+        prediction_info = st.error('Fehler beim machen der Predictions.')
 
         log.info('------------- Prediction process completed')
 
-        return None
+        return None, prediction_info
 
 ### Usage
 
