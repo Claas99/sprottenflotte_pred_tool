@@ -104,7 +104,7 @@ def make_subareas_dataframe(stations_df):
     result_df = stations_df.groupby('Teilbereich')['Delta'].apply(lambda x: x.abs().mean())
     return result_df.sort_values('Delta', ascending=False).reset_index()
 
-Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
+# Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
     predictions_df = predictions.update_predictions() 
 
