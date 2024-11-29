@@ -352,7 +352,7 @@ def update_station_data():
         st.info('Es sind bereits Daten für alle Stationen vorhanden.')
 
     process_time = time.time() - start_time
-    log.info(f'Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:   {END_DATE}')
+    log.info(f'Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:       {END_DATE}')
     log.info(f'------------- Data-fetching process completed in {round(process_time, 2)} seconds.')
 
     return data_temp_df
