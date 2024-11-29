@@ -142,49 +142,43 @@ def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
 # --- Main App Logic ---
 def main():
     stations_filename = "data/stations.csv"
-    data_filename = "data/data_temp.csv"
-
-    hist_df = data.update_station_data()
-    predictions_df, message_type, message_text = predictions.update_predictions()
+    
+    stations_df = pd.read_csv(stations_filename)
+    data_df, data_message_type, data_message_text = data.update_station_data()
+    predictions_df, pred_message_type, pred_message_text = predictions.update_predictions()
 
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
-    st.write(
-        "Thank you for using the Sprottenflotte prediciton model! This model is still in beta - We are happy to hear your feedback. Please report any issues to Claas Resow."
-    )
-    
-    stations = pd.read_csv(stations_filename)
-    # data_temp = pd.read_csv(data_filename)
+    st.write("""Thank you for using the Sprottenflotte prediciton model! This model is still in beta
+              - We are happy to hear your feedback.
+             Please report any issues to Claas Resow.""")
 
-    stations['Teilbereich'] = stations['subarea'].str.replace('√∂', 'ö')
-    ss['subareas'] = list(np.unique(stations['Teilbereich']))
+    stations_df['Teilbereich'] = stations_df['subarea'].str.replace('√∂', 'ö')
+    ss['subareas'] = list(np.unique(stations_df['Teilbereich']))
 
-
-    # neu --
     # Generiere aktuelle Werte für jede Station
     # add code, to get the latest number for every station instead of random generating numbers
-    stations['Aktuelle_Kapazität'] = np.random.randint(0, stations['maximum_capacity'] + 10, size=stations.shape[0])
+    stations_df['Aktuelle_Kapazität'] = np.random.randint(0, stations_df['maximum_capacity'] + 10, size=stations_df.shape[0])
 
     # Berechne das Delta zu max_capacity
-    stations['Delta'] = stations['Aktuelle_Kapazität'] - stations['maximum_capacity']
+    stations_df['Delta'] = stations_df['Aktuelle_Kapazität'] - stations_df['maximum_capacity']
 
     # Bedingungen und Priorität festlegen
     conditions = [
-        stations['Delta'] >= 7,
-        stations['Delta'] < -7,
-        stations['Delta'] < -5,
-        stations['Delta'] >= 5
+        stations_df['Delta'] >= 7,
+        stations_df['Delta'] < -7,
+        stations_df['Delta'] < -5,
+        stations_df['Delta'] >= 5
     ]
     choices = ['❗️❗️❗️', '❗️❗️❗️', '❗️❗️', '❗️❗️']
 
-    stations['Prio'] = np.select(conditions, choices, default='')
+    stations_df['Prio'] = np.select(conditions, choices, default='')
 
     # Add a new column to categorize Teilbereich_delta
-    stations['Delta_color'] = stations['Delta'].apply(
+    stations_df['Delta_color'] = stations_df['Delta'].apply(
         lambda x: 'überfüllt' if x >= 5 else ('zu leer' if x <= -5 else 'okay')
     )
-    # neu --
 
-
+    # initialise tabs
     tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions"])
 
     # --- tab 1 ---
@@ -202,7 +196,7 @@ def main():
         # Use the cached function
         # subarea_df = get_subarea_data(selected_option, stations, vorhersage_demo_df)
 
-        subarea_df = make_dataframe_of_subarea(selected_option, stations)
+        subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
         # Plot the map
         fig = px.scatter_mapbox(
@@ -280,24 +274,25 @@ def main():
     # --- tab 3 ---
     with tab3:
         st.write("### Historische Analyse")
+        print_message(data_message_type, data_message_text)
 
-        if hist_df is not None:
-            st.dataframe(hist_df)
+        if data_df is not None:
+            st.dataframe(data_df)
         else:
             st.error("Failed to load historical data.")
 
     # --- tab 4 ---
     with tab4:
         st.write("### Predictions")
-        print_message(message_type, message_text)
+        print_message(pred_message_type, pred_message_text)
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
         else:
             st.error("Failed to load prediction data.")
 
-        if hist_df is not None:
-            pivot_df = hist_df.pivot(index='entityId', columns='time_utc', values='availableBikeNumber')
+        if data_df is not None:
+            pivot_df = data_df.pivot(index='entityId', columns='time_utc', values='availableBikeNumber')
             st.dataframe(pivot_df)
         else:
             st.error("Failed to data.")

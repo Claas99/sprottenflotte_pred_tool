@@ -344,18 +344,20 @@ def update_station_data():
         log.info(f'{total_new_records} new records fetched for {unique_stations} stations.')
         log.info(f'request start date: {request_start_date}')
         log.info(f'Data successfully fetched and saved for all STATION_IDS.')
-        st.success(f'{total_new_records} neue Datenpunkte für {unique_stations} Stationen abgerufen.')
+        message_type = 'success'
+        message_text = f'{total_new_records} neue Datenpunkte für {unique_stations} Stationen abgerufen.'
     else:
         data_temp_df = old_data_temp.copy()
 
         log.info('No new data to process, data for every station is available. Existing data used.')
-        st.info('Es sind bereits Daten für alle Stationen vorhanden.')
+        message_type = 'info'
+        message_text = 'Es sind bereits Daten für alle Stationen vorhanden.'
 
     process_time = time.time() - start_time
     log.info(f'Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:    {END_DATE}')
     log.info(f'------------- Data-fetching process completed in {round(process_time, 2)} seconds.')
 
-    return data_temp_df
+    return data_temp_df, message_type, message_text
 
 
 def get_current_dates():
