@@ -145,10 +145,11 @@ def update_predictions():
         # überprüfen ob neue predictions necessary
         if earliest_prediction_time > latest_data_time:
             log.info("No new predictions necessary, predictions are up to date.")
-            st.info('Es sind bereits Predictions für alle Stationen vorhanden.')
+            prediction_info = st.info('Es sind bereits Predictions für alle Stationen vorhanden.')
             log.info('-------------')
             log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for:         {latest_data_time}')
-            return data_temp_predictions # Beenden der Funktion, wenn keine neuen Predictions nötig sind
+            log.info('------------- Prediction process completed')
+            return data_temp_predictions, prediction_info # Beenden der Funktion, wenn keine neuen Predictions nötig sind
         else:
             # Altes Daten löschen, da neue Predictions notwendig sind
             data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
@@ -239,6 +240,7 @@ def update_predictions():
 
     except Exception as e:
         log.info(f'Error: {e}')
+        st.error('Fehler beim machen der Predictions.')
 
         log.info('------------- Prediction process completed')
 

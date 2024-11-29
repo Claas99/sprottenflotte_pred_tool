@@ -137,7 +137,7 @@ def main():
     data_filename = "data/data_temp.csv"
 
     hist_df = data.update_station_data()
-    predictions_df = predictions.update_predictions()
+    predictions_df, prediction_info = predictions.update_predictions()
 
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
     st.write(
@@ -281,6 +281,7 @@ def main():
     # --- tab 4 ---
     with tab4:
         st.write("### Predictions")
+        prediction_info
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
