@@ -102,7 +102,7 @@ def make_dataframe_of_subarea(selected_option, stations_df):
 def make_subareas_dataframe(stations_df):
     """Creates a DataFrame for the subareas, mean delta, and sort"""
     result_df = stations_df.groupby('Teilbereich')['Delta'].apply(lambda x: x.abs().mean()).reset_index(name='Mean Absolute Delta')
-    return result_df.sort_values('Mean Absolute Delta', ascending=False)#.reset_index()
+    return result_df.sort_values('Mean Absolute Delta', ascending=False).reset_index()
 
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
@@ -153,7 +153,6 @@ def main():
     predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
 
     stations_df['Teilbereich'] = stations_df['subarea'].str.replace('√∂', 'ö')
-    ss['subareas'] = list(np.unique(stations_df['Teilbereich']))
 
     # Generiere aktuelle Werte für jede Station
     # add code, to get the latest number for every station instead of random generating numbers
@@ -178,6 +177,7 @@ def main():
         lambda x: 'überfüllt' if x >= 5 else ('zu leer' if x <= -5 else 'okay')
     )
 
+    # --- initialise ---
     # Initialise Streamlit Interface
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
     st.write("""Thank you for using the Sprottenflotte prediciton model! This model is still in beta
@@ -194,6 +194,7 @@ def main():
         # st.dataframe(vorhersage_demo_df, use_container_width=True)
 
         subareas = make_subareas_dataframe(stations_df)
+        ss['subareas'] = subareas['teilbereich'].tolist()
 
         st.dataframe(subareas, use_container_width=True)
 
