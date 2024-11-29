@@ -97,14 +97,14 @@ def print_message(message_type, message_text):
 def make_dataframe_of_subarea(selected_option, stations_df):
     """Creates a DataFrame for the selected subarea based on the 'Teilbereich' column."""
     subarea_df = stations_df[stations_df['Teilbereich'] == selected_option]
-    return subarea_df.sort_values('Prio', ascending=False)
+    return subarea_df.sort_values('Prio', ascending=False).reset_index()
 
 def make_subareas_dataframe(stations_df):
     """Creates a DataFrame for the subareas, mean delta, and sort"""
-    result_df = stations_df.groupby('Teilbereich')['Delta'].apply(lambda x: x.abs().mean()).reset_index().sort_values(by='Delta')
-    return result_df
+    result_df = stations_df.groupby('Teilbereich')['Delta'].apply(lambda x: x.abs().mean())
+    return result_df.sort_values('Delta', ascending=False).reset_index()
 
-# Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
+Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
     predictions_df = predictions.update_predictions() 
 

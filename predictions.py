@@ -122,7 +122,7 @@ def predict(model, data):
 
 def update_predictions(data_df):
     
-    log.info('------------- Prediction process started')
+    log.info('Prediction process started')
 
     # make überprüfung, ob predictions needed at this time? otherwise the predictions would be generated every time the application gets refreshed
     try:
@@ -144,10 +144,10 @@ def update_predictions(data_df):
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
         # überprüfen ob neue predictions necessary
         if earliest_prediction_time > latest_data_time:
-            log.info("No new predictions necessary, predictions are up to date.")
+            log.info("---------- No new predictions necessary, predictions are up to date.")
             message_type = 'info'
             message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
-            log.info('------------- Prediction process completed')
+            log.info('Prediction process completed')
             return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
         else:
             # Altes Daten löschen, da neue Predictions notwendig sind
@@ -166,8 +166,8 @@ def update_predictions(data_df):
         loaded_model.load_state_dict(torch.load(MODEL_FILENAME, weights_only=True))
 
     except Exception as e:
-        log.info(f'No {MODEL_FILENAME} file found.')
-        log.info(f'Error: {e}')
+        log.info(f'---------- No {MODEL_FILENAME} file found.')
+        log.info(f'---------- Error: {e}')
 
     try:
             # scalar saved joblib.dump(scaler, 'scaler.pkl')
@@ -175,8 +175,8 @@ def update_predictions(data_df):
         scaler = joblib.load(SCALER_FILENAME)
 
     except Exception as e:
-        log.info(f'No {SCALER_FILENAME} file found.')
-        log.info(f'Error: {e}')
+        log.info(f'---------- No {SCALER_FILENAME} file found.')
+        log.info(f'---------- Error: {e}')
 
     # make predictions
     try:
@@ -230,17 +230,17 @@ def update_predictions(data_df):
         
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
 
-        log.info('Predictions made successfully and saved for all STATION_IDS.')
-        log.info(f'Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for:         {latest_data_time}')
-        log.info('------------- Prediction process completed')
+        log.info('---------- Predictions made successfully and saved for all STATION_IDS.')
+        log.info(f'---------- Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for:         {latest_data_time}')
+        log.info('Prediction process completed')
 
         return data_temp_predictions, message_type, message_text
 
     except Exception as e:
-        log.info(f'Error: {e}')
+        log.info(f'---------- Error: {e}')
         message_type = 'error'
         message_text = 'Fehler beim machen der Predictions.'
-        log.info('------------- Prediction process completed')
+        log.info('Prediction process completed')
 
         return None, message_type, message_text
 

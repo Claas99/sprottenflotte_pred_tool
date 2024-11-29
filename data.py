@@ -101,13 +101,13 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
         token_data = response.json()
         access_token = token_data.get('access_token')
         if access_token:
-            log.info("Access Token successfully requested")
+            log.info("---------- Access Token successfully requested")
             return access_token
         else:
-            log.info("Access token is not available in the response.")
+            log.info("---------- Access token is not available in the response.")
             return None
     else:
-        log.info(f"Error requesting Access Token: {response.status_code}, {response.text}")
+        log.info(f"---------- Error requesting Access Token: {response.status_code}, {response.text}")
         return None
     
 
@@ -157,8 +157,8 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
         # log.info(f'Got a response for station_id: {station_id}')
         return response.json()
     else:
-        log.info(f'No response for station_id: {station_id}\n          from date: {from_date}\n          to date: {to_date}')
-        log.info(f"Error: {response.status_code}, {response.text}")
+        log.info(f'---------- No response for station_id: {station_id}\n          from date: {from_date}\n          to date: {to_date}')
+        log.info(f"---------- Error: {response.status_code}, {response.text}")
         return None
 
 
@@ -249,7 +249,7 @@ def update_station_data():
     - Potentially modifies global state if global variables or mutable data types are passed and manipulated.
     """
 
-    log.info('------------- Data-fetching process started')
+    log.info('Data-fetching process started')
     start_time = time.time()
 
     # Get the current start and end dates
@@ -274,8 +274,8 @@ def update_station_data():
         # make entity id list
         STATION_IDS = stations_data['entityId'].tolist()
     except Exception as e:
-        log.info(f'No {STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, station_name, maximum_capacity, longitude, latitude, subarea')
-        log.info(f'Error: {e}')
+        log.info(f'---------- No {STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, station_name, maximum_capacity, longitude, latitude, subarea')
+        log.info(f'---------- Error: {e}')
 
     # - timedelta(hours=1), damit der request_start_date nicht gleich END_DATE ist
     # full_date_range = all timestamps (until now) of the timewindow needed for the model for prediction
@@ -341,21 +341,21 @@ def update_station_data():
         total_new_records = len(new_data_temp)
         unique_stations = new_data_temp['entityId'].nunique()
 
-        log.info(f'{total_new_records} new records fetched for {unique_stations} stations.')
-        log.info(f'request start date: {request_start_date}')
-        log.info(f'Data successfully fetched and saved for all STATION_IDS.')
+        log.info(f'---------- {total_new_records} new records fetched for {unique_stations} stations.')
+        log.info(f'---------- request start date: {request_start_date}')
+        log.info(f'---------- Data successfully fetched and saved for all STATION_IDS.')
         message_type = 'success'
         message_text = f'{total_new_records} neue Datenpunkte für {unique_stations} Stationen abgerufen.'
-        log.info(f'Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:    {END_DATE}')
+        log.info(f'---------- Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:    {END_DATE}')
     else:
         data_temp_df = old_data_temp.copy()
 
-        log.info('No new data to process, data for every station is available. Existing data used.')
+        log.info('---------- No new data to process, data for every station is available. Existing data used.')
         message_type = 'info'
         message_text = 'Es sind bereits Daten für alle Stationen vorhanden.'
 
     process_time = time.time() - start_time
-    log.info(f'------------- Data-fetching process completed in {round(process_time, 2)} seconds.')
+    log.info(f'Data-fetching process completed in {round(process_time, 2)} seconds.')
 
     return data_temp_df, message_type, message_text
 
