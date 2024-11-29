@@ -190,8 +190,6 @@ def main():
     # --- tab 1 ---
     with tab1:
         st.write("### Vorhersage - Teilgebiete nach Handlungsbedarf")
-        # Load data into a DataFrame
-        # st.dataframe(vorhersage_demo_df, use_container_width=True)
 
         subareas = make_subareas_dataframe(stations_df)
         ss['subareas'] = subareas['Teilbereich'].tolist()
@@ -199,6 +197,10 @@ def main():
         st.dataframe(subareas, use_container_width=True)
 
         st.info('to be done')
+        st.success('to be done')
+        st.error('to be done')
+        st.warning('to be done')
+        st.loginfo('to be done')
     
     # --- tab 2 ---
     with tab2:
