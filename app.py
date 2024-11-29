@@ -97,7 +97,12 @@ def print_message(message_type, message_text):
 def make_dataframe_of_subarea(selected_option, stations_df):
     """Creates a DataFrame for the selected subarea based on the 'Teilbereich' column."""
     subarea_df = stations_df[stations_df['Teilbereich'] == selected_option]
-    return subarea_df.sort_values('Prio', ascending=False).reset_index()
+    subarea_df = subarea_df.sort_values(
+        ['Prio', 'Delta'],
+        ascending=[False, True],  # Sortiere 'Prio' absteigend und 'Delta' in Bezug auf den absoluten Wert
+        key=lambda col: (col if col.name != 'Delta' else abs(col))
+    )
+    return subarea_df.reset_index(drop=True)
 
 def make_subareas_dataframe(stations_df):
     """Creates a DataFrame for the subareas, mean delta, and sort"""
@@ -204,10 +209,8 @@ def main():
     # --- tab 2 ---
     with tab2:
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
+        
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
-
-        # Use the cached function
-        # subarea_df = get_subarea_data(selected_option, stations, vorhersage_demo_df)
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
