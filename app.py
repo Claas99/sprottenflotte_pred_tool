@@ -281,7 +281,7 @@ def main():
     # --- tab 4 ---
     with tab4:
         st.write("### Predictions")
-        prediction_info
+        st.write(prediction_info)
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
