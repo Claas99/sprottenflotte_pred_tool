@@ -114,12 +114,12 @@ def make_subareas_dataframe(stations_df):
     return result_df
 
 
-def get_latest_available_bikes(predictions_df):
+def get_latest_available_bikes(stations_df):
     # Sortiere die Daten nach prediction_time_utc, um sicherzustellen, dass der letzte Wert genommen wird
-    predictions_df_sorted = predictions_df.sort_values(by='prediction_time_utc', ascending=True)
+    stations_df_sorted = stations_df.sort_values(by='time_utc', ascending=True)
 
     # Gruppiere nach entityId und nehme den letzten Wert für availableBikeNumber
-    latest_available_bikes = predictions_df_sorted.groupby('entityId')['prediction_availableBikeNumber'].last()
+    latest_available_bikes = stations_df_sorted.groupby('entityId')['availableBikeNumber'].last()
 
     return latest_available_bikes
 
@@ -176,17 +176,16 @@ def main():
 
     # Generiere aktuelle Werte für jede Station
     # add code, to get the latest number for every station instead of random generating numbers
-    stations_df['Aktuelle_Kapazität'] = np.random.randint(0, stations_df['maximum_capacity'] + 10, size=stations_df.shape[0])
+    # stations_df['Aktuelle_Kapazität'] = np.random.randint(0, stations_df['maximum_capacity'] + 10, size=stations_df.shape[0])
 
     # Generiere aktuelle Werte für jede Station aus den Vorhersagedaten
     # Hole den letzten availableBikeNumber-Wert für jede StationID
 
     # Hole die aktuellen Kapazitätswerte aus predictions_df
-    latest_available_bikes = get_latest_available_bikes(predictions_df)
+    latest_available_bikes = get_latest_available_bikes(stations_df)
 
     # Füge die Werte in die Spalte 'Aktuelle_Kapazität' im stations_df ein
     stations_df['Aktuelle_Kapazität'] = stations_df['entityId'].map(latest_available_bikes)
-
 
     # Berechne das Delta zu max_capacity
     stations_df['Delta'] = stations_df['Aktuelle_Kapazität'] - stations_df['maximum_capacity']
