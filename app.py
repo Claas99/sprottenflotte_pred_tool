@@ -114,9 +114,9 @@ def get_latest_available_bikes(stations_df):
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
     
-    predictions_df = pd.read_csv('data/predictions.csv')
-    hist_df = pd.read_csv('data/data_temp.csv')
-    stations = pd.read_csv('data/stations.csv')
+    #predictions_df = pd.read_csv('data/predictions.csv')
+    #hist_df = pd.read_csv('data/data_temp.csv')
+    #stations = pd.read_csv('data/stations.csv')
 
     def measure_überfüllt(stationID:int) -> int:
         # get max capacity of station
