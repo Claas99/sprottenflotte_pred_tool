@@ -71,19 +71,6 @@ initialize_session_state() # needs to be here?
 
 
 # --- Helper Functions ---
-def get_table_height(rows, max_rows=20, offset=18):
-    """Calculates the height of a table."""
-
-    def calc(rows, offset):
-        return int(35 + offset + rows * 35)
-
-    return calc(rows, offset) if rows <= max_rows else calc(max_rows, offset)
-
-
-def increment_edit_table_id():
-    """Increments the edit table ID."""
-    ss["edit_table_id"] = ss["edit_table_id"] + 1
-
 def print_message(message_type, message_text):
     if message_type == 'info':
         return st.info(message_text)
@@ -126,7 +113,10 @@ def get_latest_available_bikes(stations_df):
 
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
-    predictions_df = predictions.update_predictions() 
+    
+    predictions_df = pd.read_csv('data/predictions.csv')
+    hist_df = pd.read_csv('data/data_temp.csv')
+    stations = pd.read_csv('data/stations.csv')
 
     def measure_überfüllt(stationID:int) -> int:
         # get max capacity of station
@@ -283,6 +273,7 @@ def main():
         st.dataframe(subarea_df[columns_to_show])
 
         st.dataframe(subarea_df)
+
 
 
     # --- tab 3 ---
