@@ -172,7 +172,7 @@ def main():
     # Hole den letzten availableBikeNumber-Wert für jede StationID
 
     # Hole die aktuellen Kapazitätswerte aus predictions_df
-    latest_available_bikes = get_latest_available_bikes(stations_df)
+    latest_available_bikes = get_latest_available_bikes(data_df)
 
     # Füge die Werte in die Spalte 'Aktuelle_Kapazität' im stations_df ein
     stations_df['Aktuelle_Kapazität'] = stations_df['entityId'].map(latest_available_bikes)
