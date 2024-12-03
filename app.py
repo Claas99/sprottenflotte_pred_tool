@@ -134,35 +134,18 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
     full_df = get_full_df_per_station(stations_df, predictions_df, subareas_df)
     result_df = pd.DataFrame(columns=['Teilgebiet', 'Station' 'Prio'])
 
-    def measure_überfüllt(stationID):
-        # get max capacity of station
-        max_capacity = data.get_max_capacity(stationID, subareas_df)
-        # return variable
-        hours_überfüllt = 0
-
-        for pred_value in predictions_df[predictions_df['entityID']==stationID]:
-            if pred_value >= (max_capacity*0.8):
-                hours_überfüllt += 1
-
-        # return hours_überfüllt
-        return hours_überfüllt
-    
-    def measure_zu_leer(stationID):
-        # get max capacity of station
-        max_capacity = data.get_max_capacity(stationID, subareas_df)
-        # return variable
-        hours_zu_leer = 0
-
-        for pred_value in predictions_df[predictions_df['entityID']==stationID]:
-            if pred_value <= (max_capacity*0.2):
-                hours_zu_leer += 1
+    prio = 0
 
     stations = full_df['entityId'].unique()
     for station in stations:
         teilbereich = full_df[full_df['entityId'] == station]['subarea'].unique()[0]
-        überfüllt = measure_überfüllt(station)
-        leer = measure_zu_leer(station)
-        prio = überfüllt + leer
+        max_capacity = subareas_df[subareas_df['subarea'] == teilbereich]['max_capacity'].unique()[0]
+
+        # Berechne die Differenz zwischen 
+        if station['prediction_availableBikeNumber'] >= (0.8 * max_capacity):
+            prio += 1
+        elif station['prediction_availableBikeNumber'] <= (0.2 * max_capacity):
+            prio += 1
     
         result_df = pd.concat([result_df, pd.DataFrame({'Teilgebiet': [teilbereich], 'Station': [station], 'Prio': [prio]})], ignore_index=True)
 
