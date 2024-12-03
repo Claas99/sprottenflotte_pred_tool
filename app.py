@@ -222,7 +222,7 @@ def main():
 
         st.dataframe(subareas, use_container_width=True)
 
-        st.info('st.info')
+        st.info('i: st.info')
         st.success('st.success')
         st.error('st.error')
         st.warning('st.warning')
