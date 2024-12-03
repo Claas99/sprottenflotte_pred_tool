@@ -130,8 +130,8 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
     
 
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
-def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFrame) -> pd.DataFrame:
-    full_df = get_full_df_per_station(stations_df, predictions_df)
+def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFrame, subareas_df) -> pd.DataFrame:
+    full_df = get_full_df_per_station(stations_df, predictions_df, subareas_df)
     result_df = pd.DataFrame(columns=['Teilgebiet', 'Station' 'Prio'])
 
     def measure_überfüllt(stationID:int) -> int:
@@ -379,7 +379,7 @@ def main():
 
 
     with tab6:
-        prio_df = measures_prio_of_subarea(data_df, predictions_df, subarea_df)
+        prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
         st.dataframe(prio_df)
 
     st.button("Reset App", on_click=reset_app)
