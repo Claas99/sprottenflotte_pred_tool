@@ -339,10 +339,10 @@ def update_station_data():
     dataframes = []
 
     # entfernen der einträge der station ids, die nicht in STATION_IDS ist
-    # Maske, die True ist für jede Zeile, deren entityId NICHT in STATION_IDS ist
-    mask = ~old_data_temp['entityId'].isin(STATION_IDS)
+    # Maske, die True ist für jede Zeile, deren entityId in STATION_IDS ist
+    mask = old_data_temp['entityId'].isin(STATION_IDS)
     # Entfernen dieser Zeilen
-    old_data_temp = old_data_temp[~mask]
+    old_data_temp = old_data_temp[mask]
 
     ACCESS_TOKEN = request_access_token_if_needed()
 
