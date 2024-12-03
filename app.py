@@ -202,12 +202,12 @@ def main():
     #     else ('zu leer' if x <= -0.8 * stations_df['maximum_capacity'] 
     #     else 'okay')
     # )
-    stations_df['Delta_color'] = stations_df.apply(
-        lambda row: 'überfüllt' if row['Delta'] >= 0.8 * row['maximum_capacity'] 
-        else ('zu leer' if row['Delta'] <= -0.8 * row['maximum_capacity'] else 'okay'),
-        axis=1
-    )
-    
+    # stations_df['Delta_color'] = stations_df.apply(
+    #     lambda row: 'überfüllt' if row['Delta'] >= 0.8 * row['maximum_capacity'] 
+    #     else ('zu leer' if row['Delta'] <= -0.8 * row['maximum_capacity'] else 'okay'),
+    #     axis=1
+    # )
+
 
     # --- initialise ---
     # Initialise Streamlit Interface
