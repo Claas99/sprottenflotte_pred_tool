@@ -298,9 +298,6 @@ def main():
         #     'no data': 'grey'
         # }
 
-        # Create a list of background colors for the hover labels based on point colors
-        # hover_bg_colors = [color_map[color] for color in subarea_df['color']]
-
         # Plot the map
         fig = px.scatter_mapbox(
             subarea_df, 
@@ -314,7 +311,7 @@ def main():
                 'Delta': True,
                 'latitude': False,  # Disable latitude hover
                 'longitude': False,  # Disable longitude hover
-                'color': False
+                'color_info': False
             },
             color='color_info',  # Use the new column for colors
             color_discrete_map=color_map,
