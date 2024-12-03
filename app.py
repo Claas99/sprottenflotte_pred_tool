@@ -82,8 +82,8 @@ def print_message(message_type, message_text):
 
 @st.cache_data
 def make_dataframe_of_subarea(selected_option, stations_df):
-    """Creates a DataFrame for the selected subarea based on the 'Teilbereich' column."""
-    subarea_df = stations_df[stations_df['Teilbereich'] == selected_option]
+    """Creates a DataFrame for the selected subarea based on the 'subarea' column."""
+    subarea_df = stations_df[stations_df['subarea'] == selected_option]
     subarea_df = subarea_df.sort_values(
         ['Prio', 'Delta'],
         ascending=[False, False],  # Sortiere 'Prio' absteigend und 'Delta' in Bezug auf den absoluten Wert
@@ -95,7 +95,7 @@ def make_dataframe_of_subarea(selected_option, stations_df):
 
 def make_subareas_dataframe(stations_df):
     """Creates a DataFrame for the subareas, mean delta, and sort"""
-    result_df = stations_df.groupby('Teilbereich')['Delta'].apply(lambda x: x.abs().mean()).reset_index(name='Mean Absolute Delta')
+    result_df = stations_df.groupby('subarea')['Delta'].apply(lambda x: x.abs().mean()).reset_index(name='Mean Absolute Delta')
     result_df = result_df.sort_values('Mean Absolute Delta', ascending=False).reset_index(drop=True)
     result_df.index += 1
     return result_df
@@ -163,20 +163,11 @@ def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
 
 # --- Main App Logic ---
 def main():
-    stations_filename = "data/stations_2.csv"
+    stations_filename = "data/stations.csv"
     stations_df = pd.read_csv(stations_filename)
 
     data_df, data_message_type, data_message_text = data.update_station_data()
     predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
-
-    stations_df['Teilbereich'] = stations_df['subarea']#.str.replace('√∂', 'ö')
-
-    # Generiere aktuelle Werte für jede Station
-    # add code, to get the latest number for every station instead of random generating numbers
-    # stations_df['Aktuelle_Kapazität'] = np.random.randint(0, stations_df['maximum_capacity'] + 10, size=stations_df.shape[0])
-
-    # Generiere aktuelle Werte für jede Station aus den Vorhersagedaten
-    # Hole den letzten availableBikeNumber-Wert für jede StationID
 
     # Hole die aktuellen Kapazitätswerte aus predictions_df
     latest_available_bikes = get_latest_available_bikes(data_df)
@@ -218,7 +209,7 @@ def main():
         st.write("### Vorhersage - Teilgebiete nach Handlungsbedarf")
 
         subareas = make_subareas_dataframe(stations_df)
-        ss['subareas'] = subareas['Teilbereich'].tolist()
+        ss['subareas'] = subareas['subarea'].tolist()
 
         st.dataframe(subareas, use_container_width=True)
 
@@ -276,7 +267,7 @@ def main():
         # Show the map
         st.plotly_chart(fig)
 
-        columns_to_show = ['Teilbereich', 'station_name', 'Aktuelle_Kapazität', 'maximum_capacity',  'Delta', 'Prio']
+        columns_to_show = ['subarea', 'station_name', 'Aktuelle_Kapazität', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
 
         st.dataframe(subarea_df)
