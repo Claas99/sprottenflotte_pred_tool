@@ -250,11 +250,11 @@ def main():
     with tab1:
         st.write("### Vorhersage - Teilgebiete nach Handlungsbedarf")
 
-        subareas = make_subareas_dataframe(stations_df)
-        ss['subareas'] = subareas['subarea'].tolist()
-        ss['subareas'].append('Alle')  # Option hinzufügen
+        prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
+        st.dataframe(prio_df, use_container_width=True)
 
-        st.dataframe(subareas, use_container_width=True)
+        ss['subareas'] = prio_df['subarea'].tolist()
+        ss['subareas'].append('Alle')  # Option hinzufügen
 
         st.info('ⓘ Die Prio der Subareas wird wie folgt berechnet: ')
         # st.info('st.info')
@@ -419,8 +419,7 @@ def main():
 
 
     with tab6:
-        prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
-        st.dataframe(prio_df)
+        
 
     st.button("Reset App", on_click=reset_app)
 
