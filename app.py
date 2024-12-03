@@ -164,7 +164,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         leer = measure_zu_leer(station)
         prio = überfüllt + leer
     
-        result_df = pd.concat([result_df, pd.DataFrame({'Teilgebiet': [teilbereich], 'Station': [station], 'Prio': [mean_delta]})], ignore_index=True)
+        result_df = pd.concat([result_df, pd.DataFrame({'Teilgebiet': [teilbereich], 'Station': [station], 'Prio': [prio]})], ignore_index=True)
 
     return result_df
 
@@ -377,7 +377,7 @@ def main():
 
 
     with tab6:
-        prio_df = measures_prio_of_subarea(data_df, predictions_df)
+        prio_df = measures_prio_of_subarea(data_df, predictions_df, subarea_df)
         st.dataframe(prio_df)
 
     st.button("Reset App", on_click=reset_app)
