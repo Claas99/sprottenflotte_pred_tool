@@ -113,8 +113,8 @@ def get_latest_available_bikes(stations_df):
 
 def get_full_df_per_station(stations_df, predictions_df):
     # Concatenate die letzten 24h und die nächsten 5h zu einem DataFrame
-    stations_df['time_utc'] = pd.to_datetime(stations_df['time_utc']
-    predictions_df['time_utc'] = pd.to_datetime(stations_df['prediction_time_utc']
+    stations_df['time_utc'] = pd.to_datetime(stations_df['time_utc'])
+    predictions_df['time_utc'] = pd.to_datetime(stations_df['prediction_time_utc'])
 
     full_df = pd.concat([stations_df, predictions_df], ignore_index=True)
     full_df = pd.sort_values(by=['entityID','time_utc']).reset_index(drop=True)
