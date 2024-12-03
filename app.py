@@ -269,7 +269,7 @@ def main():
         
         st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
 
-        st.radio(options=list, help='helping for sure')
+        st.radio('Show Info', help='helping for sure')
 
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
