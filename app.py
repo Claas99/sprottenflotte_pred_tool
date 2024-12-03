@@ -287,8 +287,8 @@ def main():
         # Show the map
         st.plotly_chart(fig)
 
-        st.info('''ⓘ Die Farben bedeuten:
-        rot - überfüllt - mehr als 80%
+        st.info('''ⓘ Die Farben bedeuten:\n
+        rot - überfüllt - mehr als 80%\n
         blau - zu leer - weniger als 20% ''')
 
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
