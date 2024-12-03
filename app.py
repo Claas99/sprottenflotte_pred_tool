@@ -130,11 +130,9 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
     
 
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
-def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFrame) -> int:
+def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFrame) -> pd.DataFrame:
     full_df = get_full_df_per_station(stations_df, predictions_df)
-    result_df = pd.DataFrame(columns=['subarea', 'Prio'])
-
-    teilbereiche = full_df['subarea'].unique()
+    result_df = pd.DataFrame(columns=['Teilgebiet', 'Station' 'Prio'])
 
     def measure_überfüllt(stationID:int) -> int:
         # get max capacity of station
@@ -159,16 +157,15 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
             if pred_value <= (max_capacity*0.2):
                 hours_zu_leer += 1
 
-        # return hours_zu_leer
-        return hours_zu_leer
-    
-    result_df = pd.DataFrame(columns=['subarea', 'Prio'])
-    for station in subarea_df['entityId']:
+    stations = full_df['entityId'].unique()
+    for station in stations:
+        teilbereich = full_df[full_df['entityId'] == station]['subarea'].unique()[0]
         überfüllt = measure_überfüllt(station)
-        zu_leer = measure_zu_leer(station)
-        prio = überfüllt + zu_leer
-        result_df = pd.concat([result_df, pd.DataFrame({'subarea': [station], 'Prio': [prio]})], ignore_index=True)
+        leer = measure_zu_leer(station)
+        prio = überfüllt + leer
     
+        result_df = pd.concat([result_df, pd.DataFrame({'Teilgebiet': [teilbereich], 'Station': [station], 'Prio': [mean_delta]})], ignore_index=True)
+
     return result_df
 
 
@@ -219,7 +216,7 @@ def main():
              Please report any issues to Claas Resow.""")
     
     # initialise tabs
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions", "Testebene"])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions", "Testebene", "Prio"])
 
     # --- tab 1 ---
     with tab1:
@@ -378,6 +375,10 @@ def main():
         full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
         st.dataframe(full_df)
 
+
+    with tab6:
+        prio_df = measures_prio_of_subarea(data_df, predictions_df)
+        st.dataframe(prio_df)
 
     st.button("Reset App", on_click=reset_app)
 
