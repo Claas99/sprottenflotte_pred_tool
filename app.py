@@ -267,7 +267,7 @@ def main():
     with tab2:
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         
-        if st.button('Show Info'):
+        if st.button('Show Info', help='helping', icon='ⓘ'):
             # Display information when the button is clicked
             st.info('This is an informational message triggered by the button.')
 
