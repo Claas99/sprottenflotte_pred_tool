@@ -269,7 +269,7 @@ def main():
         
         st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
 
-        st.radio('Show Info', options=list, help='helping for sure')
+        st.radio('Show Info', [], options=list, help='helping for sure')
 
         with st.expander("Mehr Informationen anzeigen"):
             st.write("Hier sind einige zusätzliche Informationen, die im Expander verborgen sind.")
