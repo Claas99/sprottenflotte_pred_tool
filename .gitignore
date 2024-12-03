@@ -18,3 +18,5 @@ cache/
 
 # requirements file
 requirements.txt
+
+.DS_Store
