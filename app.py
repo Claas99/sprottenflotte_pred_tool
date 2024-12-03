@@ -327,7 +327,7 @@ def main():
                                         font_color='black',
                                         bgcolor='white',
                                         bordercolor='blue',
-                                        borderwidth=3)
+                                        borderwidth=3))
 
         # Show the map
         st.plotly_chart(fig)
