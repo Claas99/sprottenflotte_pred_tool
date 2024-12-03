@@ -111,7 +111,7 @@ def get_latest_available_bikes(stations_df):
     return latest_available_bikes
 
 
-def get_full_df_per_station(stations_df, predictions_df):
+def get_full_df_per_station(stations_df, predictions_df, subarea_df):
     # Concatenate die letzten 24h und die nächsten 5h zu einem DataFrame
     stations_df['time_utc'] = pd.to_datetime(stations_df['time_utc'])
     predictions_df['time_utc'] = pd.to_datetime(predictions_df['prediction_time_utc'])
@@ -119,13 +119,19 @@ def get_full_df_per_station(stations_df, predictions_df):
     full_df = pd.concat([stations_df, predictions_df], ignore_index=True)
     full_df = full_df.sort_values(by=['entityId','time_utc']).reset_index(drop=True)
     full_df = full_df.drop('prediction_time_utc', axis=1)
+    full_df = full_df.merge(subarea_df[['entityId', 'subarea']], on='entityId', how='left')
 
     return full_df
 
     
 
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
-def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
+def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFrame) -> int:
+    full_df = get_full_df_per_station(stations_df, predictions_df)
+    result_df = pd.DataFrame(columns=['Teilgebiet', 'Prio'])
+
+    teilbereiche = full_df['subarea'].unique()
+
     def measure_überfüllt(stationID:int) -> int:
         # get max capacity of station
         max_capacity = data.get_max_capacity(stationID)
