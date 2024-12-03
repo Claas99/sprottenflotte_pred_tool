@@ -104,7 +104,6 @@ def make_subareas_dataframe(stations_df):
     result_df.index += 1
     return result_df
 
-
 def get_latest_available_bikes(stations_df):
     # Sortiere die Daten nach prediction_time_utc, um sicherzustellen, dass der letzte Wert genommen wird
     stations_df_sorted = stations_df.sort_values(by='time_utc', ascending=True)
@@ -132,7 +131,7 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFrame, subareas_df) -> pd.DataFrame:
     full_df = get_full_df_per_station(stations_df, predictions_df, subareas_df)
-    result_df = pd.DataFrame(columns=['Teilgebiet', 'Station', 'Prio'])
+    result_df = pd.DataFrame(columns=['subarea', 'Station', 'Prio'])
 
     prio = 0
 
@@ -148,8 +147,12 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
             elif pred <= (0.2 * max_capacity):
                 prio += 1
     
-        result_df = pd.concat([result_df, pd.DataFrame({'Teilgebiet': [teilbereich], 'Station': [station], 'Prio': [prio]})], ignore_index=True)
+        result_df = pd.concat([result_df, pd.DataFrame({'subarea': [teilbereich], 'Station': [station], 'Prio': [prio]})], ignore_index=True)
         prio = 0
+    
+    result_df = result_df.groupby('subarea')['Prio'].apply(lambda x: x.mean()).reset_index(name='subarea_prio')
+    result_df = result_df.sort_values('subarea_prio', ascending=False).reset_index(drop=True)
+    result_df.index += 1
     return result_df
 
 
@@ -160,11 +163,7 @@ def check_duration_of_leerstand(stationID: int, station_data) -> dict:
 
     # Filter predictions for the specific station
     station_predictions = station_data[station_data['prediction_availableBikeNumber'] != None]
-    station_hist = station_data[station_data['availableBikeNumber'] != None]
 
-    # Ensure 'prediction_time_utc' is in datetime format
-    station_predictions['prediction_time_utc'] = pd.to_datetime(station_predictions['prediction_time_utc'])
-    station_hist['time_utc'] = pd.to_datetime(station_hist['time_utc'])
     # Sort by time to ensure correct duration calculation
     station_predictions = station_predictions.sort_values(by='prediction_time_utc')
 
@@ -245,17 +244,17 @@ def main():
              Please report any issues to Claas Resow.""")
     
     # initialise tabs
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions", "Testebene", "Prio"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions", "Testebene"])
 
     # --- tab 1 ---
     with tab1:
         st.write("### Vorhersage - Teilgebiete nach Handlungsbedarf")
 
-        subareas = make_subareas_dataframe(stations_df)
-        ss['subareas'] = subareas['subarea'].tolist()
-        ss['subareas'].append('Alle')  # Option hinzufügen
+        prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
+        st.dataframe(prio_df, use_container_width=True)
 
-        st.dataframe(subareas, use_container_width=True)
+        ss['subareas'] = prio_df['subarea'].tolist()
+        ss['subareas'].append('Alle')  # Option hinzufügen
 
         st.info('ⓘ Die Prio der Subareas wird wie folgt berechnet: ')
         # st.info('st.info')
@@ -269,11 +268,9 @@ def main():
         
         st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
 
-        st.radio('Show Info', [], options=list, help='helping for sure')
-
+        st.radio('Show Info', options=list, help='helping for sure')
         with st.expander("Mehr Informationen anzeigen"):
             st.write("Hier sind einige zusätzliche Informationen, die im Expander verborgen sind.")
-    
 
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
@@ -419,11 +416,6 @@ def main():
     with tab5:
         full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
         st.dataframe(full_df)
-
-
-    with tab6:
-        prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
-        st.dataframe(prio_df)
 
     st.button("Reset App", on_click=reset_app)
 
