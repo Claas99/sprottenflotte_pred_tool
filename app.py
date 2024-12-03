@@ -128,7 +128,7 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFrame) -> int:
     full_df = get_full_df_per_station(stations_df, predictions_df)
-    result_df = pd.DataFrame(columns=['Teilgebiet', 'Prio'])
+    result_df = pd.DataFrame(columns=['subarea', 'Prio'])
 
     teilbereiche = full_df['subarea'].unique()
 
@@ -158,12 +158,12 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         # return hours_zu_leer
         return hours_zu_leer
     
-    result_df = pd.DataFrame(columns=['Teilgebiet', 'Prio'])
+    result_df = pd.DataFrame(columns=['subarea', 'Prio'])
     for station in subarea_df['entityId']:
         überfüllt = measure_überfüllt(station)
         zu_leer = measure_zu_leer(station)
         prio = überfüllt + zu_leer
-        result_df = pd.concat([result_df, pd.DataFrame({'Teilgebiet': [station], 'Prio': [prio]})], ignore_index=True)
+        result_df = pd.concat([result_df, pd.DataFrame({'subarea': [station], 'Prio': [prio]})], ignore_index=True)
     
     return result_df
 
