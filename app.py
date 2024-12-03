@@ -184,7 +184,7 @@ def main():
     latest_available_bikes = get_latest_available_bikes(data_df)
 
     # Füge die Werte in die Spalte 'current_capacity' im stations_df ein
-    stations_df['current_capacity'] = stations_df['entityId'].map(latest_available_bikes)
+    stations_df['current_capacity'] = stations_df['entityId'].map(latest_available_bikes).round()    
 
     # Berechne das Delta zu max_capacity
     stations_df['Delta'] = stations_df['current_capacity'] - stations_df['maximum_capacity']
