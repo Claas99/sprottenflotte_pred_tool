@@ -187,7 +187,7 @@ def main():
         stations_df['Delta'] < -5,
         stations_df['Delta'] >= 5
     ]
-    choices = ['❗️❗️❗️', '❗️❗️❗️', '❗️❗️', '❗️❗️']
+    choices = ['❗️❗️', '❗️❗️', '❗️', '❗️']
 
     stations_df['Prio'] = np.select(conditions, choices, default='')
 
