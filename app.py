@@ -227,7 +227,7 @@ def main():
 
 
     # Add a new column to color
-    stations_df['color'] = stations_df.apply(
+    stations_df['color_info'] = stations_df.apply(
         lambda row: 'no data' if pd.isna(row['current_capacity'])
                     else 'überfüllt' if row['current_capacity'] >= 0.8 * row['maximum_capacity']
                     else 'zu leer' if row['current_capacity'] <= 0.2 * row['maximum_capacity'] 
@@ -235,6 +235,14 @@ def main():
         axis=1
     )
 
+    color_map = {
+            'überfüllt': 'red',
+            'zu leer': 'blue',
+            'okay': 'green',
+            'no data': 'grey'
+        }
+
+    stations_df['color'] = stations_df['color_info'].map(color_map)
 
     # --- initialise ---
     # Initialise Streamlit Interface
@@ -283,12 +291,12 @@ def main():
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
-        color_map = {
-            'überfüllt': 'red',
-            'zu leer': 'blue',
-            'okay': 'green',
-            'no data': 'grey'
-        }
+        # color_map = {
+        #     'überfüllt': 'red',
+        #     'zu leer': 'blue',
+        #     'okay': 'green',
+        #     'no data': 'grey'
+        # }
 
         # Create a list of background colors for the hover labels based on point colors
         hover_bg_colors = [color_map[color] for color in subarea_df['color']]
@@ -309,7 +317,7 @@ def main():
                 'color': False
             },
             color='color',  # Use the new column for colors
-            color_discrete_map=color_map,
+            # color_discrete_map=color_map,
             zoom=10.2,
             height=600,
             labels={
