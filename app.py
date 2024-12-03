@@ -136,7 +136,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
 
     def measure_überfüllt(stationID):
         # get max capacity of station
-        max_capacity = data.get_max_capacity(stationID)
+        max_capacity = data.get_max_capacity(stationID, subareas_df)
         # return variable
         hours_überfüllt = 0
 
@@ -149,7 +149,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
     
     def measure_zu_leer(stationID):
         # get max capacity of station
-        max_capacity = data.get_max_capacity(stationID)
+        max_capacity = data.get_max_capacity(stationID, subareas_df)
         # return variable
         hours_zu_leer = 0
 

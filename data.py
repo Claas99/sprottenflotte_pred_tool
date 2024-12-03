@@ -428,7 +428,7 @@ def get_current_dates():
 # update_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN)
 
 
-def get_max_capacity(stationID:int) -> int:
+def get_max_capacity(stationID, subareas_df) -> int:
     """
     Retrieves the maximum capacity of a station based on its station ID.
 
@@ -443,15 +443,8 @@ def get_max_capacity(stationID:int) -> int:
 
     :raises ValueError: If the input stationID is not a string.
     """
-
-    if not isinstance(stationID, int):
-        raise ValueError("stationID must be a int")
-
-    # Laden des existierenden DataFrame
-    stations_data = pd.read_csv(STATIONS_FILENAME)
-
     # Suche nach der Station mit der gegebenen ID
-    station = stations_data[stations_data['entityId'] == stationID]
+    station = subareas_df[subareas_df['entityId'] == stationID]
 
     # Überprüfen, ob die Station gefunden wurde
     if not station.empty:
