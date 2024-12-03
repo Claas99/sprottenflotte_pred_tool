@@ -257,6 +257,9 @@ def main():
         ss['subareas'].append('Alle')  # Option hinzufügen
 
         st.info('ⓘ Die Prio der Subareas wird wie folgt berechnet: ')
+        with st.expander("ℹ️ Mehr Informationen anzeigen"):
+            st.write("""Die Prio der Subareas wird wie folgt berechnet: """)
+
         # st.info('st.info')
         # st.success('st.success')
         # st.error('st.error')
@@ -264,17 +267,19 @@ def main():
     
     # --- tab 2 ---
     with tab2:
-        st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
+        st.write('ℹ️ Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         
         # st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
 
-        st.radio('Show Info', [], options=list, help='helping for sure')
+        st.radio('Show Info', options=[], help='helping for sure')
 
-        with st.expander("ℹ️ Mehr Informationen anzeigen"):
+        with st.expander("ℹ️ Mehr Informationen zur Karte anzeigen"):
             st.write("""
                      **Die Farben bedeuten:**
-                    - **rot** - überfüllt - mehr als 80%
-                    - **blau** - zu leer - weniger als 20%
+                     - **rot** - überfüllt - mehr als 80% der maximalen Kapazität
+                     - **blau** - zu leer - weniger als 20% der maximalen Kapazität
+                     - **grün** - okay - zwischen 20% und 80% der maximalen Kapazität
+                     - **grau** - no data - keine aktuellen Kapazitätsdaten verfügbar
                     """)
 
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
@@ -331,22 +336,10 @@ def main():
         # Show the map
         st.plotly_chart(fig)
 
-        st.info('''ⓘ Die Farben bedeuten:\n
-        rot - überfüllt - mehr als 80%\n
-        blau - zu leer - weniger als 20% ''')
-
-        st.markdown('''
-        ⓘ **Die Farben bedeuten:**
-        - **rot** - überfüllt - mehr als 80%
-        - **blau** - zu leer - weniger als 20%
-        ''')
-
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
 
         st.dataframe(subarea_df)
-
-
 
     # --- tab 3 ---
     with tab3:
