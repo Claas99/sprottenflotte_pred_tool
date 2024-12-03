@@ -269,6 +269,8 @@ def main():
         
         st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
 
+        st.radio(options=list, help='helping for sure')
+
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
