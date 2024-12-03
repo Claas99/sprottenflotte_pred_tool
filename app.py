@@ -311,7 +311,8 @@ def main():
                 'Delta': True,
                 'latitude': False,  # Disable latitude hover
                 'longitude': False,  # Disable longitude hover
-                'color_info': False
+                'color_info': False,
+                'color': True
             },
             color='color_info',  # Use the new column for colors
             color_discrete_map=color_map,
@@ -331,7 +332,7 @@ def main():
                                         font_size=12,
                                         font_color='#31333F',
                                         bgcolor='#FCFEF6',
-                                        bordercolor=subarea_df['color']))#'#9ec044'))
+                                        bordercolor='color'))#'#9ec044'))
 
         # Show the map
         st.plotly_chart(fig)
