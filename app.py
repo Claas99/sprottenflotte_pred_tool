@@ -291,6 +291,12 @@ def main():
         rot - überfüllt - mehr als 80%\n
         blau - zu leer - weniger als 20% ''')
 
+        st.markdown('''
+        ⓘ **Die Farben bedeuten:**
+        - **rot** - überfüllt - mehr als 80%
+        - **blau** - zu leer - weniger als 20%
+        ''')
+
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
 
