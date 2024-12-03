@@ -266,21 +266,20 @@ def main():
     
     # --- tab 2 ---
     with tab2:
-        st.write('Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
-        
-        # st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
-        # st.radio('Show Info', options=[], help='helping for sure')
-
-        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
-
         with st.expander("ℹ️ Mehr Informationen zur Karte anzeigen"):
             st.write("""
+                     Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.
+
                      **Die Farben bedeuten:**
                      - **rot** - überfüllt - mehr als 80% der maximalen Kapazität
                      - **blau** - zu leer - weniger als 20% der maximalen Kapazität
                      - **grün** - okay - zwischen 20% und 80% der maximalen Kapazität
                      - **grau** - no data - keine aktuellen Kapazitätsdaten verfügbar
                     """)
+        # st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
+        # st.radio('Show Info', options=[], help='helping for sure')
+
+        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
