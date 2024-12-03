@@ -141,7 +141,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         teilbereich = full_df[full_df['entityId'] == station]['subarea'].unique()[0]
         max_capacity = subareas_df[subareas_df['subarea'] == teilbereich]['maximum_capacity'].unique()[0]
         station_data = full_df[full_df['entityId'] == station]
-        for pred in station_data['prediction_availableBikeNumber']:
+        for pred in station_data['availableBikeNumber']:
             # Berechne die Differenz zwischen 
             if pred >= (0.8 * max_capacity):
                 prio += 1
