@@ -82,6 +82,8 @@ def request_access_token_if_needed():
 
     # Check if cached token is valid
     if access_token_cache['token'] and current_time < access_token_cache['expires_at']:
+        expiration_time = datetime.fromtimestamp(access_token_cache['expires_at']).replace(microsecond=0)
+        log.info(f"---------- Access Token valid until: {expiration_time}")
         return access_token_cache['token']
 
     # If not, request a new token
