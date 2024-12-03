@@ -266,12 +266,16 @@ def main():
     with tab2:
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         
-        st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
+        # st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
 
         st.radio('Show Info', [], options=list, help='helping for sure')
 
-        with st.expander("Mehr Informationen anzeigen"):
-            st.write("Hier sind einige zusätzliche Informationen, die im Expander verborgen sind.")
+        with st.expander("ℹ️ Mehr Informationen anzeigen"):
+            st.write("""
+                     **Die Farben bedeuten:**
+                    - **rot** - überfüllt - mehr als 80%
+                    - **blau** - zu leer - weniger als 20%
+                    """)
 
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
