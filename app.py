@@ -119,10 +119,10 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
     # Concatenate die letzten 24h und die nächsten 5h zu einem DataFrame
     stations_df['time_utc'] = pd.to_datetime(stations_df['time_utc'])
     predictions_df['time_utc'] = pd.to_datetime(predictions_df['prediction_time_utc'])
+    predictions_df['availableBikeNumber'] = predictions_df['prediction_availableBikeNumber']
 
-    full_df = pd.concat([stations_df, predictions_df], ignore_index=True)
+    full_df = pd.concat([stations_df['time_utc','avaibleBikeNumber'], predictions_df['time_utc','avaibleBikeNumber']], ignore_index=True)
     full_df = full_df.sort_values(by=['entityId','time_utc']).reset_index(drop=True)
-    full_df = full_df.drop('prediction_time_utc', axis=1)
     full_df = full_df.merge(subarea_df[['entityId', 'subarea']], on='entityId', how='left')
 
     return full_df
@@ -151,6 +151,50 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         result_df = pd.concat([result_df, pd.DataFrame({'Teilgebiet': [teilbereich], 'Station': [station], 'Prio': [prio]})], ignore_index=True)
         prio = 0
     return result_df
+
+
+def check_duration_of_leerstand(stationID: int, station_data) -> dict:
+    # Get max capacity of the station
+    max_capacity = data.get_max_capacity(stationID)
+    threshold = max_capacity * 0.2
+
+    # Filter predictions for the specific station
+    station_predictions = station_data[station_data['prediction_availableBikeNumber'] != None]
+    station_hist = station_data[station_data['availableBikeNumber'] != None]
+
+    # Ensure 'prediction_time_utc' is in datetime format
+    station_predictions['prediction_time_utc'] = pd.to_datetime(station_predictions['prediction_time_utc'])
+    station_hist['time_utc'] = pd.to_datetime(station_hist['time_utc'])
+    # Sort by time to ensure correct duration calculation
+    station_predictions = station_predictions.sort_values(by='prediction_time_utc')
+
+    # Identify periods where predicted value is below the threshold
+    station_predictions['below_threshold'] = station_predictions['predicted_value'] <= threshold
+
+    # Calculate the difference in time between consecutive rows
+    station_predictions['time_diff'] = station_predictions['prediction_time_utc'].diff()
+
+    # Identify the start of each new period below the threshold
+    station_predictions['new_period'] = (station_predictions['below_threshold'] != station_predictions['below_threshold'].shift()).cumsum()
+
+    # Filter only periods where the condition is met
+    below_threshold_periods = station_predictions[station_predictions['below_threshold']]
+
+    # Calculate the duration of each period
+    period_durations = below_threshold_periods.groupby('new_period')['time_diff'].sum()
+
+    # Convert durations to hours
+    period_durations_in_hours = period_durations.dt.total_seconds() / 3600
+
+    # Check if any period exceeds the specified durations
+    results = {
+        'exceeds_4h': any(period_durations_in_hours > 4),
+        'exceeds_8h': any(period_durations_in_hours > 8),
+        'exceeds_24h': any(period_durations_in_hours > 24)
+    }
+
+    return results
+
 
 
 # --- Main App Logic ---
