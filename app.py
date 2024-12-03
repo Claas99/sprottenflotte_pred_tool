@@ -271,6 +271,8 @@ def main():
         # st.success('st.success')
         # st.error('st.error')
         # st.warning('st.warning')
+        # st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
+        # st.radio('Show Info', options=[], help='helping for sure')
     
     # --- tab 2 ---
     with tab2:
@@ -284,8 +286,6 @@ def main():
                      - **grün** - okay - zwischen 20% und 80% der maximalen Kapazität
                      - **grau** - no data - keine aktuellen Kapazitätsdaten verfügbar
                     """)
-        # st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
-        # st.radio('Show Info', options=[], help='helping for sure')
 
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
@@ -325,7 +325,7 @@ def main():
                                         font_size=12,
                                         font_color='#31333F',
                                         bgcolor='#FCFEF6',
-                                        bordercolor=subarea_df['color']))#'#9ec044'))
+                                        bordercolor='#9ec044'))
 
         # Show the map
         st.plotly_chart(fig)
