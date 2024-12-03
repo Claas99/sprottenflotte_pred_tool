@@ -317,7 +317,7 @@ def main():
                 'color': False
             },
             color='color_info',  # Use the new column for colors
-            # color_discrete_map=color_map,
+            color_discrete_map=color_map,
             zoom=10.2,
             height=600,
             labels={
