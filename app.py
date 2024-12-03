@@ -291,13 +291,6 @@ def main():
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
-        # color_map = {
-        #     'überfüllt': 'red',
-        #     'zu leer': 'blue',
-        #     'okay': 'green',
-        #     'no data': 'grey'
-        # }
-
         # Plot the map
         fig = px.scatter_mapbox(
             subarea_df, 
@@ -332,7 +325,7 @@ def main():
                                         font_size=12,
                                         font_color='#31333F',
                                         bgcolor='#FCFEF6',
-                                        bordercolor=subarea_df['color'].tolist()))#'#9ec044'))
+                                        bordercolor=subarea_df['color']))#'#9ec044'))
 
         # Show the map
         st.plotly_chart(fig)
