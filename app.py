@@ -201,7 +201,8 @@ def main():
 
     # Add a new column to color
     stations_df['color'] = stations_df.apply(
-        lambda row: 'überfüllt' if row['current_capacity'] >= 0.8 * row['maximum_capacity']
+        lambda row: 'no data' if pd.isna(row['current_capacity'])
+                    else 'überfüllt' if row['current_capacity'] >= 0.8 * row['maximum_capacity']
                     else 'zu leer' if row['current_capacity'] <= 0.2 * row['maximum_capacity'] 
                     else 'okay',
         axis=1
@@ -261,7 +262,8 @@ def main():
             color_discrete_map={
                     'überfüllt': 'red',
                     'zu leer': 'blue',
-                    'okay': 'green'
+                    'okay': 'green',
+                    'no data': 'grey'
                 },
             zoom=10.2,
             height=600,
