@@ -111,13 +111,20 @@ def get_latest_available_bikes(stations_df):
     return latest_available_bikes
 
 
+def get_full_df_per_station(stations_df, predictions_df):
+    # Concatenate die letzten 24h und die nächsten 5h zu einem DataFrame
+    stations_df['time_utc'] = pd.to_datetime(stations_df['time_utc']
+    predictions_df['time_utc'] = pd.to_datetime(stations_df['prediction_time_utc']
+
+    full_df = pd.concat([stations_df, predictions_df], ignore_index=True)
+    full_df = pd.sort_values(by=['entityID','time_utc']).reset_index(drop=True)
+
+    return full_df
+
+    
+
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(subarea_df:pd.DataFrame) -> int:
-    
-    #predictions_df = pd.read_csv('data/predictions.csv')
-    #hist_df = pd.read_csv('data/data_temp.csv')
-    #stations = pd.read_csv('data/stations.csv')
-
     def measure_überfüllt(stationID:int) -> int:
         # get max capacity of station
         max_capacity = data.get_max_capacity(stationID)
@@ -204,7 +211,7 @@ def main():
              Please report any issues to Claas Resow.""")
     
     # initialise tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions", "Testebene"])
 
     # --- tab 1 ---
     with tab1:
@@ -297,6 +304,10 @@ def main():
             st.dataframe(pivot_df)
         else:
             st.error("Failed to load prediction data.")
+
+    with tab5:
+        full_df = get_full_df_per_station(data_df, predictions_df)
+        st.dataframe(full_df)
 
 
     st.button("Reset App", on_click=reset_app)
