@@ -151,7 +151,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         prio = 0
     
     result_df = result_df.groupby('subarea')['Prio'].apply(lambda x: x.mean()).reset_index(name='subarea_prio')
-    result_df = result_df.sort_values('subare_prio', ascending=False).reset_index(drop=True)
+    result_df = result_df.sort_values('subarea_prio', ascending=False).reset_index(drop=True)
     result_df.index += 1
     return result_df
 
@@ -267,6 +267,10 @@ def main():
         st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         
         st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
+
+        st.radio('Show Info', options=list, help='helping for sure')
+        with st.expander("Mehr Informationen anzeigen"):
+            st.write("Hier sind einige zusätzliche Informationen, die im Expander verborgen sind.")
 
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
