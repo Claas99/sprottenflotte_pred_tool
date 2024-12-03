@@ -321,7 +321,7 @@ def main():
             zoom=10.2,
             height=600,
             labels={
-                'color': 'Station Info'  # Change title of the legend
+                'color_info': 'Station Info'  # Change title of the legend
             }
         )
 
