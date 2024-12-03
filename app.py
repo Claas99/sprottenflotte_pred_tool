@@ -244,7 +244,7 @@ def main():
              Please report any issues to Claas Resow.""")
     
     # initialise tabs
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions", "Testebene", "Prio"])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions", "Testebene"])
 
     # --- tab 1 ---
     with tab1:
