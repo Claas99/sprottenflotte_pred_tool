@@ -193,4 +193,4 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea,latitide
 24369,Alte Mu Brunswiker Str ,15,54.327583,10.1415,Kiel,
 24368,Umsteiger,22,54.314861,10.131167,Kiel,
 24367,Anleger Dietrichsdorf,30,54.329611,10.178556,Kiel,
-99999,test,20,,10.2523,Plön,54.0944
+99999,test,20,54.0944,10.2523,Plön,
