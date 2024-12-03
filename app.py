@@ -256,8 +256,7 @@ def main():
         ss['subareas'] = prio_df['subarea'].tolist()
         ss['subareas'].append('Alle')  # Option hinzufügen
 
-        st.info('ⓘ Die Prio der Subareas wird wie folgt berechnet: ')
-        with st.expander("ℹ️ Mehr Informationen anzeigen"):
+        with st.expander("ℹ️ Mehr Informationen zu der Berechnung der Prio anzeigen"):
             st.write("""Die Prio der Subareas wird wie folgt berechnet: """)
 
         # st.info('st.info')
@@ -267,11 +266,12 @@ def main():
     
     # --- tab 2 ---
     with tab2:
-        st.write('ℹ️ Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
+        st.write('Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
         
         # st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
+        # st.radio('Show Info', options=[], help='helping for sure')
 
-        st.radio('Show Info', options=[], help='helping for sure')
+        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         with st.expander("ℹ️ Mehr Informationen zur Karte anzeigen"):
             st.write("""
@@ -282,10 +282,7 @@ def main():
                      - **grau** - no data - keine aktuellen Kapazitätsdaten verfügbar
                     """)
 
-        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
-
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
-
 
         color_map = {
             'überfüllt': 'red',
