@@ -83,7 +83,11 @@ def print_message(message_type, message_text):
 @st.cache_data
 def make_dataframe_of_subarea(selected_option, stations_df):
     """Creates a DataFrame for the selected subarea based on the 'subarea' column."""
-    subarea_df = stations_df[stations_df['subarea'] == selected_option]
+    if selected_option == 'Alle':
+        subarea_df = stations_df.copy()
+    else:
+        subarea_df = stations_df[stations_df['subarea'] == selected_option]
+
     subarea_df = subarea_df.sort_values(
         ['Prio', 'Delta'],
         ascending=[False, False],  # Sortiere 'Prio' absteigend und 'Delta' in Bezug auf den absoluten Wert
@@ -223,6 +227,7 @@ def main():
 
         subareas = make_subareas_dataframe(stations_df)
         ss['subareas'] = subareas['subarea'].tolist()
+        ss['subareas'].append('Alle')  # Option hinzufügen
 
         st.dataframe(subareas, use_container_width=True)
 
@@ -244,7 +249,8 @@ def main():
         fig = px.scatter_mapbox(
             subarea_df, 
             lat='latitude', 
-            lon='longitude', 
+            lon='longitude',
+            title=f"Teilgebiet: {selected_option}",
             hover_name='station_name',
             hover_data={
                 'current_capacity':True,
@@ -281,6 +287,8 @@ def main():
         # Show the map
         st.plotly_chart(fig)
 
+        st.info('ⓘ Die Farben bedeuten:\nrot - überfüllt - mehr als 80%\nblau - zu leer - weniger als 20% ')
+
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
 
@@ -302,6 +310,54 @@ def main():
     with tab4:
         st.write("### Predictions")
         print_message(pred_message_type, pred_message_text)
+
+        # st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
+        
+        # selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
+
+        # subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
+
+        # # Plot the map
+        # fig = px.scatter_mapbox(
+        #     subarea_df, 
+        #     lat='latitude', 
+        #     lon='longitude', 
+        #     hover_name='station_name',
+        #     hover_data={
+        #         'current_capacity':True,
+        #         'maximum_capacity': True,
+        #         'Delta': True,
+        #         'latitude': False,  # Disable latitude hover
+        #         'longitude': False,  # Disable longitude hover
+        #         'color': False
+        #     },
+        #     color='color',  # Use the new column for colors
+        #     color_discrete_map={
+        #             'überfüllt': 'red',
+        #             'zu leer': 'blue',
+        #             'okay': 'green'
+        #         },
+        #     zoom=10.2,
+        #     height=600,
+        #     labels={
+        #         'color': 'Station Info'  # Change title of the legend
+        #     }
+        # )
+
+        # # Set the Mapbox style (requires an internet connection)
+        # fig.update_layout(mapbox_style="open-street-map")
+
+        # # Adjust the hoverlabel color # bgcolor=subarea_df['color'],
+        # fig.update_traces(marker=dict(size=12), 
+        #                 hoverlabel=dict(font=dict(
+        #                                     family='Arial', 
+        #                                     size=12,
+        #                                     color='black'
+        #                                 )))
+
+        # # Show the map
+        # st.plotly_chart(fig)
+
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
