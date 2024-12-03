@@ -338,10 +338,7 @@ def main():
 
         # Create a Google Maps URL
         google_maps_url = f"https://www.google.com/maps/search/?api=1&query={station_data['latitude']},{station_data['longitude']}"
-
-        # Create a button to open the Google Maps URL
-        if st.button(f"[Öffne {selected_station} in Google Maps]({google_maps_url})"):
-            st.markdown(f"[Klicken Sie hier, um Google Maps zu öffnen]({google_maps_url})")
+        st.markdown(f"[Klicken Sie hier, um {selected_station} in Google Maps zu öffnen]({google_maps_url})")
 
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
