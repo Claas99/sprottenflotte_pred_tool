@@ -316,7 +316,7 @@ def main():
                 'longitude': False,  # Disable longitude hover
                 'color': False
             },
-            color='color',  # Use the new column for colors
+            color='color_info',  # Use the new column for colors
             # color_discrete_map=color_map,
             zoom=10.2,
             height=600,
