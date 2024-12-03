@@ -95,8 +95,8 @@ def make_dataframe_of_subarea(selected_option, stations_df):
 
 def make_subareas_dataframe(stations_df):
     """Creates a DataFrame for the subareas, mean delta, and sort"""
-    result_df = stations_df.groupby('subarea')['Delta'].apply(lambda x: x.abs().mean()).reset_index(name='Mean Absolute Delta')
-    result_df = result_df.sort_values('Mean Absolute Delta', ascending=False).reset_index(drop=True)
+    result_df = stations_df.groupby('subarea')['Delta'].apply(lambda x: x.abs().mean()).reset_index(name='mean_absolute_Delta')
+    result_df = result_df.sort_values('mean_absolute_Delta', ascending=False).reset_index(drop=True)
     result_df.index += 1
     return result_df
 
@@ -185,26 +185,24 @@ def main():
     # Berechne das Delta zu max_capacity
     stations_df['Delta'] = stations_df['current_capacity'] - stations_df['maximum_capacity']
 
-    # Bedingungen und Priorität festlegen
+    # berechne prio Bedingungen für die Priorisierung
     conditions = [
-        stations_df['Delta'] >= 0.8 * stations_df['maximum_capacity'],  # Delta >= 80% der MaxCapacity
-        stations_df['Delta'] < -0.8 * stations_df['maximum_capacity'],  # Delta < -80% der MaxCapacity
-        stations_df['Delta'] < -0.6 * stations_df['maximum_capacity'],  # Delta < -60% der MaxCapacity
-        stations_df['Delta'] >= 0.6 * stations_df['maximum_capacity']   # Delta >= 60% der MaxCapacity
+        (stations_df['current_capacity'] > 0.9 * stations_df['maximum_capacity']) | 
+        (stations_df['current_capacity'] < 0.1 * stations_df['maximum_capacity']),  # Sehr hoch oder sehr niedrig
+        (stations_df['current_capacity'] > 0.8 * stations_df['maximum_capacity']) | 
+        (stations_df['current_capacity'] < 0.2 * stations_df['maximum_capacity'])   # Hoch oder niedrig
     ]
-    choices = ['❗️❗️', '❗️❗️', '❗️', '❗️']
-
+    # Wahl der Prioritäten entsprechend den Bedingungen
+    choices = ['❗️❗️', '❗️']
+    # Zuweisung der Prioritäten
     stations_df['Prio'] = np.select(conditions, choices, default='')
 
-    # Add a new column to categorize Teilbereich_delta
-    # stations_df['Delta_color'] = stations_df['Delta'].apply(
-    #     lambda x: 'überfüllt' if x >= 0.8 * stations_df['maximum_capacity'] 
-    #     else ('zu leer' if x <= -0.8 * stations_df['maximum_capacity'] 
-    #     else 'okay')
-    # )
-    stations_df['Delta_color'] = stations_df.apply(
-        lambda row: 'überfüllt' if row['Delta'] >= 0.8 * row['maximum_capacity'] 
-        else ('zu leer' if row['Delta'] <= -0.8 * row['maximum_capacity'] else 'okay'),
+
+    # Add a new column to color
+    stations_df['color'] = stations_df.apply(
+        lambda row: 'überfüllt' if row['current_capacity'] >= 0.8 * row['maximum_capacity']
+                    else 'zu leer' if row['current_capacity'] <= 0.2 * row['maximum_capacity'] 
+                    else 'okay',
         axis=1
     )
 
@@ -228,10 +226,11 @@ def main():
 
         st.dataframe(subareas, use_container_width=True)
 
-        st.info('i: st.info')
-        st.success('st.success')
-        st.error('st.error')
-        st.warning('st.warning')
+        st.info('ⓘ Die Prio der Subareas wird wie folgt berechnet: ')
+        # st.info('st.info')
+        # st.success('st.success')
+        # st.error('st.error')
+        # st.warning('st.warning')
     
     # --- tab 2 ---
     with tab2:
@@ -253,9 +252,9 @@ def main():
                 'Delta': True,
                 'latitude': False,  # Disable latitude hover
                 'longitude': False,  # Disable longitude hover
-                'Delta_color': False
+                'color': False
             },
-            color='Delta_color',  # Use the new column for colors
+            color='color',  # Use the new column for colors
             color_discrete_map={
                     'überfüllt': 'red',
                     'zu leer': 'blue',
@@ -264,14 +263,14 @@ def main():
             zoom=10.2,
             height=600,
             labels={
-                'Delta_color': 'Station Info'  # Change title of the legend
+                'color': 'Station Info'  # Change title of the legend
             }
         )
 
         # Set the Mapbox style (requires an internet connection)
         fig.update_layout(mapbox_style="open-street-map")
 
-        # Adjust the hoverlabel color # bgcolor=subarea_df['Delta_color'],
+        # Adjust the hoverlabel color # bgcolor=subarea_df['color'],
         fig.update_traces(marker=dict(size=12), 
                         hoverlabel=dict(font=dict(
                                             family='Arial', 
