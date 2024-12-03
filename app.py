@@ -299,7 +299,7 @@ def main():
         # }
 
         # Create a list of background colors for the hover labels based on point colors
-        hover_bg_colors = [color_map[color] for color in subarea_df['color']]
+        # hover_bg_colors = [color_map[color] for color in subarea_df['color']]
 
         # Plot the map
         fig = px.scatter_mapbox(
