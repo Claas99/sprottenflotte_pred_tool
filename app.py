@@ -417,10 +417,6 @@ def main():
         full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
         st.dataframe(full_df)
 
-
-    with tab6:
-        
-
     st.button("Reset App", on_click=reset_app)
 
 # --- Entry Point ---
