@@ -173,18 +173,18 @@ def main():
     # Hole die aktuellen Kapazitätswerte aus predictions_df
     latest_available_bikes = get_latest_available_bikes(data_df)
 
-    # Füge die Werte in die Spalte 'Aktuelle_Kapazität' im stations_df ein
-    stations_df['Aktuelle_Kapazität'] = stations_df['entityId'].map(latest_available_bikes)
+    # Füge die Werte in die Spalte 'current_capacity' im stations_df ein
+    stations_df['current_capacity'] = stations_df['entityId'].map(latest_available_bikes)
 
     # Berechne das Delta zu max_capacity
-    stations_df['Delta'] = stations_df['Aktuelle_Kapazität'] - stations_df['maximum_capacity']
+    stations_df['Delta'] = stations_df['current_capacity'] - stations_df['maximum_capacity']
 
     # Bedingungen und Priorität festlegen
     conditions = [
-        stations_df['Delta'] >= 7,
-        stations_df['Delta'] < -7,
-        stations_df['Delta'] < -5,
-        stations_df['Delta'] >= 5
+        stations_df['Delta'] >= 0.8 * stations_df['maximum_capacity'],  # Delta >= 80% der MaxCapacity
+        stations_df['Delta'] < -0.8 * stations_df['maximum_capacity'],  # Delta < -80% der MaxCapacity
+        stations_df['Delta'] < -0.6 * stations_df['maximum_capacity'],  # Delta < -60% der MaxCapacity
+        stations_df['Delta'] >= 0.6 * stations_df['maximum_capacity']   # Delta >= 60% der MaxCapacity
     ]
     choices = ['❗️❗️', '❗️❗️', '❗️', '❗️']
 
@@ -192,7 +192,9 @@ def main():
 
     # Add a new column to categorize Teilbereich_delta
     stations_df['Delta_color'] = stations_df['Delta'].apply(
-        lambda x: 'überfüllt' if x >= 5 else ('zu leer' if x <= -5 else 'okay')
+        lambda x: 'überfüllt' if x >= 0.8 * stations_df['maximum_capacity'] 
+        else ('zu leer' if x <= -0.8 * stations_df['maximum_capacity'] 
+        else 'okay')
     )
 
     # --- initialise ---
@@ -234,7 +236,7 @@ def main():
             lon='longitude', 
             hover_name='station_name',
             hover_data={
-                'Aktuelle_Kapazität':True,
+                'current_capacity':True,
                 'maximum_capacity': True,
                 'Delta': True,
                 'latitude': False,  # Disable latitude hover
@@ -268,7 +270,7 @@ def main():
         # Show the map
         st.plotly_chart(fig)
 
-        columns_to_show = ['subarea', 'station_name', 'Aktuelle_Kapazität', 'maximum_capacity',  'Delta', 'Prio']
+        columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
 
         st.dataframe(subarea_df)
