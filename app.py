@@ -117,7 +117,7 @@ def get_full_df_per_station(stations_df, predictions_df):
     predictions_df['time_utc'] = pd.to_datetime(predictions_df['prediction_time_utc'])
 
     full_df = pd.concat([stations_df, predictions_df], ignore_index=True)
-    full_df = full_df.sort_values(by=['entityID','time_utc']).reset_index(drop=True)
+    full_df = full_df.sort_values(by=['entityId','time_utc']).reset_index(drop=True)
 
     return full_df
 
