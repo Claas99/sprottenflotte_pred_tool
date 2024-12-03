@@ -322,7 +322,7 @@ def main():
 
         # Adjust the hoverlabel color # bgcolor=subarea_df['color'],
         fig.update_traces(marker=dict(size=12),
-                        bgcolor=color_map,
+                        bgcolor=subarea_df['color'],
                         hoverlabel=dict(font=dict(
                                             family='Arial', 
                                             size=12,
