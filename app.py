@@ -149,7 +149,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
                 prio += 1
     
         result_df = pd.concat([result_df, pd.DataFrame({'Teilgebiet': [teilbereich], 'Station': [station], 'Prio': [prio]})], ignore_index=True)
-    prio = 0
+        prio = 0
     return result_df
 
 
