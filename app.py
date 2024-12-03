@@ -271,6 +271,10 @@ def main():
 
         st.radio('Show Info', options=list, help='helping for sure')
 
+        with st.expander("Mehr Informationen anzeigen"):
+            st.write("Hier sind einige zusätzliche Informationen, die im Expander verborgen sind.")
+    
+
         selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
