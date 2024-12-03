@@ -243,6 +243,17 @@ def main():
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
+
+        color_map = {
+            'überfüllt': 'red',
+            'zu leer': 'blue',
+            'okay': 'green',
+            'no data': 'grey'
+        }
+
+        # Create a list of background colors for the hover labels based on point colors
+        hover_bg_colors = [color_map[color] for color in subarea_df['color']]
+
         # Plot the map
         fig = px.scatter_mapbox(
             subarea_df, 
@@ -259,12 +270,7 @@ def main():
                 'color': False
             },
             color='color',  # Use the new column for colors
-            color_discrete_map={
-                    'überfüllt': 'red',
-                    'zu leer': 'blue',
-                    'okay': 'green',
-                    'no data': 'grey'
-                },
+            color_discrete_map=color_map,
             zoom=10.2,
             height=600,
             labels={
@@ -276,7 +282,8 @@ def main():
         fig.update_layout(mapbox_style="open-street-map")
 
         # Adjust the hoverlabel color # bgcolor=subarea_df['color'],
-        fig.update_traces(marker=dict(size=12), 
+        fig.update_traces(marker=dict(size=12),
+                        bgcolor=hover_bg_colors,
                         hoverlabel=dict(font=dict(
                                             family='Arial', 
                                             size=12,
