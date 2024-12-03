@@ -197,10 +197,15 @@ def main():
     stations_df['Prio'] = np.select(conditions, choices, default='')
 
     # Add a new column to categorize Teilbereich_delta
-    stations_df['Delta_color'] = stations_df['Delta'].apply(
-        lambda x: 'überfüllt' if x >= 0.8 * stations_df['maximum_capacity'] 
-        else ('zu leer' if x <= -0.8 * stations_df['maximum_capacity'] 
-        else 'okay')
+    # stations_df['Delta_color'] = stations_df['Delta'].apply(
+    #     lambda x: 'überfüllt' if x >= 0.8 * stations_df['maximum_capacity'] 
+    #     else ('zu leer' if x <= -0.8 * stations_df['maximum_capacity'] 
+    #     else 'okay')
+    # )
+    stations_df['Delta_color'] = stations_df.apply(
+        lambda row: 'überfüllt' if row['Delta'] >= 0.8 * row['maximum_capacity'] 
+        else ('zu leer' if row['Delta'] <= -0.8 * row['maximum_capacity'] else 'okay'),
+        axis=1
     )
 
     # --- initialise ---
