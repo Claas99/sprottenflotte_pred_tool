@@ -304,7 +304,7 @@ def main():
             st.error("Failed to load prediction data.")
 
     with tab5:
-        full_df = get_full_df_per_station(data_df, predictions_df)
+        full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
         st.dataframe(full_df)
 
 
