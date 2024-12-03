@@ -207,6 +207,7 @@ def main():
         else ('zu leer' if row['Delta'] <= -0.8 * row['maximum_capacity'] else 'okay'),
         axis=1
     )
+    
 
     # --- initialise ---
     # Initialise Streamlit Interface
