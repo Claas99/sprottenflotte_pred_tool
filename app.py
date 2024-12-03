@@ -121,7 +121,7 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
     predictions_df['time_utc'] = pd.to_datetime(predictions_df['prediction_time_utc'])
     predictions_df['availableBikeNumber'] = predictions_df['prediction_availableBikeNumber']
 
-    full_df = pd.concat([stations_df['time_utc','availableBikeNumber'], predictions_df['time_utc','availableBikeNumber']], ignore_index=True)
+    full_df = pd.concat([stations_df[['time_utc','availableBikeNumber']], predictions_df[['time_utc','availableBikeNumber']]], ignore_index=True)
     full_df = full_df.sort_values(by=['entityId','time_utc']).reset_index(drop=True)
     full_df = full_df.merge(subarea_df[['entityId', 'subarea']], on='entityId', how='left')
 
@@ -141,7 +141,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         teilbereich = full_df[full_df['entityId'] == station]['subarea'].unique()[0]
         max_capacity = subareas_df[subareas_df['subarea'] == teilbereich]['maximum_capacity'].unique()[0]
         station_data = full_df[full_df['entityId'] == station]
-        for pred in station_data['prediction_availableBikeNumber']:
+        for pred in station_data['availableBikeNumber']:
             # Berechne die Differenz zwischen 
             if pred >= (0.8 * max_capacity):
                 prio += 1

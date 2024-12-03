@@ -39,7 +39,7 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 28795,Holzdorf ,15,54.55162,9.89846,Eckernförde Umland Nord
 28794,Holzdorf   Neu Seeholz,15,54.55693,9.90928,Eckernförde Umland Nord
 28793,Goosefeld,15,54.43037,9.8141,Eckernförde
-28792,Goetheby Holm,15,54.484311,9.713093,Schönberg
+28792,Goetheby Holm,15,54.484311,9.713093,Eckernförde
 28791,Fleckeby   Schmiederedder,15,54.481444,9.695621,Eckernförde
 28790,ZOB Vogelsang Gruenholz,15,54.571396,9.955614,Eckernförde Umland Nord
 28789,Mehrzweckhalle Barkelsby,15,54.50248,9.83552,Eckernförde
@@ -50,7 +50,7 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 27452,Lamp sche Koppel,15,54.395033,10.379145,Schönberg
 27451,Schoenberg Eichkamp,15,54.387144,10.380611,Schönberg
 27450,Wisch Ort,15,54.408917,10.341622,Schönberg
-27449,Wisch Heidkate,30,54.433856,10.319238,Kiel Umland
+27449,Wisch Heidkate,30,54.433856,10.319238,Schönberg
 27448,Wendtorf Marina,30,54.417324,10.283525,Schönberg
 27447,Wendtorf Edeka,20,54.411912,10.285885,Schönberg
 27446,Stoltenberg Doerpshus,15,54.344644,10.347584,Schönberg
