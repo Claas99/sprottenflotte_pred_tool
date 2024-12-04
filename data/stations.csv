@@ -1,7 +1,7 @@
 entityId,station_name,maximum_capacity,latitude,longitude,subarea
 30434,Felde Gemeindezentrum,18,54.299552,9.933817,Felde
 30207,Sporthalle Saxtorfer Weg,15,54.487005,9.835833,Eckernförde
-30151,Eiche Daenischenhagen,15,54.424663,10.127872,Kiel
+30151,Eiche Daenischenhagen,15,54.424663,10.127872,Kiel Nord
 30147,Bushaltestelle Eiderbruecke,15,54.289706,10.090042,Kiel Umland
 30146,Herzog Friedrich Strasse  ZOB ,25,54.317114,10.133099,Kiel Innenstadt
 30145,Rondeel,15,54.308532,10.125048,Kiel Innenstadt
@@ -71,7 +71,7 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 27374,Osterby,15,54.453385,9.753969,Eckernförde
 27373,Sehestedt Markttreff,15,54.365043,9.817198,Rendsburg
 27372,Gross Wittensee,15,54.404468,9.769934,Eckernförde
-27183,Schilksee Olympiazentrum,30,54.425453,10.168224,Kiel
+27183,Schilksee Olympiazentrum,30,54.425453,10.168224,Kiel Nord
 26889,Wilhelmplatz,30,54.322734,10.121238,Kiel Innenstadt
 26805,Amt Molfsee,15,54.281617,10.079457,Kiel Umland
 26730,Schoenberger Strand,30,54.412817,10.414665,Schönberg
@@ -171,7 +171,7 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 24392,Andreas Gayk Strasse,30,54.318199,10.134068,Kiel Innenstadt
 24391,Bluecherplatz,30,54.341722,10.136861,Kiel Westen
 24390,CITTI PARK,30,54.311667,10.099722,Kiel Westen
-24389,Hansastr  Gutenbergstr ,20,54.332111,10.124861,Kiel
+24389,Hansastr  Gutenbergstr ,20,54.332111,10.124861,Kiel Westen
 24388,Schoenkirchen Gemeindehaus,20,54.339056,10.223028,Kiel Osten
 24387,Moenkeberg Anleger,25,54.351445,10.178445,Kiel Osten
 24386,Faehranleger Moeltenort,14,54.376793,10.196216,Kiel Osten
@@ -184,7 +184,7 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 24378,Muthesius Kunsthochschule,20,54.327389,10.128333,Kiel Innenstadt
 24377,Kronshagen Rathaus,25,54.332704,10.085497,Kiel Westen
 24376,Kirchhofallee,20,54.316194,10.120583,Kiel Innenstadt
-24375,Hoernbad,30,54.308643,10.135253,Kiel
+24375,Hoernbad,30,54.308643,10.135253,Kiel Osten
 24374,Holsten  Hafenstrasse,20,54.321,10.135389,Kiel Innenstadt
 24373,Christian Albrechts Platz,30,54.338651,10.123843,Kiel Westen
 24372,Bahnhof Suchsdorf,20,54.349822,10.090947,Kiel Westen
