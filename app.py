@@ -482,8 +482,8 @@ def main():
                 'Delta': False,
                 'latitude': False,  # Disable latitude hover
                 'longitude': False,  # Disable longitude hover
-                'color_info': True,
-                'color': False,
+                'color_info_predictions': True,
+                'color_predictions': False,
                 'prediction_1h': True,
                 'prediction_2h': True,
                 'prediction_3h': True,
