@@ -470,7 +470,7 @@ def main():
                      - **grau** - no data - keine Daten verfügbar
                     """)
 
-        selected_option = st.selectbox("Wähle ein Teilgebiet Predictions aus:", ss['subareas'], index=0)
+        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
