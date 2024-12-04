@@ -461,11 +461,13 @@ def main():
             st.write("""
                      Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.
 
+                     In Zukunft bedeutet bei Stunde 5 der Predictions.
+
                      **Die Farben bedeuten:**
                      - **rot** - in Zukunft zu leer - 'zu leer - zu leer', 'okay - zu leer', 'überfüllt - zu leer'
                      - **grün** - in Zukunft okay - 'zu leer - okay', 'okay - okay', 'überfüllt - okay'
                      - **blau** - in Zukunft überfüllt - 'zu leer - überfüllt', 'okay - überfüllt', 'überfüllt - überfüllt'
-                     - **grau** - no data - zz
+                     - **grau** - no data - keine Daten verfügbar
                     """)
 
         # selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
