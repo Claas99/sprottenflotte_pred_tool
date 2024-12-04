@@ -538,7 +538,6 @@ def main():
             subarea_df = full_df
         else:
             subarea_df = full_df[full_df['subarea'] == selected_option]
-        st.dataframe(subarea_df, use_container_width=True)
 
         fig = px.line(
             subarea_df,
@@ -563,6 +562,8 @@ def main():
 
         # Show the plot
         st.plotly_chart(fig)
+
+        st.dataframe(subarea_df[['entityId', 'station_name', 'availableBikeNumber', 'deutsche_timezone']], use_container_width=True)
 
     st.button("Reset App", on_click=reset_app)
 
