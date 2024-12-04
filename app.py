@@ -381,7 +381,6 @@ def main():
                      - **rot** - zu leer - weniger als 20% der maximalen Kapazität
                      - **grün** - okay - zwischen 20% und 80% der maximalen Kapazität
                      - **blau** - überfüllt - mehr als 80% der maximalen Kapazität
-
                      - **grau** - no data - keine aktuellen Kapazitätsdaten verfügbar
                     """)
 
@@ -463,7 +462,6 @@ def main():
                      - **rot** - in Zukunft zu leer - 'zu leer - zu leer', 'okay - zu leer', 'überfüllt - zu leer'
                      - **grün** - in Zukunft okay - 'zu leer - okay', 'okay - okay', 'überfüllt - okay'
                      - **blau** - in Zukunft überfüllt - 'zu leer - überfüllt', 'okay - überfüllt', 'überfüllt - überfüllt'
-
                      - **grau** - no data - zz
                     """)
 
