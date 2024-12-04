@@ -232,7 +232,7 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
 
     full_df = pd.concat([stations_df[['entityId','time_utc','availableBikeNumber']], predictions_df[['entityId','time_utc','availableBikeNumber']]], ignore_index=True)
     full_df = full_df.sort_values(by=['entityId','time_utc']).reset_index(drop=True)
-    full_df = full_df.merge(subarea_df[['entityId', 'subarea']], on='entityId', how='left')
+    full_df = full_df.merge(subarea_df[['entityId', 'subarea', 'station']], on='entityId', how='left')
 
     return full_df
 
@@ -313,7 +313,7 @@ def main():
 
     data_df, data_message_type, data_message_text = data.update_station_data()
     predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
-
+    full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
     # Define a color map
     color_map = {
         'überfüllt': 'blue',
@@ -534,8 +534,34 @@ def main():
 
     # --- tab 4 ---
     with tab4:
-        full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
-        st.dataframe(full_df)
+        selected_option = st.selectbox("Wähle ein Teilgebiet für die Analyse aus:", ss['subareas'], index=0)
+
+        subarea_df = full_df[full_df['subarea'] == selected_option]
+        st.dataframe(subarea_df)
+
+        fig = px.line(
+            subarea_df,
+            x='time_utc',
+            y='availableBikeNumber',
+            color='station',
+            title="Bike Availability Over Time by Station",
+            labels={
+                "time_utc": "Time (UTC)",
+                "availableBikeNumber": "Available Bikes",
+                "station": "Station"
+            }
+        )
+
+        # Customize the layout
+        fig.update_layout(
+            xaxis_title="Time (UTC)",
+            yaxis_title="Available Bikes",
+            legend_title="Station",
+            template="plotly_white"
+    )
+
+        # Show the plot
+        st.plotly_chart(fig)
 
     st.button("Reset App", on_click=reset_app)
 
