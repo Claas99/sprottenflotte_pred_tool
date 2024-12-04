@@ -537,7 +537,7 @@ def main():
             subarea_df = full_df
         else:
             subarea_df = full_df[full_df['subarea'] == selected_option]
-        st.dataframe(subarea_df)
+        st.dataframe(subarea_df, use_container_width=True)
 
         fig = px.line(
             subarea_df,
