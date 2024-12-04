@@ -232,7 +232,7 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
 
     full_df = pd.concat([stations_df[['entityId','time_utc','availableBikeNumber']], predictions_df[['entityId','time_utc','availableBikeNumber']]], ignore_index=True)
     full_df = full_df.sort_values(by=['entityId','time_utc']).reset_index(drop=True)
-    full_df = full_df.merge(subarea_df[['entityId', 'subarea', 'station']], on='entityId', how='left')
+    full_df = full_df.merge(subarea_df[['entityId', 'subarea', 'station_name']], on='entityId', how='left')
 
     return full_df
 
@@ -543,7 +543,7 @@ def main():
             subarea_df,
             x='time_utc',
             y='availableBikeNumber',
-            color='station',
+            color='station_name',
             title="Bike Availability Over Time by Station",
             labels={
                 "time_utc": "Time (UTC)",
