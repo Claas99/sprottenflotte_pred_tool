@@ -381,52 +381,64 @@ def main():
         st.write("### Predictions")
         print_message(pred_message_type, pred_message_text)
 
-        # st.write('Als Default ist hier das Teilgebiet ausgewählt, dass die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.')
-        
-        # selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
+        with st.expander("ℹ️ Mehr Informationen zur Karte anzeigen"):
+            st.write("""
+                     Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.
+
+                     **Die Farben bedeuten:**
+                     - **xx** - yy - zz
+                     - **xx** - y y - zz
+                     - **xx** - yy - zz
+                     - **xx** - yy - zz
+                    """)
+
+        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         # subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
-        # # Plot the map
-        # fig = px.scatter_mapbox(
-        #     subarea_df, 
-        #     lat='latitude', 
-        #     lon='longitude', 
-        #     hover_name='station_name',
-        #     hover_data={
-        #         'current_capacity':True,
-        #         'maximum_capacity': True,
-        #         'Delta': True,
-        #         'latitude': False,  # Disable latitude hover
-        #         'longitude': False,  # Disable longitude hover
-        #         'color': False
-        #     },
-        #     color='color',  # Use the new column for colors
-        #     color_discrete_map={
-        #             'überfüllt': 'red',
-        #             'zu leer': 'blue',
-        #             'okay': 'green'
-        #         },
-        #     zoom=10.2,
-        #     height=600,
-        #     labels={
-        #         'color': 'Station Info'  # Change title of the legend
-        #     }
-        # )
+        # Plot the map
+        fig = px.scatter_mapbox(
+            subarea_df, 
+            lat='latitude', 
+            lon='longitude',
+            title=f"Teilgebiet: {selected_option}",
+            hover_name='station_name',
+            hover_data={
+                'current_capacity':True,
+                'maximum_capacity': True,
+                'Delta': False,
+                # 'latitude': False,  # Disable latitude hover
+                # 'longitude': False,  # Disable longitude hover
+                'color_info': False,
+                'color': False,
+                'prediction_1': True,
+                'prediction_2': True,
+                'prediction_3': True,
+                'prediction_4': True,
+                'prediction_5': True
+            },
+            color='color_info',  # Use the new column for colors
+            color_discrete_map=color_map,
+            zoom=10.2,
+            height=600,
+            labels={
+                'color_info': 'Station Info'  # Change title of the legend
+            }
+        )
 
-        # # Set the Mapbox style (requires an internet connection)
-        # fig.update_layout(mapbox_style="open-street-map")
+        # Set the Mapbox style (requires an internet connection)
+        fig.update_layout(mapbox_style="open-street-map")
 
-        # # Adjust the hoverlabel color # bgcolor=subarea_df['color'],
-        # fig.update_traces(marker=dict(size=12), 
-        #                 hoverlabel=dict(font=dict(
-        #                                     family='Arial', 
-        #                                     size=12,
-        #                                     color='black'
-        #                                 )))
+        # Adjust the hoverlabel color # bgcolor=subarea_df['color'],
+        fig.update_traces(marker=dict(size=12),
+                        hoverlabel=dict(#font_family='Serif',
+                                        font_size=12,
+                                        font_color='#31333F',
+                                        bgcolor='#FCFEF6',
+                                        bordercolor='#9ec044'))
 
-        # # Show the map
-        # st.plotly_chart(fig)
+        # Show the map
+        st.plotly_chart(fig)
 
 
         if predictions_df is not None:
