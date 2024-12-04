@@ -244,6 +244,8 @@ def main():
 
     stations_df['color'] = stations_df['color_info'].map(color_map)
 
+    # add the 5 predictions to stations_df
+
     # --- initialise ---
     # Initialise Streamlit Interface
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
