@@ -438,14 +438,14 @@ def main():
         st.markdown(f"[Klicken Sie hier, um {selected_station} in Google Maps zu öffnen]({google_maps_url})")
 
         st.write("""***
-                ## Historical Data""")
+                Historische Daten""")
 
         if data_df is not None:
             st.dataframe(data_df)
         else:
             st.error("Failed to load historical data.")
 
-        st.write("Stations Data")
+        st.write("Stations Data:")
 
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
@@ -517,7 +517,7 @@ def main():
         st.plotly_chart(fig)
 
         st.write("""***
-                ## Data""")
+                **Daten**""")
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
