@@ -339,7 +339,7 @@ def main():
         'okay - okay': 'green',
         'okay - überfüllt': 'blue',
 
-        'no data': 'gray'
+        'no data': 'grey'
     }
 
     # add the 5 predictions to stations_df
