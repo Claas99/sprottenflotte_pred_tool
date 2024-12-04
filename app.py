@@ -438,7 +438,7 @@ def main():
         st.markdown(f"[Klicken Sie hier, um {selected_station} in Google Maps zu öffnen]({google_maps_url})")
 
         st.write("***")
-        st.write("**Historische Daten**")
+        st.write("Historische Daten:")
 
         if data_df is not None:
             st.dataframe(data_df)
