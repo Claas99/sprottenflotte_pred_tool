@@ -199,18 +199,18 @@ def add_predictions_to_stations_df(stations_df, predictions_df, color_map_predic
         condition_future_okay = not (condition_future_full or condition_future_empty)
         
         if condition_current_empty:
-            if condition_future_empty: return 'rot'
-            elif condition_future_okay: return 'grün'
-            elif condition_future_full: return 'blau'
+            if condition_future_empty: return 'zu leer - zu leer'
+            elif condition_future_okay: return 'zu leer - okay'
+            elif condition_future_full: return 'zu leer - überfüllt'
         elif condition_current_full:
-            if condition_future_empty: return 'rot'
-            elif condition_future_okay: return 'grün'
-            elif condition_future_full: return 'blau'
+            if condition_future_empty: return 'überfüllt - zu leer'
+            elif condition_future_okay: return 'überfüllt - okay'
+            elif condition_future_full: return 'überfüllt - überfüllt'
         elif condition_current_okay:
-            if condition_future_empty: return 'rot'
-            elif condition_future_okay: return 'grün'
-            elif condition_future_full: return 'blau'
-        return 'grau'  # default fallback color
+            if condition_future_empty: return 'okay - zu leer'
+            elif condition_future_okay: return 'okay - okay'
+            elif condition_future_full: return 'okay - überfüllt'
+        return 'no data'  # default fallback color
 
     # Apply the determine_color function
     stations_df['color_info_predictions'] = stations_df.apply(determine_color, axis=1)
@@ -312,8 +312,8 @@ def main():
 
     # Define a color map
     color_map = {
-        'überfüllt': 'red',
-        'zu leer': 'blue',
+        'überfüllt': 'blue',
+        'zu leer': 'rot',
         'okay': 'green',
         'no data': 'grey'
     }
@@ -323,10 +323,19 @@ def main():
 
     # Map the colors based on a predefined color map
     color_map_predictions = {
-        'rot': 'red',
-        'grün': 'green',
-        'blau': 'blue',
-        'grau': 'gray'
+        'zu leer - zu leer': 'red',
+        'zu leer - okay': 'green',
+        'zu leer - überfüllt': 'blue',
+
+        'überfüllt - zu leer': 'red',
+        'überfüllt - okay': 'green',
+        'überfüllt - überfüllt': 'blue',
+
+        'okay - zu leer': 'red',
+        'okay - okay': 'green',
+        'okay - überfüllt': 'blue',
+
+        'no data': 'gray'
     }
 
     # add the 5 predictions to stations_df
@@ -369,8 +378,8 @@ def main():
                      Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.
 
                      **Die Farben bedeuten:**
-                     - **rot** - überfüllt - mehr als 80% der maximalen Kapazität
-                     - **blau** - zu leer - weniger als 20% der maximalen Kapazität
+                     - **blau** - überfüllt - mehr als 80% der maximalen Kapazität
+                     - **rot** - zu leer - weniger als 20% der maximalen Kapazität
                      - **grün** - okay - zwischen 20% und 80% der maximalen Kapazität
                      - **grau** - no data - keine aktuellen Kapazitätsdaten verfügbar
                     """)
@@ -473,7 +482,7 @@ def main():
                 'Delta': False,
                 'latitude': False,  # Disable latitude hover
                 'longitude': False,  # Disable longitude hover
-                'color_info': False,
+                'color_info': True,
                 'color': False,
                 'prediction_1h': True,
                 'prediction_2h': True,
