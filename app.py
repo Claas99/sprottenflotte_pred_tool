@@ -104,6 +104,7 @@ def make_subareas_dataframe(stations_df):
     result_df.index += 1
     return result_df
 
+
 def get_latest_available_bikes(stations_df):
     # Sortiere die Daten nach prediction_time_utc, um sicherzustellen, dass der letzte Wert genommen wird
     stations_df_sorted = stations_df.sort_values(by='time_utc', ascending=True)
@@ -112,6 +113,27 @@ def get_latest_available_bikes(stations_df):
     latest_available_bikes = stations_df_sorted.groupby('entityId')['availableBikeNumber'].last()
 
     return latest_available_bikes
+
+
+def add_predictions_to_stations_df(stations_df, predictions_df):
+    """Adds 5 prediction columns to stations_df for each prediction time."""
+    
+    # Make sure both DataFrames have the necessary columns
+    if 'entityId' not in stations_df.columns:
+        raise ValueError("stations_df must contain entityId column")
+    if 'entityId' not in predictions_df.columns or 'prediction_time_utc' not in predictions_df.columns or 'prediction_availableBikeNumber' not in predictions_df.columns:
+        raise ValueError("predictions_df must contain 'entityId', 'prediction_time_utc', and 'prediction_availableBikeNumber' columns")
+    
+    # Pivot the predictions_df so that each prediction time gets its own column
+    predictions_pivot = predictions_df.pivot(index='entityId', columns='prediction_time_utc', values='prediction_availableBikeNumber')
+    
+    # Reset the column names of the pivoted DataFrame for clarity
+    predictions_pivot.columns = [f'prediction_{i+1}' for i in range(len(predictions_pivot.columns))]
+    
+    # Merge the predictions with the stations_df
+    stations_df = stations_df.merge(predictions_pivot, how='left', on='entityId')
+    
+    return stations_df
 
 
 def get_full_df_per_station(stations_df, predictions_df, subarea_df):
@@ -225,7 +247,6 @@ def main():
     # Zuweisung der Prioritäten
     stations_df['Prio'] = np.select(conditions, choices, default='')
 
-
     # Add a new column to color
     stations_df['color_info'] = stations_df.apply(
         lambda row: 'no data' if pd.isna(row['current_capacity'])
@@ -245,6 +266,7 @@ def main():
     stations_df['color'] = stations_df['color_info'].map(color_map)
 
     # add the 5 predictions to stations_df
+    stations_df = add_predictions_to_stations_df(stations_df, predictions_df)
 
     # --- initialise ---
     # Initialise Streamlit Interface
