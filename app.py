@@ -115,7 +115,56 @@ def get_latest_available_bikes(stations_df):
     return latest_available_bikes
 
 
-def add_predictions_to_stations_df(stations_df, predictions_df):
+def add_current_capacity_to_stations_df(stations_df, data_df, color_map):
+    """
+    Adds current capacity, delta, priority, and color information to the stations DataFrame.
+
+    Parameters:
+    - stations_df: DataFrame containing information about stations.
+    - data_df: DataFrame containing the latest data used to compute the current capacity.
+
+    Returns:
+    - Updated stations_df with added columns: 'current_capacity', 'Delta', 'Prio', 'color_info', and 'color'.
+    """
+    # Get the latest capacity values from data_df
+    latest_available_bikes = get_latest_available_bikes(data_df)
+
+    # Add the current capacity values to the stations_df
+    stations_df['current_capacity'] = stations_df['entityId'].map(latest_available_bikes).round()
+
+    # Calculate the Delta to max_capacity
+    stations_df['Delta'] = stations_df['current_capacity'] - stations_df['maximum_capacity']
+
+    # Define conditions for priority calculation
+    conditions = [
+        (stations_df['current_capacity'] > 0.9 * stations_df['maximum_capacity']) | 
+        (stations_df['current_capacity'] < 0.1 * stations_df['maximum_capacity']),  # Very high or very low
+        (stations_df['current_capacity'] > 0.8 * stations_df['maximum_capacity']) | 
+        (stations_df['current_capacity'] < 0.2 * stations_df['maximum_capacity'])   # High or low
+    ]
+
+    # Define priority choices according to conditions
+    choices = ['❗️❗️', '❗️']
+
+    # Assign priority to stations
+    stations_df['Prio'] = np.select(conditions, choices, default='')
+
+    # Add a new column to indicate color based on station conditions
+    stations_df['color_info'] = stations_df.apply(
+        lambda row: 'no data' if pd.isna(row['current_capacity'])
+                    else 'überfüllt' if row['current_capacity'] >= 0.8 * row['maximum_capacity']
+                    else 'zu leer' if row['current_capacity'] <= 0.2 * row['maximum_capacity'] 
+                    else 'okay',
+        axis=1
+    )
+
+    # Map the colors to a new column
+    stations_df['color'] = stations_df['color_info'].map(color_map)
+
+    return stations_df
+
+
+def add_predictions_to_stations_df(stations_df, predictions_df, color_map_predictions):
     """Adds 5 prediction columns to stations_df for each prediction time."""
     
     # Make sure both DataFrames have the necessary columns
@@ -135,6 +184,38 @@ def add_predictions_to_stations_df(stations_df, predictions_df):
     
     # Merge the predictions with the stations_df
     stations_df = stations_df.merge(predictions_pivot, how='left', on='entityId')
+
+    # Define a function to determine the color based on current and future capacity status
+    def determine_color(row):
+        current = row['current_capacity']
+        future = row['prediction_5h'] # Just example: using the 5th prediction column for simplicity
+        
+        condition_current_full = current >= 0.8 * row['maximum_capacity']
+        condition_current_empty = current <= 0.2 * row['maximum_capacity']
+        condition_current_okay = not (condition_current_full or condition_current_empty)
+        
+        condition_future_full = future >= 0.8 * row['maximum_capacity']
+        condition_future_empty = future <= 0.2 * row['maximum_capacity']
+        condition_future_okay = not (condition_future_full or condition_future_empty)
+        
+        if condition_current_empty:
+            if condition_future_empty: return 'rot'
+            elif condition_future_okay: return 'grün'
+            elif condition_future_full: return 'blau'
+        elif condition_current_full:
+            if condition_future_empty: return 'rot'
+            elif condition_future_okay: return 'grün'
+            elif condition_future_full: return 'blau'
+        elif condition_current_okay:
+            if condition_future_empty: return 'rot'
+            elif condition_future_okay: return 'grün'
+            elif condition_future_full: return 'blau'
+        return 'grau'  # default fallback color
+
+    # Apply the determine_color function
+    stations_df['color_info_predictions'] = stations_df.apply(determine_color, axis=1)
+    
+    stations_df['color_predictions'] = stations_df['color_info_predictions'].map(color_map_predictions)
     
     return stations_df
 
@@ -229,45 +310,25 @@ def main():
     data_df, data_message_type, data_message_text = data.update_station_data()
     predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
 
-    # Hole die aktuellen Kapazitätswerte aus predictions_df
-    latest_available_bikes = get_latest_available_bikes(data_df)
-
-    # Füge die Werte in die Spalte 'current_capacity' im stations_df ein
-    stations_df['current_capacity'] = stations_df['entityId'].map(latest_available_bikes).round()    
-
-    # Berechne das Delta zu max_capacity
-    stations_df['Delta'] = stations_df['current_capacity'] - stations_df['maximum_capacity']
-
-    # berechne prio Bedingungen für die Priorisierung
-    conditions = [
-        (stations_df['current_capacity'] > 0.9 * stations_df['maximum_capacity']) | 
-        (stations_df['current_capacity'] < 0.1 * stations_df['maximum_capacity']),  # Sehr hoch oder sehr niedrig
-        (stations_df['current_capacity'] > 0.8 * stations_df['maximum_capacity']) | 
-        (stations_df['current_capacity'] < 0.2 * stations_df['maximum_capacity'])   # Hoch oder niedrig
-    ]
-    # Wahl der Prioritäten entsprechend den Bedingungen
-    choices = ['❗️❗️', '❗️']
-    # Zuweisung der Prioritäten
-    stations_df['Prio'] = np.select(conditions, choices, default='')
-
-    # Add a new column to color
-    stations_df['color_info'] = stations_df.apply(
-        lambda row: 'no data' if pd.isna(row['current_capacity'])
-                    else 'überfüllt' if row['current_capacity'] >= 0.8 * row['maximum_capacity']
-                    else 'zu leer' if row['current_capacity'] <= 0.2 * row['maximum_capacity'] 
-                    else 'okay',
-        axis=1
-    )
-
+    # Define a color map
     color_map = {
-            'überfüllt': 'red',
-            'zu leer': 'blue',
-            'okay': 'green',
-            'no data': 'grey'
-        }
+        'überfüllt': 'red',
+        'zu leer': 'blue',
+        'okay': 'green',
+        'no data': 'grey'
+    }
 
-    stations_df['color'] = stations_df['color_info'].map(color_map)
+    # add current capacity and color to stations_df
+    stations_df = add_current_capacity_to_stations_df(stations_df, data_df, color_map)
 
+    # Map the colors based on a predefined color map
+    color_map_predictions = {
+        'rot': 'red',
+        'grün': 'green',
+        'blau': 'blue',
+        'grau': 'gray'
+    }
+    
     # add the 5 predictions to stations_df
     stations_df = add_predictions_to_stations_df(stations_df, predictions_df)
 
@@ -410,8 +471,8 @@ def main():
                 'current_capacity':True,
                 'maximum_capacity': True,
                 'Delta': False,
-                # 'latitude': False,  # Disable latitude hover
-                # 'longitude': False,  # Disable longitude hover
+                'latitude': False,  # Disable latitude hover
+                'longitude': False,  # Disable longitude hover
                 'color_info': False,
                 'color': False,
                 'prediction_1h': True,
@@ -420,12 +481,12 @@ def main():
                 'prediction_4h': True,
                 'prediction_5h': True
             },
-            # color='color_info',  # Use the new column for colors
-            # color_discrete_map=color_map,
+            color='color_info_predictions',  # Use the new column for colors
+            color_discrete_map=color_map_predictions,
             zoom=10.2,
             height=600,
             labels={
-                'color_info': 'Station Info'  # Change title of the legend
+                'color_info_predictions': 'Station Info'  # Change title of the legend
             }
         )
 
