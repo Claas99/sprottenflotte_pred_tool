@@ -328,9 +328,9 @@ def main():
         'blau': 'blue',
         'grau': 'gray'
     }
-    
+
     # add the 5 predictions to stations_df
-    stations_df = add_predictions_to_stations_df(stations_df, predictions_df)
+    stations_df = add_predictions_to_stations_df(stations_df, predictions_df, color_map_predictions)
 
     # --- initialise ---
     # Initialise Streamlit Interface
