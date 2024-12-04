@@ -352,6 +352,13 @@ def main():
               - We are happy to hear your feedback.
              Please report any issues to Claas Resow.""")
     
+    prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
+
+    ss['subareas'] = prio_df['subarea'].tolist()
+    ss['subareas'].append('Alle')  # Option hinzufügen
+
+    selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
+
     # initialise tabs
     tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Predictions", "Testebene"])
 
@@ -359,11 +366,7 @@ def main():
     with tab1:
         st.write("### Vorhersage - Teilgebiete nach Handlungsbedarf")
 
-        prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
         st.dataframe(prio_df, use_container_width=True)
-
-        ss['subareas'] = prio_df['subarea'].tolist()
-        ss['subareas'].append('Alle')  # Option hinzufügen
 
         with st.expander("ℹ️ Mehr Informationen zu der Berechnung der Prio anzeigen"):
             st.write("""Die Prio der Subareas wird wie folgt berechnet: """)
@@ -390,8 +393,6 @@ def main():
                      - **blau** - überfüllt - mehr als 80% der maximalen Kapazität
                      - **grau** - no data - keine aktuellen Kapazitätsdaten verfügbar
                     """)
-
-        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
@@ -473,9 +474,7 @@ def main():
                      - **blau** - in Zukunft überfüllt - 'zu leer - überfüllt', 'okay - überfüllt', 'überfüllt - überfüllt'
                      - **grau** - no data - keine Daten verfügbar
                     """)
-
-        selected_option = st.selectbox("Wähle ein Teilgebiet für die Predictions aus:", ss['subareas'], index=0)
-
+            
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
         # Plot the map
@@ -534,8 +533,6 @@ def main():
 
     # --- tab 4 ---
     with tab4:
-        selected_option = st.selectbox("Wähle ein Teilgebiet für die Analyse aus:", ss['subareas'], index=0)
-
         subarea_df = full_df[full_df['subarea'] == selected_option]
         st.dataframe(subarea_df)
 
