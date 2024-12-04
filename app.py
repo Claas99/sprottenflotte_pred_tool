@@ -378,9 +378,10 @@ def main():
                      Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.
 
                      **Die Farben bedeuten:**
-                     - **blau** - überfüllt - mehr als 80% der maximalen Kapazität
                      - **rot** - zu leer - weniger als 20% der maximalen Kapazität
                      - **grün** - okay - zwischen 20% und 80% der maximalen Kapazität
+                     - **blau** - überfüllt - mehr als 80% der maximalen Kapazität
+
                      - **grau** - no data - keine aktuellen Kapazitätsdaten verfügbar
                     """)
 
@@ -459,10 +460,11 @@ def main():
                      Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.
 
                      **Die Farben bedeuten:**
-                     - **xx** - yy - zz
-                     - **xx** - y y - zz
-                     - **xx** - yy - zz
-                     - **xx** - yy - zz
+                     - **rot** - in Zukunft zu leer - 'zu leer - zu leer', 'okay - zu leer', 'überfüllt - zu leer'
+                     - **grün** - in Zukunft okay - 'zu leer - okay', 'okay - okay', 'überfüllt - okay'
+                     - **blau** - in Zukunft überfüllt - 'zu leer - überfüllt', 'okay - überfüllt', 'überfüllt - überfüllt'
+
+                     - **grau** - no data - zz
                     """)
 
         # selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
