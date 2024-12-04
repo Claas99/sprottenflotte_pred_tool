@@ -129,7 +129,7 @@ def add_predictions_to_stations_df(stations_df, predictions_df):
     
     # Round the pivoted prediction values to the nearest integer
     predictions_pivot = predictions_pivot.round(0)
-    
+
     # Reset the column names of the pivoted DataFrame for clarity
     predictions_pivot.columns = [f'prediction_{i+1}h' for i in range(len(predictions_pivot.columns))]
     
@@ -395,7 +395,7 @@ def main():
                      - **xx** - yy - zz
                     """)
 
-        selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
+        # selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
         # subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
