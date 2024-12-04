@@ -313,7 +313,7 @@ def main():
     # Define a color map
     color_map = {
         'überfüllt': 'blue',
-        'zu leer': 'rot',
+        'zu leer': 'red',
         'okay': 'green',
         'no data': 'grey'
     }
