@@ -189,6 +189,10 @@ def add_predictions_to_stations_df(stations_df, predictions_df, color_map_predic
     def determine_color(row):
         current = row['current_capacity']
         future = row['prediction_5h'] # Just example: using the 5th prediction column for simplicity
+
+         # Check for NaN values
+        if pd.isna(current) or pd.isna(future):
+            return 'no data'  # Return 'no data' which you can map to grey
         
         condition_current_full = current >= 0.8 * row['maximum_capacity']
         condition_current_empty = current <= 0.2 * row['maximum_capacity']
