@@ -349,7 +349,7 @@ def main():
              Please report any issues to Claas Resow.""")
     
     # initialise tabs
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Tabellenansicht", "Kartenansicht", "Historische_Analyse", "Predictions", "Testebene"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Predictions", "Testebene"])
 
     # --- tab 1 ---
     with tab1:
@@ -373,6 +373,9 @@ def main():
     
     # --- tab 2 ---
     with tab2:
+        st.write("### Historische Analyse")
+        print_message(data_message_type, data_message_text)
+
         with st.expander("ℹ️ Mehr Informationen zur Karte anzeigen"):
             st.write("""
                      Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.
@@ -434,7 +437,15 @@ def main():
         google_maps_url = f"https://www.google.com/maps/search/?api=1&query={station_data['latitude']},{station_data['longitude']}"
         st.markdown(f"[Klicken Sie hier, um {selected_station} in Google Maps zu öffnen]({google_maps_url})")
 
-        st.write("***")
+        st.write("""***
+                ## Historical Data""")
+
+        if data_df is not None:
+            st.dataframe(data_df)
+        else:
+            st.error("Failed to load historical data.")
+
+        st.write("Stations Data")
 
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
         st.dataframe(subarea_df[columns_to_show])
@@ -443,16 +454,6 @@ def main():
 
     # --- tab 3 ---
     with tab3:
-        st.write("### Historische Analyse")
-        print_message(data_message_type, data_message_text)
-
-        if data_df is not None:
-            st.dataframe(data_df)
-        else:
-            st.error("Failed to load historical data.")
-
-    # --- tab 4 ---
-    with tab4:
         st.write("### Predictions")
         print_message(pred_message_type, pred_message_text)
 
@@ -515,6 +516,8 @@ def main():
         # Show the map
         st.plotly_chart(fig)
 
+        st.write("""***
+                ## Data""")
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
@@ -523,7 +526,8 @@ def main():
         else:
             st.error("Failed to load prediction data.")
 
-    with tab5:
+    # --- tab 4 ---
+    with tab4:
         full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
         st.dataframe(full_df)
 
