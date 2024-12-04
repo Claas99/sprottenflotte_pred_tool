@@ -127,8 +127,11 @@ def add_predictions_to_stations_df(stations_df, predictions_df):
     # Pivot the predictions_df so that each prediction time gets its own column
     predictions_pivot = predictions_df.pivot(index='entityId', columns='prediction_time_utc', values='prediction_availableBikeNumber')
     
+    # Round the pivoted prediction values to the nearest integer
+    predictions_pivot = predictions_pivot.round(0)
+    
     # Reset the column names of the pivoted DataFrame for clarity
-    predictions_pivot.columns = [f'prediction_{i+1}' for i in range(len(predictions_pivot.columns))]
+    predictions_pivot.columns = [f'prediction_{i+1}h' for i in range(len(predictions_pivot.columns))]
     
     # Merge the predictions with the stations_df
     stations_df = stations_df.merge(predictions_pivot, how='left', on='entityId')
@@ -411,14 +414,14 @@ def main():
                 # 'longitude': False,  # Disable longitude hover
                 'color_info': False,
                 'color': False,
-                'prediction_1': True,
-                'prediction_2': True,
-                'prediction_3': True,
-                'prediction_4': True,
-                'prediction_5': True
+                'prediction_1h': True,
+                'prediction_2h': True,
+                'prediction_3h': True,
+                'prediction_4h': True,
+                'prediction_5h': True
             },
-            color='color_info',  # Use the new column for colors
-            color_discrete_map=color_map,
+            # color='color_info',  # Use the new column for colors
+            # color_discrete_map=color_map,
             zoom=10.2,
             height=600,
             labels={
