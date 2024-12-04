@@ -533,7 +533,10 @@ def main():
 
     # --- tab 4 ---
     with tab4:
-        subarea_df = full_df[full_df['subarea'] == selected_option]
+        if selected_option == 'Alle':
+            subarea_df = full_df
+        else:
+            subarea_df = full_df[full_df['subarea'] == selected_option]
         st.dataframe(subarea_df)
 
         fig = px.line(
