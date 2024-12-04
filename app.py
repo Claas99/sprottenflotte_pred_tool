@@ -517,7 +517,7 @@ def main():
         st.plotly_chart(fig)
 
         st.write("""***
-                **Daten**""")
+                **Daten:**""")
 
         if predictions_df is not None:
             st.dataframe(predictions_df)
