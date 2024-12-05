@@ -253,7 +253,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         station_data = full_df[full_df['entityId'] == station]
         availableBikes = station_data['availableBikeNumber']
 
-        if availableBikes.iloc[-1,0] >= (0.8 * max_capacity):
+        if availableBikes.iloc[-1] >= (0.8 * max_capacity):
             prio += 0.5
         if len(availableBikes) >= 5 and mean(availableBikes.iloc[-5:]) >= (0.8 * max_capacity):  # Mean of last 5 values
             prio += 0.5
@@ -262,7 +262,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         if len(availableBikes) >= 25 and mean(availableBikes.iloc[-25:]) >= (0.8 * max_capacity):  # Mean of last 25 values
             prio += 1
         
-        if availableBikes.iloc[-1,0] <= (0.2 * max_capacity):
+        if availableBikes.iloc[-1] <= (0.2 * max_capacity):
             prio += 0.5
         if len(availableBikes) >= 5 and mean(availableBikes.iloc[-5:]) <= (0.2 * max_capacity):  # Mean of last 5 values
             prio += 0.5
