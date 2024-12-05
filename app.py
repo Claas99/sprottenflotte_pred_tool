@@ -535,6 +535,7 @@ def main():
             legend_title="Station",
             template="plotly_white"
     )
+        fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-5]}", line_width=2, line_dash="dash", line_color="blue")  
 
         # Show the plot
         st.plotly_chart(fig)
