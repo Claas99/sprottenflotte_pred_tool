@@ -423,6 +423,8 @@ def main():
         st.write("Historische Daten:")
 
         if data_df is not None:
+            data_df['time_utc'] = pd.to_datetime(data_df['time_utc'])
+            data_df['deutsche_timezone'] = data_df['time_utc'] + pd.Timedelta(hours=1)
             st.dataframe(data_df)
         else:
             st.error("Failed to load historical data.")
@@ -502,8 +504,10 @@ def main():
         st.write("Daten:")
 
         if predictions_df is not None:
-            st.dataframe(predictions_df)
-            pivot_df = predictions_df.pivot(index='entityId', columns='prediction_time_utc', values='prediction_availableBikeNumber')
+            predictions_df['time_utc'] = pd.to_datetime(predictions_df['time_utc'])
+            predictions_df['deutsche_timezone'] = predictions_df['time_utc'] + pd.Timedelta(hours=1)
+            st.dataframe(predictions_df[['entityId', 'deutsche_timezone', 'availableBikeNumber']])
+            pivot_df = predictions_df.pivot(index='entityId', columns='deutsche_timezone', values='prediction_availableBikeNumber')
             st.dataframe(pivot_df)
         else:
             st.error("Failed to load prediction data.")
