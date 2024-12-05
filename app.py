@@ -506,8 +506,9 @@ def main():
         if predictions_df is not None:
             predictions_df['time_utc'] = pd.to_datetime(predictions_df['time_utc'])
             predictions_df['deutsche_timezone'] = predictions_df['time_utc'] + pd.Timedelta(hours=1)
-            st.dataframe(predictions_df[['entityId', 'deutsche_timezone', 'availableBikeNumber']])
-            pivot_df = predictions_df.pivot(index='entityId', columns='deutsche_timezone', values='prediction_availableBikeNumber')
+            predictions_df = predictions_df.merge(station_df[['entityId', 'station_name']], on='entityId', how='left')
+            st.dataframe(predictions_df[['entityId', 'station_name', 'deutsche_timezone', 'availableBikeNumber']])
+            pivot_df = predictions_df.pivot(index='station_name', columns='deutsche_timezone', values='prediction_availableBikeNumber')
             st.dataframe(pivot_df)
         else:
             st.error("Failed to load prediction data.")
