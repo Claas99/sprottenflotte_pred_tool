@@ -251,12 +251,25 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         teilbereich = full_df[full_df['entityId'] == station]['subarea'].unique()[0]
         max_capacity = subareas_df[subareas_df['subarea'] == teilbereich]['maximum_capacity'].unique()[0]
         station_data = full_df[full_df['entityId'] == station]
-        for pred in station_data['availableBikeNumber']:
-            # Berechne die Differenz zwischen 
-            if pred >= (0.8 * max_capacity):
-                prio += 1
-            elif pred <= (0.2 * max_capacity):
-                prio += 1
+        availableBikes = station_data['availableBikeNumber']
+
+        if availableBikes[-1] >= (0.8 * max_capacity):
+            prio += 0.5
+        if len(availableBikes) >= 5 and mean(availableBikes[-5:]) >= (0.8 * max_capacity):  # Mean of last 5 values
+            prio += 0.5
+        if len(availableBikes) >= 9 and mean(availableBikes[-9:]) >= (0.8 * max_capacity):  # Mean of last 9 values
+            prio += 0.5
+        if len(availableBikes) >= 25 and mean(availableBikes[-25:]) >= (0.8 * max_capacity):  # Mean of last 25 values
+            prio += 1
+        
+        if availableBikes[-1] <= (0.2 * max_capacity):
+            prio += 0.5
+        if len(availableBikes) >= 5 and mean(availableBikes[-5:]) <= (0.2 * max_capacity):  # Mean of last 5 values
+            prio += 0.5
+        if len(availableBikes) >= 9 and mean(availableBikes[-9:]) <= (0.2 * max_capacity):  # Mean of last 9 values
+            prio += 0.5
+        if len(availableBikes) >= 25 and mean(availableBikes[-25:]) <= (0.2 * max_capacity):  # Mean of last 25 values
+            prio += 1
     
         result_df = pd.concat([result_df, pd.DataFrame({'subarea': [teilbereich], 'Station': [station], 'Prio': [prio]})], ignore_index=True)
         prio = 0
@@ -267,43 +280,6 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
     return result_df
 
 
-def check_duration_of_leerstand(stationID: int, station_data) -> dict:
-    # Get max capacity of the station
-    max_capacity = data.get_max_capacity(stationID)
-    threshold = max_capacity * 0.2
-
-    # Filter predictions for the specific station
-    station_predictions = station_data[station_data['prediction_availableBikeNumber'] != None]
-
-    # Sort by time to ensure correct duration calculation
-    station_predictions = station_predictions.sort_values(by='prediction_time_utc')
-
-    # Identify periods where predicted value is below the threshold
-    station_predictions['below_threshold'] = station_predictions['predicted_value'] <= threshold
-
-    # Calculate the difference in time between consecutive rows
-    station_predictions['time_diff'] = station_predictions['prediction_time_utc'].diff()
-
-    # Identify the start of each new period below the threshold
-    station_predictions['new_period'] = (station_predictions['below_threshold'] != station_predictions['below_threshold'].shift()).cumsum()
-
-    # Filter only periods where the condition is met
-    below_threshold_periods = station_predictions[station_predictions['below_threshold']]
-
-    # Calculate the duration of each period
-    period_durations = below_threshold_periods.groupby('new_period')['time_diff'].sum()
-
-    # Convert durations to hours
-    period_durations_in_hours = period_durations.dt.total_seconds() / 3600
-
-    # Check if any period exceeds the specified durations
-    results = {
-        'exceeds_4h': any(period_durations_in_hours > 4),
-        'exceeds_8h': any(period_durations_in_hours > 8),
-        'exceeds_24h': any(period_durations_in_hours > 24)
-    }
-
-    return results
 
 
 
