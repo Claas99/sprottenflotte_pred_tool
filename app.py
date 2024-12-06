@@ -237,7 +237,6 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
 
     return full_df
 
-    
 
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFrame, subareas_df) -> pd.DataFrame:
