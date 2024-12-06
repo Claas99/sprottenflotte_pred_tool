@@ -440,7 +440,7 @@ def main():
         for trace in fig.data:
             if trace.name == 'Random Bike Location':
                 trace.text = ['egg 🚲']  # Set the bike emoji
-                trace.mode = 'text'  # Show text only
+                trace.mode = 'markers+text'  # Show text only
                 trace.showlegend = False  # Optionally hide from legend
 
         # Set the Mapbox style (requires an internet connection)
