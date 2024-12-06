@@ -395,10 +395,10 @@ def main():
             # Create a DataFrame for the random bike
             bike_df = pd.DataFrame([ss['random_bike']])
             bike_df['station_name'] = 'Easter Egg Bike'
-            bike_df['color_info'] = 'Random Bike Location'
+            bike_df['color_info'] = 'Easter Egg Bike'
 
             # Define a custom color for the random bike
-            random_bike_color = {'Random Bike Location': 'purple'}
+            random_bike_color = {'Easter Egg Bike': 'purple'}
 
             # Concatenate the random bike DataFrame with subarea_df
             combined_df = pd.concat([subarea_df, bike_df], ignore_index=True)
@@ -438,10 +438,11 @@ def main():
 
         # Hide the Easter Egg Bike from the legend
         for trace in fig.data:
-            if trace.name == 'Random Bike Location':
+            if trace.name == 'Easter Egg Bike':
                 trace.text = ['egg 🚲']  # Set the bike emoji
                 trace.mode = 'markers+text'  # Show text only
                 trace.showlegend = False  # Optionally hide from legend
+                trace.hoverinfo = 'name'  # Show only the name in hoverlabel
 
         # Set the Mapbox style (requires an internet connection)
         fig.update_layout(mapbox_style="open-street-map")
