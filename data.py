@@ -100,22 +100,6 @@ def request_access_token_if_needed():
         expiration_time = datetime.fromtimestamp(access_token_cache['expires_at']).replace(microsecond=0)
         log.info(f"---------- Access Token valid until: {expiration_time}")
 
-    # # Check if cached token is valid
-    # if st.session_state['access_token'] and current_time < st.session_state['expires_at']:
-    #     return st.session_state['access_token']
-
-    # # If not, request a new token
-    # new_token = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
-
-    # if new_token:
-    #     # Token validity in seconds. Adjust according to your OAuth provider's token lifespan
-    #     token_validity_duration = 86400  # 24 hours
-
-    #     # Update session state with new token and its expiry time
-    #     st.session_state['access_token'] = new_token
-    #     st.session_state['expires_at'] = current_time + token_validity_duration
-
-
     return new_token
 
 
@@ -149,6 +133,11 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
         'client_id': 'quantumleap',
         'client_secret': CLIENT_SECRET
     }
+    # data = {
+    #     'grant_type': 'client_credentials',
+    #     'client_id': 'quantumleap',
+    #     'client_secret': CLIENT_SECRET   # abfragen, oder gilt der dann immer?
+    # }
 
     response = requests.post(token_url, headers=headers, data=data)
 
