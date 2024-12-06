@@ -454,7 +454,9 @@ def main():
             # bike_df['station_name'] = 'Easter Egg Bike 🚲'
             # bike_df['color_info'] = 'Easter Egg Bike'
 
-            hover_text = '🚲 Easter Egg Bike 🚲'
+            hover_text = '🚲 Easter Egg Bike 🚲<br><br>' + \
+                         'Latitude: ' + bike_df['latitude'].round(1).astype(str) + '<br>' + \
+                         'Longitude: ' + bike_df['longitude'].round(1).astype(str)
 
             fig.add_scattermapbox(
                 lat = bike_df['latitude'], 
