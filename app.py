@@ -343,10 +343,10 @@ def main():
     with tab1:
         st.write("### Vorhersage - Teilgebiete nach Handlungsbedarf")
 
-        st.dataframe(prio_df, use_container_width=True)
-
         with st.expander("ℹ️ Mehr Informationen zu der Berechnung der Prio anzeigen"):
             st.write("""Die Prio der Subareas wird wie folgt berechnet: """)
+
+        st.dataframe(prio_df, use_container_width=True)
 
         # st.info('st.info')
         # st.success('st.success')
