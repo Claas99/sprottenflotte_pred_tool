@@ -305,6 +305,8 @@ def main():
         random_subarea, new_lat, new_lon = data.update_random_bike_location(stations_df)
         ss['random_bike'] = {'subarea': random_subarea, 'latitude': new_lat, 'longitude': new_lon}
     # <--- Easter Egg ---
+    bike_df = pd.DataFrame([ss['random_bike']])
+    st.dataframe(bike_df)
     
     full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
     
@@ -397,9 +399,7 @@ def main():
             bike_df = pd.DataFrame([ss['random_bike']])
             bike_df['station_name'] = 'Random Bike'
             bike_df['color_info'] = 'Random Bike Location'
-            
-            st.dataframe(bike_df)
-            
+
             # Define a custom color for the random bike
             random_bike_color = {
                 'Random Bike Location': 'purple'
