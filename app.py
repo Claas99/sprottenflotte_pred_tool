@@ -448,6 +448,7 @@ def main():
         #         trace.showlegend = False  # Optionally hide from legend
         #         trace.textposition='top center'
 
+        # --- Easter Egg --->
         # Danach den neuen Punkt hinzufügen
         if ss.get('random_bike') and selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
             bike_df = pd.DataFrame([ss['random_bike']])
@@ -455,8 +456,8 @@ def main():
             # bike_df['color_info'] = 'Easter Egg Bike'
 
             hover_text = '🚲 Easter Egg Bike 🚲<br><br>' + \
-                         'Latitude: ' + bike_df['latitude'].round(1).astype(str) + '<br>' + \
-                         'Longitude: ' + bike_df['longitude'].round(1).astype(str)
+                         'Latitude: ' + bike_df['latitude'].round(1).astype(str) + '°N<br>' + \
+                         'Longitude: ' + bike_df['longitude'].round(1).astype(str) + '°E'
 
             fig.add_scattermapbox(
                 lat = bike_df['latitude'], 
@@ -468,8 +469,9 @@ def main():
                 marker = dict(color='#9ec044'),
                 name='Easter Egg Bike',
                 hovertext = hover_text,
-                hoverinfo = 'text'
+                # hoverinfo = 'text'
             )
+        # <--- Easter Egg ---
 
         # Set the Mapbox style (requires an internet connection)
         fig.update_layout(mapbox_style="open-street-map")
