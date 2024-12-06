@@ -65,8 +65,6 @@ def initialize_session_state():
         ss["stations"] = list()  # Default to False (using full dataset)
     if "subareas" not in ss:
         ss["subareas"] = list()  # Default to False (using full dataset)
-    if 'random_bike' not in ss:
-        ss['random_bike'] = None
 
 
 initialize_session_state() # needs to be here?
