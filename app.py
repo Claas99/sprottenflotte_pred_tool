@@ -398,7 +398,7 @@ def main():
             bike_df['color_info'] = 'Easter Egg Bike'
 
             # Define a custom color for the random bike
-            random_bike_color = {'Easter Egg Bike': 'purple'}
+            random_bike_color = {'Easter Egg Bike': '#9ec044'}
 
             # Concatenate the random bike DataFrame with subarea_df
             combined_df = pd.concat([subarea_df, bike_df], ignore_index=True)
