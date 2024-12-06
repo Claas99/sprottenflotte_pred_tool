@@ -297,15 +297,6 @@ def main():
     data_df, data_message_type, data_message_text = data.update_station_data()
     predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
     
-    # --- Easter Egg --->
-    # Set random bike position in session state 
-    if 'random_bike' not in ss or data_message_type == 'success': 
-        random_subarea, new_lat, new_lon = data.update_random_bike_location(stations_df)
-        ss['random_bike'] = {'subarea': random_subarea, 'latitude': new_lat, 'longitude': new_lon}
-    # <--- Easter Egg ---
-    bike_df = pd.DataFrame([ss['random_bike']])
-    st.dataframe(bike_df)
-    
     full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
     
     # Define a color map
@@ -391,11 +382,19 @@ def main():
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
         # --- Easter Egg --->
+        # Set random bike position in session state 
+        if 'random_bike' not in ss or data_message_type == 'success': 
+            random_subarea, new_lat, new_lon = data.update_random_bike_location(stations_df)
+            ss['random_bike'] = {'subarea': random_subarea, 'latitude': new_lat, 'longitude': new_lon}
+
+        bike_df = pd.DataFrame([ss['random_bike']])
+        st.dataframe(bike_df)
+
         # Check if the random bike's subarea matches the selected subarea
         if ss.get('random_bike') and selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
             # Create a DataFrame for the random bike
             bike_df = pd.DataFrame([ss['random_bike']])
-            bike_df['station_name'] = 'Random Bike'
+            bike_df['station_name'] = 'Easter Egg Bike'
             bike_df['color_info'] = 'Random Bike Location'
 
             # Define a custom color for the random bike
