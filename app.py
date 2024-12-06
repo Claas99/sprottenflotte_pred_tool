@@ -441,7 +441,9 @@ def main():
         # Hide the Easter Egg Bike from the legend
         for trace in fig.data:
             if trace.name == 'Random Bike Location':
-                trace.showlegend = False
+                trace.mode = 'text+markers'
+                trace.text = '🚲'  # Set the bike emoji only for the Easter Egg Bike
+                trace.showlegend = False  # Optionally hide from legend
 
         # Set the Mapbox style (requires an internet connection)
         fig.update_layout(mapbox_style="open-street-map")
