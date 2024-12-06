@@ -398,6 +398,8 @@ def main():
             bike_df['station_name'] = 'Random Bike'
             bike_df['color_info'] = 'Random Bike Location'
             
+            st.dataframe(bike_df)
+            
             # Define a custom color for the random bike
             random_bike_color = {
                 'Random Bike Location': 'purple'
