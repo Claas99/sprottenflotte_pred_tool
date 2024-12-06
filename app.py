@@ -451,15 +451,15 @@ def main():
         # Danach den neuen Punkt hinzufügen
         if ss.get('random_bike') and selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
             bike_df = pd.DataFrame([ss['random_bike']])
-            bike_df['station_name'] = 'Easter Egg Bike 🚲'
-            bike_df['color_info'] = 'Easter Egg Bike'
+            # bike_df['station_name'] = 'Easter Egg Bike 🚲'
+            # bike_df['color_info'] = 'Easter Egg Bike'
 
-            hover_text = 'Easter Egg Bike Details: <br>'
+            hover_text = '🚲 Easter Egg Bike 🚲'
 
             fig.add_scattermapbox(
                 lat = bike_df['latitude'], 
                 lon = bike_df['longitude'], 
-                text = 'Easter Egg Bike 🚲', 
+                text = 'Easter Egg Bike', # 🚲
                 mode = 'markers+text', 
                 showlegend = False,
                 textposition='top center',
