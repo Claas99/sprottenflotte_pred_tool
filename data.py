@@ -12,6 +12,7 @@ import streamlit as st
 import base64
 import time
 import logging
+import random
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -443,3 +444,18 @@ def get_max_capacity(stationID, subareas_df) -> int:
     else:
         # Rückgabe von 0, wenn die Station nicht gefunden wurde
         return 0
+    
+
+def update_random_bike_location(stations_df):
+    """Select a random subarea and assign random coordinates."""
+    # Laden des existierenden DataFrame
+    stations_df = pd.read_csv(STATIONS_FILENAME)
+
+    if len(stations_df['subarea'].unique()) > 1:
+        random_subarea = random.choice(stations_df['subarea'].unique())
+        new_lat = random.uniform(54.0, 55.0)
+        new_lon = random.uniform(10.0, 11.0)
+        
+        return random_subarea, new_lat, new_lon
+    
+    return None, None, None

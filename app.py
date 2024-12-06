@@ -65,6 +65,8 @@ def initialize_session_state():
         ss["stations"] = list()  # Default to False (using full dataset)
     if "subareas" not in ss:
         ss["subareas"] = list()  # Default to False (using full dataset)
+    if 'random_bike' not in ss:
+        ss['random_bike'] = None
 
 
 initialize_session_state() # needs to be here?
@@ -296,7 +298,16 @@ def main():
 
     data_df, data_message_type, data_message_text = data.update_station_data()
     predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
+    
+    # --- Easter Egg --->
+    # Set random bike position in session state 
+    if 'random_bike' not in ss or data_message_type == 'success': 
+        random_subarea, new_lat, new_lon = data.update_random_bike_location(stations_df)
+        ss['random_bike'] = {'subarea': random_subarea, 'latitude': new_lat, 'longitude': new_lon}
+    # <--- Easter Egg ---
+    
     full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
+    
     # Define a color map
     color_map = {
         'überfüllt': 'blue',
@@ -379,9 +390,33 @@ def main():
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
 
+        # --- Easter Egg --->
+        # Check if the random bike's subarea matches the selected subarea
+        if selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
+            # Create a DataFrame for the random bike
+            bike_df = pd.DataFrame([ss['random_bike']])
+            bike_df['station_name'] = 'Random Bike'
+            bike_df['color_info'] = 'Random Bike Location'
+            
+            # Define a custom color for the random bike
+            random_bike_color = {
+                'Random Bike Location': 'purple'
+            }
+
+            # Concatenate the random bike DataFrame with subarea_df
+            combined_df = pd.concat([subarea_df, bike_df], ignore_index=True)
+
+            # Update color map to include the random bike
+            combined_color_map = {**color_map, **random_bike_color}
+        else:
+            # Use the subarea DataFrame only
+            combined_df = subarea_df
+            combined_color_map = color_map
+        # <--- Easter Egg ---
+
         # Plot the map
         fig = px.scatter_mapbox(
-            subarea_df, 
+            combined_df, 
             lat='latitude', 
             lon='longitude',
             title=f"Teilgebiet: {selected_option}",
@@ -396,7 +431,7 @@ def main():
                 'color': False
             },
             color='color_info',  # Use the new column for colors
-            color_discrete_map=color_map,
+            color_discrete_map=combined_color_map,
             zoom=10.2,
             height=600,
             labels={
