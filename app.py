@@ -452,7 +452,7 @@ def main():
         if 'random_bike' in ss and selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
             bike_df = pd.DataFrame([ss['random_bike']])
             bike_df['station_name'] = 'Easter Egg Bike'
-            fig.add_scattermapbox(lat=bike_df['latitude'], lon=bike_df['longitude'], text='Easter Egg Bike🚲', mode='markers+text', marker=dict(textposition='top center', color='#9ec044'))
+            fig.add_scattermapbox(lat=bike_df['latitude'], lon=bike_df['longitude'], text='Easter Egg Bike🚲', mode='markers+text', marker=dict(color='#9ec044'))
 
         # Set the Mapbox style (requires an internet connection)
         fig.update_layout(mapbox_style="open-street-map")
