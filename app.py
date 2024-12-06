@@ -395,7 +395,7 @@ def main():
             # Create a DataFrame for the random bike
             bike_df = pd.DataFrame([ss['random_bike']])
             bike_df['station_name'] = 'Easter Egg Bike'
-            # bike_df['color_info'] = 'Random Bike Location'
+            bike_df['color_info'] = 'Random Bike Location'
 
             # Define a custom color for the random bike
             random_bike_color = {
@@ -437,6 +437,11 @@ def main():
                 'color_info': 'Station Info'  # Change title of the legend
             }
         )
+
+        # Hide the Easter Egg Bike from the legend
+        for trace in fig.data:
+            if trace.name == 'Random Bike Location':
+                trace.showlegend = False
 
         # Set the Mapbox style (requires an internet connection)
         fig.update_layout(mapbox_style="open-street-map")
