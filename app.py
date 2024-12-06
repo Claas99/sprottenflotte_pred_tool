@@ -454,15 +454,21 @@ def main():
             bike_df['station_name'] = 'Easter Egg Bike 🚲'
             bike_df['color_info'] = 'Easter Egg Bike'
 
+            hover_text = 'Easter Egg Bike Details: <br>' + \
+                         'Latitude: ' + bike_df['latitude'].astype(str) + '<br>' + \
+                         'Longitude: ' + bike_df['longitude'].astype(str)
+
             fig.add_scattermapbox(
                 lat = bike_df['latitude'], 
                 lon = bike_df['longitude'], 
-                text = 'Easter Egg Bike 🚲', 
+                # text = 'Easter Egg Bike 🚲', 
                 mode = 'markers+text', 
                 showlegend = False,
                 textposition='top center',
                 marker = dict(color='#9ec044'),
-                name='Easter Egg Bike'
+                name='Easter Egg Bike',
+                hovertext = hover_text,
+                hoverinfo = 'text'
             )
 
         # Set the Mapbox style (requires an internet connection)
