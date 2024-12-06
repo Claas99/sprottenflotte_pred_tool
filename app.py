@@ -431,16 +431,16 @@ def main():
         if data_df is not None:
             data_df['time_utc'] = pd.to_datetime(data_df['time_utc'])
             data_df['deutsche_timezone'] = data_df['time_utc'] + pd.Timedelta(hours=1)
-            st.dataframe(data_df)
+            st.dataframe(data_df, use_container_width=True)
         else:
             st.error("Failed to load historical data.")
 
         st.write("Stations Data:")
 
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
-        st.dataframe(subarea_df[columns_to_show])
+        st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
-        st.dataframe(subarea_df)
+        st.dataframe(subarea_df, use_container_width=True)
 
     # --- tab 3 ---
     with tab3:
@@ -513,9 +513,9 @@ def main():
             predictions_df['time_utc'] = pd.to_datetime(predictions_df['time_utc'])
             predictions_df['deutsche_timezone'] = predictions_df['time_utc'] + pd.Timedelta(hours=1)
             predictions_df = predictions_df.merge(stations_df[['entityId', 'station_name']], on='entityId', how='left')
-            st.dataframe(predictions_df[['entityId', 'station_name', 'deutsche_timezone', 'availableBikeNumber']])
+            st.dataframe(predictions_df[['entityId', 'station_name', 'deutsche_timezone', 'availableBikeNumber']], use_container_width=True)
             pivot_df = predictions_df.pivot(index='station_name', columns='deutsche_timezone', values='prediction_availableBikeNumber')
-            st.dataframe(pivot_df)
+            st.dataframe(pivot_df, use_container_width=True)
         else:
             st.error("Failed to load prediction data.")
 
