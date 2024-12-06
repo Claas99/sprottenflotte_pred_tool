@@ -242,12 +242,13 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
 # Berechnet absolute Prio - Muss noch in relative prio umberechnet werden
 def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFrame, subareas_df) -> pd.DataFrame:
     full_df = get_full_df_per_station(stations_df, predictions_df, subareas_df)
-    result_df = pd.DataFrame(columns=['subarea', 'Station', 'Prio'])
-
-    prio = 0
+    # result_df = pd.DataFrame(columns=['subarea', 'Station', 'Prio'])
+    first_iteration = True  # Flag zur Überwachung der ersten Iteration
 
     stations = full_df['entityId'].unique()
     for station in stations:
+        prio = 0
+
         teilbereich = full_df[full_df['entityId'] == station]['subarea'].unique()[0]
         max_capacity = subareas_df[subareas_df['subarea'] == teilbereich]['maximum_capacity'].unique()[0]
         station_data = full_df[full_df['entityId'] == station]
@@ -271,8 +272,14 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
         if len(availableBikes) >= 25 and availableBikes.iloc[-25:].mean() <= (0.2 * max_capacity):  # Mean of last 25 values
             prio += 1
     
-        result_df = pd.concat([result_df, pd.DataFrame({'subarea': [teilbereich], 'Station': [station], 'Prio': [prio]})], ignore_index=True)
-        prio = 0
+        temp_df = pd.DataFrame({'subarea': [teilbereich], 'Station': [station], 'Prio': [prio]})
+
+        # Überprüfen, ob es die erste Iteration ist
+        if first_iteration:
+            result_df = temp_df  # Setze result_df direkt für die erste Iteration
+            first_iteration = False
+        else:
+            result_df = pd.concat([result_df, temp_df], ignore_index=True)
     
     result_df = result_df.groupby('subarea')['Prio'].apply(lambda x: x.mean()).reset_index(name='subarea_prio')
     result_df = result_df.sort_values('subarea_prio', ascending=False).reset_index(drop=True)
