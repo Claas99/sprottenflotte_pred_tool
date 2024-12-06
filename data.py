@@ -453,8 +453,8 @@ def update_random_bike_location(stations_df):
 
     if len(stations_df['subarea'].unique()) > 1:
         random_subarea = random.choice(stations_df['subarea'].unique())
-        new_lat = random.uniform(54.0, 55.0)
-        new_lon = random.uniform(10.0, 11.0)
+        new_lat = random.uniform(-90.0, 90.0)  # Globaler Bereich für Breitengrad
+        new_lon = random.uniform(-180.0, 180.0)  # Globaler Bereich für Längengrad
 
         return random_subarea, new_lat, new_lon
     
