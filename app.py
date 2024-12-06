@@ -392,7 +392,7 @@ def main():
 
         # --- Easter Egg --->
         # Check if the random bike's subarea matches the selected subarea
-        if selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
+        if ss.get('random_bike') and selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
             # Create a DataFrame for the random bike
             bike_df = pd.DataFrame([ss['random_bike']])
             bike_df['station_name'] = 'Random Bike'
