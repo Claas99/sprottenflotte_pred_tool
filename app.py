@@ -387,8 +387,8 @@ def main():
             random_subarea, new_lat, new_lon = data.update_random_bike_location(stations_df)
             ss['random_bike'] = {'subarea': random_subarea, 'latitude': new_lat, 'longitude': new_lon}
         # anzeigen des punktes als dataframe
-        bike_df = pd.DataFrame([ss['random_bike']])
-        st.dataframe(bike_df)
+        # bike_df = pd.DataFrame([ss['random_bike']])
+        # st.dataframe(bike_df)
         # <--- Easter Egg ---
 
         # Plot the map
