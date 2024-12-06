@@ -390,25 +390,25 @@ def main():
         bike_df = pd.DataFrame([ss['random_bike']])
         st.dataframe(bike_df)
 
-        # Check if the random bike's subarea matches the selected subarea
-        if ss.get('random_bike') and selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
-            # Create a DataFrame for the random bike
-            bike_df = pd.DataFrame([ss['random_bike']])
-            bike_df['station_name'] = 'Easter Egg Bike'
-            bike_df['color_info'] = 'Easter Egg Bike'
+        # # Check if the random bike's subarea matches the selected subarea
+        # if ss.get('random_bike') and selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
+        #     # Create a DataFrame for the random bike
+        #     bike_df = pd.DataFrame([ss['random_bike']])
+        #     bike_df['station_name'] = 'Easter Egg Bike'
+        #     bike_df['color_info'] = 'Easter Egg Bike'
 
-            # Define a custom color for the random bike
-            random_bike_color = {'Easter Egg Bike': '#9ec044'}
+        #     # Define a custom color for the random bike
+        #     random_bike_color = {'Easter Egg Bike': '#9ec044'}
 
-            # Concatenate the random bike DataFrame with subarea_df
-            combined_df = pd.concat([subarea_df, bike_df], ignore_index=True)
+        #     # Concatenate the random bike DataFrame with subarea_df
+        #     combined_df = pd.concat([subarea_df, bike_df], ignore_index=True)
 
-            # Update color map to include the random bike
-            combined_color_map = {**color_map, **random_bike_color}
-        else:
-            # Use the subarea DataFrame only
-            combined_df = subarea_df
-            combined_color_map = color_map
+        #     # Update color map to include the random bike
+        #     combined_color_map = {**color_map, **random_bike_color}
+        # else:
+        #     # Use the subarea DataFrame only
+        #     combined_df = subarea_df
+        #     combined_color_map = color_map
         # <--- Easter Egg ---
 
         # Use the subarea DataFrame only
@@ -441,18 +441,29 @@ def main():
         )
 
         # Hide the Easter Egg Bike from the legend
-        for trace in fig.data:
-            if trace.name == 'Easter Egg Bike':
-                trace.text = 'Easter Egg Bike'  # Set the bike emoji 🚲
-                trace.mode = 'markers+text'  # Show text only
-                trace.showlegend = False  # Optionally hide from legend
-                trace.textposition='top center'
+        # for trace in fig.data:
+        #     if trace.name == 'Easter Egg Bike':
+        #         trace.text = 'Easter Egg Bike'  # Set the bike emoji 🚲
+        #         trace.mode = 'markers+text'  # Show text only
+        #         trace.showlegend = False  # Optionally hide from legend
+        #         trace.textposition='top center'
 
         # Danach den neuen Punkt hinzufügen
-        if 'random_bike' in ss and selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
+        if ss.get('random_bike') and selected_option != 'Alle' and ss['random_bike']['subarea'] == selected_option:
             bike_df = pd.DataFrame([ss['random_bike']])
-            bike_df['station_name'] = 'Easter Egg Bike'
-            fig.add_scattermapbox(lat=bike_df['latitude'], lon=bike_df['longitude'], text='Easter Egg Bike🚲', mode='markers+text', marker=dict(color='#9ec044'))
+            bike_df['station_name'] = 'Easter Egg Bike 🚲'
+            bike_df['color_info'] = 'Easter Egg Bike'
+
+            fig.add_scattermapbox(
+                lat = bike_df['latitude'], 
+                lon = bike_df['longitude'], 
+                text = 'Easter Egg Bike 🚲', 
+                mode = 'markers+text', 
+                showlegend = False,
+                textposition='top center',
+                marker = dict(color='#9ec044'),
+                name='Easter Egg Bike'
+            )
 
         # Set the Mapbox style (requires an internet connection)
         fig.update_layout(mapbox_style="open-street-map")
