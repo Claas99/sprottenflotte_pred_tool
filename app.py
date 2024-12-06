@@ -439,7 +439,7 @@ def main():
         # Hide the Easter Egg Bike from the legend
         for trace in fig.data:
             if trace.name == 'Random Bike Location':
-                trace.text = ['🚲']  # Set the bike emoji
+                trace.text = ['egg']  # Set the bike emoji
                 trace.mode = 'text'  # Show text only
                 trace.showlegend = False  # Optionally hide from legend
 
