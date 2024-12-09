@@ -396,9 +396,10 @@ def update_station_data():
                     nan_data = pd.DataFrame({
                         'entityId': station_id,
                         'time_utc': missing_times,
-                        'availableBikeNumber': [None] * len(missing_times)
+                        'availableBikeNumber': [pd.NA] * len(missing_times)
                     })
                     df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
+                    # df = df.replace(-42, None)
                 
                 # und appende sie an das dataframe
                 dataframes.append(df)
