@@ -322,10 +322,10 @@ def update_station_data():
     # Prüfen, ob data_temp.csv vorhanden ist
     if os.path.exists(DATA_FILENAME):
         # # Laden des existierenden DataFrame
-        old_data_temp = pd.read_csv(DATA_FILENAME)
+        # old_data_temp = pd.read_csv(DATA_FILENAME)
         ########
     
-        # old_data_temp = read_csv_from_github(DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
+        old_data_temp = read_csv_from_github(DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
         ########
         # make 'time_utc' in datetime
