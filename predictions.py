@@ -243,7 +243,3 @@ def update_predictions(data_df):
         log.info('Prediction process completed')
 
         return None, message_type, message_text
-
-### Usage
-
-# update_and_save_predictions(DATA_FILENAME, MODEL_FILENAME, SCALER_FILENAME, PREDICTIONS_FILENAME)
