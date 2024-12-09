@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 
 import dotenv
 import pandas as pd
+import numpy as np
 import requests
 import streamlit as st
 import base64
@@ -331,9 +332,11 @@ def update_station_data():
         old_data_temp['time_utc'] = pd.to_datetime(old_data_temp['time_utc'])
         # lösche alle daten vor START_DATE
         old_data_temp = old_data_temp[old_data_temp['time_utc'] >= START_DATE]
+        
         # lösche alle nan
-        old_data_temp = old_data_temp.dropna().reset_index(drop=True)
+        # old_data_temp = old_data_temp.dropna().reset_index(drop=True)
         # delete duplicates
+        
         old_data_temp = old_data_temp.drop_duplicates().reset_index(drop=True)
     else:
         # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
@@ -401,7 +404,7 @@ def update_station_data():
                         'availableBikeNumber': [-42] * len(missing_times)
                     })
                     df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
-                    df = df.replace(-42, pd.NA)
+                    df = df.replace(-42, np.nan)
                 
                 # und appende sie an das dataframe
                 dataframes.append(df)
