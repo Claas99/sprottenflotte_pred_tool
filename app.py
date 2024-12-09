@@ -67,7 +67,7 @@ def initialize_session_state():
         ss["subareas"] = list()  # Default to False (using full dataset)
 
 
-# initialize_session_state() # needs to be here?
+initialize_session_state() # needs to be here?
 
 
 # --- Helper Functions ---
