@@ -409,6 +409,7 @@ def update_station_data():
                 # und appende sie an das dataframe
                 dataframes.append(df)
 
+
     if dataframes:
         # Alle neuen DataFrames der Stationen zusammenführen
         new_data_temp = pd.concat(dataframes)
