@@ -409,7 +409,6 @@ def update_station_data():
                 # und appende sie an das dataframe
                 dataframes.append(df)
 
-
     if dataframes:
         # Alle neuen DataFrames der Stationen zusammenführen
         new_data_temp = pd.concat(dataframes)
@@ -441,6 +440,8 @@ def update_station_data():
         log.info(f'---------- Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:    {END_DATE}')
     else:
         data_temp_df = old_data_temp.copy()
+        csv_to_github = data_temp_df.to_csv(index=False)
+        update_csv_on_github(csv_to_github, DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
         log.info('---------- No new data to process, data for every station is available. Existing data used.')
         message_type = 'info'
