@@ -336,6 +336,7 @@ def update_station_data():
     else:
         # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
         old_data_temp = pd.DataFrame(columns=['entityId', 'time_utc'])
+        log.info(f'---------- No {STATIONS_FILENAME} file exists. A new file will be created')
 
     # prüfen ob station_data.csv vorhanden
     try:
