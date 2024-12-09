@@ -390,18 +390,18 @@ def update_station_data():
 
                 # Identify missing hours within the fetched data
                 fetched_times = pd.to_datetime(df['time_utc'])
-                all_times = pd.date_range(start=request_start_date, end=END_DATE , freq='h') #- timedelta(hours=1)
+                all_times = pd.date_range(start=request_start_date, end=END_DATE - timedelta(hours=1), freq='h')
                 missing_times = all_times.difference(fetched_times)
 
                 # Create NaN entries for those missing times
                 if not missing_times.empty:
                     nan_data = pd.DataFrame({
-                        'entityId': station_id,
+                        'entityId': [station_id] * len(missing_times),
                         'time_utc': missing_times,
-                        'availableBikeNumber': [pd.NA] * len(missing_times)
+                        'availableBikeNumber': [-42] * len(missing_times)
                     })
                     df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
-                    # df = df.replace(-42, None)
+                    df = df.replace(-42, None)
                 
                 # und appende sie an das dataframe
                 dataframes.append(df)
