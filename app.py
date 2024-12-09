@@ -293,7 +293,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
 def main():
     # Check for first load or reset action
     if 'initialized' not in ss: # or st.button("Reset App", on_click=reset_app)
-        reset_app()  # Reset the app if not initialized or reset button is clicked
+        reset_app() 
         
         data_df, data_message_type, data_message_text = data.update_station_data()
         predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
@@ -361,39 +361,8 @@ def main():
               - We are happy to hear your feedback.
              Please report any issues to Claas Resow.""")
     
-    st.markdown("""
-        <style>
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 220px;
-            background-color: black;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-
-            /* Position the tooltip */
-            position: absolute;
-            z-index: 1;
-            top: -5px;
-            left: 105%;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-        }
-        </style>
-        
-        <div class="tooltip">ℹ️
-            <span class="tooltiptext">Hover over the icon for additional information!</span>
-        </div>
-    """, unsafe_allow_html=True)
+    with st.expander("ℹ️"):
+            st.write("""Stündliche Daten. Nur nach neuer vollen Stunde neu laden.""")
     
     prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
 
@@ -645,7 +614,7 @@ def main():
 
         st.dataframe(subarea_df[['entityId', 'station_name', 'availableBikeNumber', 'deutsche_timezone']], use_container_width=True)
 
-    st.button("Reset App", on_click=reset_app, key="reset_button")
+    st.button("Reset App/Reload", on_click=reset_app, key="reset_button")
 
 # --- Entry Point ---
 if __name__ == "__main__":
