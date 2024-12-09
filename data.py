@@ -332,7 +332,7 @@ def update_station_data():
         # lösche alle daten vor START_DATE
         old_data_temp = old_data_temp[old_data_temp['time_utc'] >= START_DATE]
         # delete duplicates
-        # old_data_temp = old_data_temp.drop_duplicates()
+        old_data_temp = old_data_temp.drop_duplicates()
     else:
         # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
         old_data_temp = pd.DataFrame(columns=['entityId', 'time_utc'])
@@ -394,9 +394,9 @@ def update_station_data():
                 # Create NaN entries for those missing times
                 if not missing_times.empty:
                     nan_data = pd.DataFrame({
-                        'entityId': [station_id] * len(missing_times),
+                        'entityId': station_id,
                         'time_utc': missing_times,
-                        'availableBikeNumber': pd.Series([None] * len(missing_times), dtype='float')
+                        'availableBikeNumber': [None] * len(missing_times)
                     })
                     df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
                 
