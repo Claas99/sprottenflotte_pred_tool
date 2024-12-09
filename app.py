@@ -303,7 +303,11 @@ def main():
         ss['initialized'] = True
     else:
         data_df = ss.get('data_df')
+        data_message_type = 'info'
+        data_message_text = 'Es sind bereits Daten für alle Stationen vorhanden.'
         predictions_df = ss.get('predictions_df')
+        pred_message_type = 'info'
+        pred_message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
         st.write("Data is already initialized, no need to reload. Only reload nach voller Stunde")
 
     stations_filename = "data/stations.csv"
