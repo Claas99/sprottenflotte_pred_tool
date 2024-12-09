@@ -72,12 +72,13 @@ def initialize_session_state():
 
 # --- Helper Functions ---
 def print_message(message_type, message_text):
-    if message_type == 'info':
-        return st.info(message_text)
-    elif message_type == 'success':
-        return st.success(message_text)
-    elif message_type == 'error':
-        return st.error(message_text)
+    if message_type and message_text:
+        if message_type == 'info':
+            return st.info(message_text)
+        elif message_type == 'success':
+            return st.success(message_text)
+        elif message_type == 'error':
+            return st.error(message_text)
 
 
 @st.cache_data
