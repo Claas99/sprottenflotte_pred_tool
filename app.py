@@ -292,7 +292,7 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
 # --- Main App Logic ---
 def main():
     # Check for first load or reset action
-    if 'initialized' not in ss or st.button("Reset App", on_click=reset_app, key="reset_button"):
+    if 'initialized' not in ss or st.button("Reset App", on_click=reset_app):
         reset_app()  # Reset the app if not initialized or reset button is clicked
         ss['initialized'] = True
 
