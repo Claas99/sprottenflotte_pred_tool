@@ -394,9 +394,9 @@ def update_station_data():
                 # Create NaN entries for those missing times
                 if not missing_times.empty:
                     nan_data = pd.DataFrame({
-                        'entityId': station_id,
+                        'entityId': [station_id] * len(missing_times),
                         'time_utc': missing_times,
-                        'availableBikeNumber': [None]*len(missing_times)
+                        'availableBikeNumber': [None] * len(missing_times)
                     })
                     df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
                 
