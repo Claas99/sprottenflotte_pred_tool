@@ -292,9 +292,9 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
 # --- Main App Logic ---
 def main():
     # Check for first load or reset action
-    if 'initialized' not in ss or st.button("Reset App", on_click=reset_app):
-        reset_app()  # Reset the app if not initialized or reset button is clicked
-        ss['initialized'] = True
+    # if 'initialized' not in ss or st.button("Reset App", on_click=reset_app):
+    #     reset_app()  # Reset the app if not initialized or reset button is clicked
+    #     ss['initialized'] = True
 
     stations_filename = "data/stations.csv"
     stations_df = pd.read_csv(stations_filename)
@@ -303,8 +303,8 @@ def main():
     predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
     
     if predictions_df is None:
-        predictions_df = pd.read_csv('data/predictions.csv')
-        st.write("predictions_df is None")
+        # predictions_df = pd.read_csv('data/predictions.csv')
+        st.error("predictions_df is None")
     
     full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
     
