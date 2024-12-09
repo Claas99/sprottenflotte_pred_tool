@@ -331,6 +331,8 @@ def update_station_data():
         old_data_temp['time_utc'] = pd.to_datetime(old_data_temp['time_utc'])
         # lösche alle daten vor START_DATE
         old_data_temp = old_data_temp[old_data_temp['time_utc'] >= START_DATE]
+        # lösche alle nan
+        old_data_temp = old_data_temp.dropna().reset_index(drop=True)
         # delete duplicates
         old_data_temp = old_data_temp.drop_duplicates().reset_index(drop=True)
     else:
