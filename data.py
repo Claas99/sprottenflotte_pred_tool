@@ -365,7 +365,7 @@ def update_station_data():
         # select one station
         station_data = old_data_temp[old_data_temp['entityId'] == station_id]
         # extract available dates
-        available_dates = station_data['time_utc']
+        available_dates = station_data['time_utc'].astype('datetime64[ns, UTC]')
         # Ermitteln der fehlenden Daten
         missing_dates = full_date_range[~full_date_range.isin(available_dates)]
 
