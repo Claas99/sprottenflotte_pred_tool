@@ -304,6 +304,7 @@ def main():
     
     if predictions_df is None:
         predictions_df = pd.read_csv('data/predictions.csv')
+        st.write("predictions_df is None")
     
     full_df = get_full_df_per_station(data_df, predictions_df, stations_df)
     
