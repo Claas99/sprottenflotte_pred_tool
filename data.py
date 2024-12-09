@@ -380,28 +380,28 @@ def update_station_data():
             request_start_date = missing_dates[0]
             # und requeste die nicht vorhandenen stunden bis zum END_DATE
             data = fetch_station_data(station_id, request_start_date, END_DATE, BASE_URL, ACCESS_TOKEN)
-            # if data:
+            if data:
             #     df = create_dataframe_from_api_data(data)
             #     # und appende sie an das dataframe
             #     dataframes.append(df)
-            df = create_dataframe_from_api_data(data)
+                df = create_dataframe_from_api_data(data)
 
-            # Identify missing hours within the fetched data
-            fetched_times = pd.to_datetime(df['time_utc'])
-            all_times = pd.date_range(start=request_start_date, end=END_DATE, freq='h')
-            missing_times = all_times.difference(fetched_times)
+                # Identify missing hours within the fetched data
+                fetched_times = pd.to_datetime(df['time_utc'])
+                all_times = pd.date_range(start=request_start_date, end=END_DATE, freq='h')
+                missing_times = all_times.difference(fetched_times)
 
-            # Create NaN entries for those missing times
-            if not missing_times.empty:
-                nan_data = pd.DataFrame({
-                    'entityId': station_id,
-                    'time_utc': missing_times,
-                    'availableBikeNumber': [None]*len(missing_times)
-                })
-                df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
-            
-            # und appende sie an das dataframe
-            dataframes.append(df)
+                # Create NaN entries for those missing times
+                if not missing_times.empty:
+                    nan_data = pd.DataFrame({
+                        'entityId': station_id,
+                        'time_utc': missing_times,
+                        'availableBikeNumber': [None]*len(missing_times)
+                    })
+                    df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
+                
+                # und appende sie an das dataframe
+                dataframes.append(df)
 
     if dataframes:
         # Alle neuen DataFrames der Stationen zusammenführen
