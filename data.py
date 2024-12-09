@@ -322,16 +322,15 @@ def update_station_data():
     if os.path.exists(DATA_FILENAME):
         # # Laden des existierenden DataFrame
         # old_data_temp = pd.read_csv(DATA_FILENAME)
-        # # make 'time_utc' in datetime
-        # old_data_temp['time_utc'] = pd.to_datetime(old_data_temp['time_utc'])
-        # # lösche alle daten vor START_DATE
-        # old_data_temp = old_data_temp[old_data_temp['time_utc'] >= START_DATE]
-        
         ########
     
         old_data_temp = read_csv_from_github(DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
         ########
+        # make 'time_utc' in datetime
+        old_data_temp['time_utc'] = pd.to_datetime(old_data_temp['time_utc'])
+        # lösche alle daten vor START_DATE
+        old_data_temp = old_data_temp[old_data_temp['time_utc'] >= START_DATE]
     else:
         # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
         old_data_temp = pd.DataFrame(columns=['entityId', 'time_utc'])
@@ -365,7 +364,7 @@ def update_station_data():
         # select one station
         station_data = old_data_temp[old_data_temp['entityId'] == station_id]
         # extract available dates
-        available_dates = station_data['time_utc'].astype('datetime64[ns, UTC]')
+        available_dates = station_data['time_utc']
         # Ermitteln der fehlenden Daten
         missing_dates = full_date_range[~full_date_range.isin(available_dates)]
 
