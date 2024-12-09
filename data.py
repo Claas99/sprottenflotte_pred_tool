@@ -331,6 +331,8 @@ def update_station_data():
         old_data_temp['time_utc'] = pd.to_datetime(old_data_temp['time_utc'])
         # lösche alle daten vor START_DATE
         old_data_temp = old_data_temp[old_data_temp['time_utc'] >= START_DATE]
+        # delete duplicates
+        old_data_temp.drop_duplicates(inplace=True)
     else:
         # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
         old_data_temp = pd.DataFrame(columns=['entityId', 'time_utc'])
