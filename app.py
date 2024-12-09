@@ -362,7 +362,7 @@ def main():
               - We are happy to hear your feedback.
              Please report any issues to Claas Resow.""")
     
-    with st.expander("ℹ️"):
+    with st.expander(""):
             st.write("""Stündliche Daten. Nur nach neuer vollen Stunde neu laden.""")
     
     prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
