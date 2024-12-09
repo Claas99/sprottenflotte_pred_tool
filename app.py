@@ -308,7 +308,8 @@ def main():
         predictions_df = ss.get('predictions_df')
         pred_message_type = 'info'
         pred_message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
-        st.write("Data is already initialized, no need to reload. Only reload nach voller Stunde")
+        
+        # st.write("Data is already initialized, no need to reload. Only reload nach voller Stunde")
 
     stations_filename = "data/stations.csv"
     stations_df = pd.read_csv(stations_filename)
