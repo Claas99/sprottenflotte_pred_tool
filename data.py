@@ -13,6 +13,7 @@ import base64
 import time
 import logging
 import random
+from io import StringIO
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -67,6 +68,23 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
         log.info("----- Data file updated successfully on GitHub -----")
     else:
         log.error(f"----- Failed to update Data file on GitHub: {r.content} ------")
+
+
+def read_csv_from_github(filepath, repo, token, branch="main"):
+    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+    headers = {'Authorization': f'token {token}'}
+
+    r = requests.get(url, headers=headers)
+    if r.status_code != 200:
+        log.error(f"----- Failed to get Data file from Github: {r.content} ------")
+        return None
+
+    file_content = r.json()['content']
+    decoded_content = base64.b64decode(file_content).decode('utf-8')
+    
+    # Convert the decoded content into a pandas DataFrame
+    df = pd.read_csv(StringIO(decoded_content))
+    return df
 
 
 def request_access_token_if_needed():
@@ -302,12 +320,18 @@ def update_station_data():
 
     # Prüfen, ob data_temp.csv vorhanden ist
     if os.path.exists(DATA_FILENAME):
-        # Laden des existierenden DataFrame
-        old_data_temp = pd.read_csv(DATA_FILENAME)
-        # make 'time_utc' in datetime
-        old_data_temp['time_utc'] = pd.to_datetime(old_data_temp['time_utc'])
-        # lösche alle daten vor START_DATE
-        old_data_temp = old_data_temp[old_data_temp['time_utc'] >= START_DATE]
+        # # Laden des existierenden DataFrame
+        # old_data_temp = pd.read_csv(DATA_FILENAME)
+        # # make 'time_utc' in datetime
+        # old_data_temp['time_utc'] = pd.to_datetime(old_data_temp['time_utc'])
+        # # lösche alle daten vor START_DATE
+        # old_data_temp = old_data_temp[old_data_temp['time_utc'] >= START_DATE]
+        
+        ########
+    
+        old_data_temp = read_csv_from_github(DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
+
+        ########
     else:
         # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
         old_data_temp = pd.DataFrame(columns=['entityId', 'time_utc'])
@@ -414,36 +438,32 @@ def get_current_dates():
     return start_date, end_date
 
 
-### Usage
-# update_station_data(DATA_FILENAME, STATIONS_FILENAME, START_DATE, END_DATE, BASE_URL, ACCESS_TOKEN)
+# def get_max_capacity(stationID, subareas_df) -> int:
+#     """
+#     Retrieves the maximum capacity of a station based on its station ID.
 
+#     This function searches for a station in a predefined DataFrame of stations
+#     and returns its maximum capacity. If the station is not found, it returns 0.
 
-def get_max_capacity(stationID, subareas_df) -> int:
-    """
-    Retrieves the maximum capacity of a station based on its station ID.
+#     :param stationID: The ID of the station whose maximum capacity is to be retrieved.
+#     :type stationID: str
 
-    This function searches for a station in a predefined DataFrame of stations
-    and returns its maximum capacity. If the station is not found, it returns 0.
+#     :return: The maximum capacity of the station as an integer. Returns 0 if the station is not found.
+#     :rtype: int
 
-    :param stationID: The ID of the station whose maximum capacity is to be retrieved.
-    :type stationID: str
+#     :raises ValueError: If the input stationID is not a string.
+#     """
+#     # Suche nach der Station mit der gegebenen ID
+#     station = subareas_df[subareas_df['entityId'] == stationID]
 
-    :return: The maximum capacity of the station as an integer. Returns 0 if the station is not found.
-    :rtype: int
-
-    :raises ValueError: If the input stationID is not a string.
-    """
-    # Suche nach der Station mit der gegebenen ID
-    station = subareas_df[subareas_df['entityId'] == stationID]
-
-    # Überprüfen, ob die Station gefunden wurde
-    if not station.empty:
-        # Extrahieren der maximalen Kapazität
-        max_capacity = station['maximum_capacity'].iloc[0]
-        return int(max_capacity)
-    else:
-        # Rückgabe von 0, wenn die Station nicht gefunden wurde
-        return 0
+#     # Überprüfen, ob die Station gefunden wurde
+#     if not station.empty:
+#         # Extrahieren der maximalen Kapazität
+#         max_capacity = station['maximum_capacity'].iloc[0]
+#         return int(max_capacity)
+#     else:
+#         # Rückgabe von 0, wenn die Station nicht gefunden wurde
+#         return 0
     
 # --- Easter Egg --->
 def update_random_bike_location(stations_df):
