@@ -67,7 +67,7 @@ def initialize_session_state():
         ss["subareas"] = list()  # Default to False (using full dataset)
 
 
-initialize_session_state() # needs to be here?
+# initialize_session_state() # needs to be here?
 
 
 # --- Helper Functions ---
@@ -291,6 +291,11 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
 
 # --- Main App Logic ---
 def main():
+    # Check for first load or reset action
+    if 'initialized' not in ss or st.button("Reset App", on_click=reset_app):
+        reset_app()  # Reset the app if not initialized or reset button is clicked
+        ss['initialized'] = True
+
     stations_filename = "data/stations.csv"
     stations_df = pd.read_csv(stations_filename)
 
