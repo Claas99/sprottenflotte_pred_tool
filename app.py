@@ -361,6 +361,40 @@ def main():
               - We are happy to hear your feedback.
              Please report any issues to Claas Resow.""")
     
+    st.markdown("""
+        <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            top: -5px;
+            left: 105%;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+        </style>
+        
+        <div class="tooltip">ℹ️
+            <span class="tooltiptext">Hover over the icon for additional information!</span>
+        </div>
+    """, unsafe_allow_html=True)
+    
     prio_df = measures_prio_of_subarea(data_df, predictions_df, stations_df)
 
     ss['subareas'] = prio_df['subarea'].tolist()
