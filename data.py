@@ -388,7 +388,7 @@ def update_station_data():
 
                 # Identify missing hours within the fetched data
                 fetched_times = pd.to_datetime(df['time_utc'])
-                all_times = pd.date_range(start=request_start_date, end=END_DATE, freq='h')
+                all_times = pd.date_range(start=request_start_date, end=END_DATE - timedelta(hours=1), freq='h')
                 missing_times = all_times.difference(fetched_times)
 
                 # Create NaN entries for those missing times
