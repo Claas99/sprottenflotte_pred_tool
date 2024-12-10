@@ -80,7 +80,7 @@ def main():
         # st.write("Data is already initialized, no need to reload. Only reload nach voller Stunde")
 
     if predictions_df is None:
-        # predictions_df = pd.read_csv('data/predictions.csv')
+        predictions_df = pd.read_csv('data/predictions.csv')
         st.error("predictions_df is None")
     
     full_df = app_functions.get_full_df_per_station(data_df, predictions_df, stations_df)
