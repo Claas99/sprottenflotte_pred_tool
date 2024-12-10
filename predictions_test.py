@@ -225,13 +225,15 @@ def update_predictions(data_df, weather_data_df, stations_df):
         for entity in entityId_list:
             data_for_prediction = data_temp[data_temp['entityId'] == entity]
 
-
-
-
             ######## make input of model, in such form for model to use
+            data = data_for_prediction[['availableBikeNumber', 'longitude', 'latitude',
+                            'day_sin', 'day_cos', 'year_sin', 'year_cos',
+                            'temperature', 'precipitation', 'windSpeed']].to_numpy().astype(np.float32)
+
+
             # Select the 'availableBikeNumber' column, convert to float and create a tensor
             data_for_prediction = torch.tensor(data_for_prediction['availableBikeNumber'].values).float()
-            data_for_prediction = data_for_prediction.unsqueeze(0).unsqueeze(0)  # Das Ergebnis ist ebenfalls [1, 1, 24]
+            data_for_prediction = data_for_prediction.unsqueeze(0).unsqueeze(0) 
 
 
 
