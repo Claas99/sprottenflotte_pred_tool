@@ -498,7 +498,7 @@ def update_weather_data():
         # old_weather = pd.read_csv(WEATHER_DATA_FILENAME)
         ########
     
-        old_weather = read_csv_from_github(DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
+        old_weather = read_csv_from_github(WEATHER_DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
         ########
         # make 'time_utc' in datetime
