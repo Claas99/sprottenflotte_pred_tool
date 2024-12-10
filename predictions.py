@@ -13,6 +13,7 @@ import joblib
 import requests
 import streamlit as st
 import base64
+from sklearn.preprocessing import MinMaxScaler
 
 import logging
 
