@@ -14,6 +14,7 @@ import requests
 import streamlit as st
 import base64
 from sklearn.preprocessing import MinMaxScaler
+from io import StringIO
 
 import logging
 
@@ -100,6 +101,24 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     else:
         log.error(f"----- Failed to update Prediction file on GitHub: {r.content} ------")
 
+
+def read_csv_from_github(filepath, repo, token, branch="main"):
+    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+    headers = {'Authorization': f'token {token}'}
+
+    r = requests.get(url, headers=headers)
+    if r.status_code != 200:
+        log.error(f"----- Failed to get Data file from Github: {r.content} ------")
+        return None
+
+    file_content = r.json()['content']
+    decoded_content = base64.b64decode(file_content).decode('utf-8')
+    
+    # Convert the decoded content into a pandas DataFrame
+    df = pd.read_csv(StringIO(decoded_content))
+    return df
+
+
 def inverse_scale_target(scaler, scaled_target, target_feature_index, original_feature_count):
     # Prepare a dummy matrix with zeros
     dummy = np.zeros((scaled_target.shape[0], original_feature_count))
@@ -139,8 +158,14 @@ def update_predictions(data_df):
         
     # Prüfen, ob predictions.csv vorhanden ist
     if os.path.exists(PREDICTIONS_FILENAME):
-        # Laden des existierenden DataFrame
-        data_temp_predictions = pd.read_csv(PREDICTIONS_FILENAME)
+        # # Laden des existierenden DataFrame
+        # data_temp_predictions = pd.read_csv(PREDICTIONS_FILENAME)
+        ########
+    
+        data_temp_predictions = read_csv_from_github(PREDICTIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
+
+        ########
+
         data_temp_predictions['prediction_time_utc'] = pd.to_datetime(data_temp_predictions['prediction_time_utc'])
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
         # überprüfen ob neue predictions necessary

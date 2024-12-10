@@ -375,8 +375,15 @@ def update_station_data():
 
     # prüfen ob station.csv vorhanden
     try:
-        # Laden des existierenden DataFrame
-        stations_data = pd.read_csv(STATIONS_FILENAME)
+        # # Laden des existierenden DataFrame
+        # stations_data = pd.read_csv(STATIONS_FILENAME)
+
+        ########
+    
+        stations_data = read_csv_from_github(STATIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
+
+        ########
+
         # make entity id list
         STATION_IDS = stations_data['entityId'].tolist()
     except Exception as e:
@@ -519,8 +526,13 @@ def update_weather_data():
 
     # prüfen ob weather_station.csv vorhanden
     try:
-        # Laden des existierenden DataFrame
-        weather_stations_data = pd.read_csv(WEATHER_STATIONS_FILENAME)
+        # # Laden des existierenden DataFrame
+        # weather_stations_data = pd.read_csv(WEATHER_STATIONS_FILENAME)
+        ########
+    
+        weather_stations_data = read_csv_from_github(WEATHER_STATIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
+
+        ########
         # make entity id list
         WEATHER_STATION_IDS = weather_stations_data['entityId'].tolist()
     except Exception as e:
