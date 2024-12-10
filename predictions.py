@@ -187,15 +187,15 @@ def update_predictions(data_df):
         for entity in entityId_list:
             data_for_prediction = data_temp[data_temp['entityId'] == entity]
 
-            # Select the 'availableBikeNumber' column, convert to float and create a tensor
-            data_for_prediction_values = data_for_prediction['availableBikeNumber'].values.reshape(-1, 1)
+            # # Select the 'availableBikeNumber' column, convert to float and create a tensor
+            # data_for_prediction_values = data_for_prediction['availableBikeNumber'].values.reshape(-1, 1)
 
-            # Scale the data
-            data_for_prediction_values_scaled = scaler.transform(data_for_prediction_values)
+            # # Scale the data
+            # data_for_prediction_values_scaled = scaler.transform(data_for_prediction_values)
 
             # make the data in such form for model to use
             # Select the 'availableBikeNumber' column, convert to float and create a tensor
-            data_for_prediction = torch.tensor(data_for_prediction_values_scaled['availableBikeNumber'].values).float()
+            data_for_prediction = torch.tensor(data_for_prediction['availableBikeNumber'].values).float()
             data_for_prediction = data_for_prediction.unsqueeze(0).unsqueeze(0)  # Das Ergebnis ist ebenfalls [1, 1, 24]
 
             # make predictions
