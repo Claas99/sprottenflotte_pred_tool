@@ -44,6 +44,8 @@ def main():
         # predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
         predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
         
+        ss['test_df_cool'] = test_df_cool
+
         ss['weather_data_df'] = weather_data_df
         ss['data_df'] = data_df
         ss['predictions_df'] = predictions_df
@@ -72,6 +74,8 @@ def main():
         predictions_df = ss.get('predictions_df')
         pred_message_type = None # 'info'
         pred_message_text = None # 'Es sind bereits Predictions für alle Stationen vorhanden.'
+
+        test_df_cool = ss.get('test_df_cool')
         
         # st.write("Data is already initialized, no need to reload. Only reload nach voller Stunde")
 
