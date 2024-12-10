@@ -502,7 +502,7 @@ def main():
         if data_df is not None:
             data_df['time_utc'] = pd.to_datetime(data_df['time_utc'])
             data_df['deutsche_timezone'] = data_df['time_utc'] + pd.Timedelta(hours=1)
-            st.dataframe(data_df, use_container_width=True)
+            st.dataframe(data_df[['entityId','deutsche_timezone','availableBikeNumber']], use_container_width=True)
         else:
             st.error("Failed to load historical data.")
 
