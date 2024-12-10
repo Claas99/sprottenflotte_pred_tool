@@ -125,36 +125,35 @@ def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
     specific_weather_data = weather_data_df[weather_data_df['entityId'] == 5423951]
 
     # Merge data_df with the specific weather data
-    combined_df = pd.merge(data_df, specific_weather_data, on='time_utc', how='left')
+    combined_df = pd.merge(data_df, specific_weather_data[['time_utc', 'precipitation', 'temperature', 'windSpeed']], on='time_utc', how='left')
     
     # Merge the combined data with stations data to add latitude and longitude
-    # final_df = pd.merge(combined_df, stations_df[['entityId', 'latitude', 'longitude']], on='entityId', how='left')
+    final_df = pd.merge(combined_df, stations_df[['entityId', 'latitude', 'longitude']], on='entityId', how='left')
     
-    # # Select and rename columns as needed
-    # final_df = final_df[['entityId', 'time_utc', 'availableBikeNumber', 'precipitation', 'windSpeed', 'temperature', 'latitude', 'longitude']]
-    # # final_df.columns = ['EntityID', 'Timestamp', 'Precipitation', 'Wind Speed', 'Temperature', 'Latitude', 'Longitude']
+    # Select and rename columns as needed
+    final_df = final_df[['entityId', 'time_utc', 'availableBikeNumber', 'precipitation', 'temperature', 'windSpeed', 'latitude', 'longitude']]
     
-    # # make sin and cos day and year
-    # # Extract seconds in day and calculate sine/cosine transformations
-    # day = 24 * 60 * 60  # Total seconds in a day
-    # year = 365.2425 * day  # Approximate total seconds in a year
+    # make sin and cos day and year
+    # Extract seconds in day and calculate sine/cosine transformations
+    day = 24 * 60 * 60  # Total seconds in a day
+    year = 365.2425 * day  # Approximate total seconds in a year
 
-    # # Ensure that all datetime objects are tz-naive (idk, had some error to prevent here)
-    # # final_df['time_utc'] = final_df['time_utc'].dt.tz_localize(None)
+    # Ensure that all datetime objects are tz-naive (idk, had some error to prevent here)
+    # final_df['time_utc'] = final_df['time_utc'].dt.tz_localize(None)
 
-    # # Timestamp seconds (linear value for point in time)
-    # final_df['Seconds'] = final_df['time_utc'].map(pd.Timestamp.timestamp)
+    # Timestamp seconds (linear value for point in time)
+    final_df['Seconds'] = final_df['time_utc'].map(pd.Timestamp.timestamp)
 
-    # # Apply sine and cosine transformations
-    # final_df['day_sin'] = np.sin(final_df['Seconds'] * (2* np.pi / day))
-    # final_df['day_cos'] = np.cos(final_df['Seconds'] * (2 * np.pi / day))
-    # final_df['year_sin'] = np.sin(final_df['Seconds'] * (2 * np.pi / year))
-    # final_df['year_cos'] = np.cos(final_df['Seconds'] * (2 * np.pi / year))
+    # Apply sine and cosine transformations
+    final_df['day_sin'] = np.sin(final_df['Seconds'] * (2* np.pi / day))
+    final_df['day_cos'] = np.cos(final_df['Seconds'] * (2 * np.pi / day))
+    final_df['year_sin'] = np.sin(final_df['Seconds'] * (2 * np.pi / year))
+    final_df['year_cos'] = np.cos(final_df['Seconds'] * (2 * np.pi / year))
 
-    # # Drop temporary columns
-    # final_df.drop(columns=['Seconds'], inplace=True)
+    # Drop temporary columns
+    final_df.drop(columns=['Seconds'], inplace=True)
 
-    return combined_df
+    return final_df
 
 
 def update_predictions(data_df, weather_data_df, stations_df):

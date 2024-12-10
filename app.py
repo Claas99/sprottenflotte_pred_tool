@@ -29,18 +29,6 @@ def reset_app():
     st.cache_resource.clear()
 
 
-# --- App Stages ---
-class AppStage(Enum):
-    """Enum for the different stages of the app."""
-
-    START = auto()
-    ANALYSIS_START = auto()
-
-    # define greater or equal
-    def __ge__(self, other):
-        return self.value >= other.value
-
-
 # --- Main App Logic ---
 def main():
     stations_filename = "data/stations.csv"
