@@ -213,13 +213,13 @@ def update_predictions(data_df):
         # for every unique entity id make predictions
         entityId_list = data_temp.entityId.unique()
         for entity in entityId_list:
-            data_for_prediction = data_temp[data_temp['entityId'] == entity]
+            data_for_prediction = data_temp[data_temp['entityId'] == entity].copy()
 
             # new ->
             data_for_prediction['Month'] = data_for_prediction['time_utc'].dt.month
             data_for_prediction['Day'] = data_for_prediction['time_utc'].dt.day
             data_for_prediction['Hour'] = data_for_prediction['time_utc'].dt.hour
-            data_for_prediction = data_for_prediction[['month', 'day', 'hour', 'availableBikeNumber']]
+            data_for_prediction = data_for_prediction[['Month', 'Day', 'Hour', 'availableBikeNumber']]
 
             # Daten vorverarbeiten (z. B. Skalierung)
             data_for_prediction_scaled = scaler.transform(data_for_prediction)
