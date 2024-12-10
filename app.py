@@ -305,6 +305,17 @@ def main():
         ss['predictions_df'] = predictions_df
 
         ss['initialized'] = True
+        if data_message_type == 'success':
+             # --- Easter Egg --->
+            # Set random bike position in session state 
+            # if 'random_bike' not in ss: # or data_message_type == 'success': 
+            random_subarea, new_lat, new_lon = data.update_random_bike_location(stations_df)
+            ss['random_bike'] = {'subarea': random_subarea, 'latitude': new_lat, 'longitude': new_lon}
+            # anzeigen des punktes als dataframe
+            # bike_df = pd.DataFrame([ss['random_bike']])
+            # st.dataframe(bike_df)
+            # <--- Easter Egg ---
+
     else:
         weather_data_df = ss.get('weather_data_df')
         weather_data_message_type = 'info'
@@ -417,16 +428,6 @@ def main():
                     """)
 
         subarea_df = make_dataframe_of_subarea(selected_option, stations_df)
-
-        # --- Easter Egg --->
-        # Set random bike position in session state 
-        if 'random_bike' not in ss: # or data_message_type == 'success': 
-            random_subarea, new_lat, new_lon = data.update_random_bike_location(stations_df)
-            ss['random_bike'] = {'subarea': random_subarea, 'latitude': new_lat, 'longitude': new_lon}
-        # anzeigen des punktes als dataframe
-        # bike_df = pd.DataFrame([ss['random_bike']])
-        # st.dataframe(bike_df)
-        # <--- Easter Egg ---
 
         # Plot the map
         fig = px.scatter_mapbox(
