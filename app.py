@@ -64,8 +64,8 @@ def main():
 
     else:
         weather_data_df = ss.get('weather_data_df')
-        weather_data_message_type = 'info'
-        weather_data_message_text = 'Es sind bereits Daten für alle Wetterstationen vorhanden.'
+        weather_data_message_type =  None # 'info'
+        weather_data_message_text =  None # 'Es sind bereits Daten für alle Wetterstationen vorhanden.'
 
         data_df = ss.get('data_df')
         data_message_type = None # 'info'
