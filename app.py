@@ -292,6 +292,9 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
 
 # --- Main App Logic ---
 def main():
+    stations_filename = "data/stations.csv"
+    stations_df = pd.read_csv(stations_filename)
+
     # Check for first load or reset action
     if 'initialized' not in ss: # or st.button("Reset App", on_click=reset_app)
         reset_app()
@@ -331,12 +334,6 @@ def main():
         
         # st.write("Data is already initialized, no need to reload. Only reload nach voller Stunde")
 
-    stations_filename = "data/stations.csv"
-    stations_df = pd.read_csv(stations_filename)
-
-    # data_df, data_message_type, data_message_text = data.update_station_data()
-    # predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
-    
     if predictions_df is None:
         # predictions_df = pd.read_csv('data/predictions.csv')
         st.error("predictions_df is None")
