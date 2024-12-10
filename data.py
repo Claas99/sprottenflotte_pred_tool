@@ -61,7 +61,7 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     # Update vorbereiten
     content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
     payload = {
-        "message": "Update Data CSV file",
+        "message": f"Update {filepath} file",
         "content": content_base64,
         "sha": sha,
         "branch": branch,
