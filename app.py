@@ -294,18 +294,26 @@ def measures_prio_of_subarea(stations_df:pd.DataFrame, predictions_df:pd.DataFra
 def main():
     # Check for first load or reset action
     if 'initialized' not in ss: # or st.button("Reset App", on_click=reset_app)
-        reset_app() 
-        
+        reset_app()
+
+        weather_data_df, weather_data_message_type, weather_data_message_text = data.update_weather_data()
         data_df, data_message_type, data_message_text = data.update_station_data()
         predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
+        
+        ss['weather_data_df'] = weather_data_df
         ss['data_df'] = data_df
         ss['predictions_df'] = predictions_df
 
         ss['initialized'] = True
     else:
+        weather_data_df = ss.get('weather_data_df')
+        weather_data_message_type = 'info'
+        weather_data_message_text = 'Es sind bereits Daten für alle Wetterstationen vorhanden.'
+
         data_df = ss.get('data_df')
         data_message_type = None # 'info'
         data_message_text = None # 'Es sind bereits Daten für alle Stationen vorhanden.'
+
         predictions_df = ss.get('predictions_df')
         pred_message_type = None # 'info'
         pred_message_text = None # 'Es sind bereits Predictions für alle Stationen vorhanden.'
@@ -394,6 +402,7 @@ def main():
     # --- tab 2 ---
     with tab2:
         st.write("### Historische Analyse")
+        print_message(weather_data_message_type, weather_data_message_text)
         print_message(data_message_type, data_message_text)
 
         with st.expander("ℹ️ Mehr Informationen zur Karte anzeigen"):
@@ -503,6 +512,9 @@ def main():
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
         st.dataframe(subarea_df, use_container_width=True)
+
+        st.write("Wetterstation Data:")
+        st.dataframe(weather_data_df, use_container_width=True)
 
     # --- tab 3 ---
     with tab3:

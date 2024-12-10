@@ -31,6 +31,10 @@ DATA_FILENAME = 'data/data_temp.csv'
 STATIONS_FILENAME = 'data/stations.csv' # station ids from file einlesen, um änderungen zu haben
 BASE_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:BikeHireDockingStation:KielRegion:"
 
+WEATHER_DATA_FILENAME = 'data/weather_data_temp.csv'
+WEATHER_STATIONS_FILENAME  = 'data/weather_stations.csv'
+WEATHER_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:WeatherObserved:OWM:"
+
 # Global variable to store the access token and its expiration time
 access_token_cache = {
     'token': None,
@@ -226,6 +230,31 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
         return None
 
 
+def fetch_weather_data(station_id, from_date, to_date, WEATHER_URL, ACCESS_TOKEN):
+    url = f"{WEATHER_URL}{station_id}"
+    headers = {
+        'NGSILD-Tenant': 'infoportal',
+        'Authorization': f'Bearer {ACCESS_TOKEN}'
+    }
+    params = {
+        'type': 'WeatherObserved',
+        'fromDate': from_date.isoformat(),
+        'toDate': to_date.isoformat(),
+        'attrs': 'temperature,windSpeed,precipitation',
+        'aggrPeriod': 'hour',
+        'aggrMethod': 'avg'
+    }
+    response = requests.get(url, headers=headers, params=params)
+
+    if response.status_code == 200:
+        # log.info(f'Got a response for weather_station_id: {station_id}')
+        return response.json()
+    else:
+        log.info(f'---------- No response for weather_station_id: {station_id}\n          from date: {from_date}\n          to date: {to_date}')
+        log.info(f"---------- Error: {response.status_code}, {response.text}")
+        return None
+
+
 def create_dataframe_from_api_data(data):
     """
     Converts data received from an API response into a structured pandas DataFrame.
@@ -258,8 +287,8 @@ def create_dataframe_from_api_data(data):
     # Extract entityId and entityType
     entity_id = data['entityId']
 
-    # Extract the number after "KielRegion" from the entityId
-    match = re.search(r'KielRegion:(\d+)', entity_id)
+    # Extract the number after "KielRegion" or "OWM" from the entityId
+    match = re.search(r'(?:KielRegion|OWM):(\d+)', entity_id)
     entity_id_number = match.group(1) if match else ''  # Get the number or set to empty if not found
 
     # Loop through each attribute dictionary in 'attributes'
@@ -344,7 +373,7 @@ def update_station_data():
         log.info(f'---------- No {STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, time_utc, availableBikeNumber')
         return
 
-    # prüfen ob station_data.csv vorhanden
+    # prüfen ob station.csv vorhanden
     try:
         # Laden des existierenden DataFrame
         stations_data = pd.read_csv(STATIONS_FILENAME)
@@ -450,6 +479,154 @@ def update_station_data():
 
     return data_temp_df, message_type, message_text
 
+
+##########
+def update_weather_data():
+    """
+    ss
+    """
+
+    log.info('Weather-Data-fetching process started')
+    start_time = time.time()
+
+    # Get the current start and end dates
+    START_DATE, END_DATE = get_current_dates()
+
+    # Prüfen, ob data_temp.csv vorhanden ist
+    if os.path.exists(WEATHER_DATA_FILENAME):
+        # # Laden des existierenden DataFrame
+        # old_weather = pd.read_csv(WEATHER_DATA_FILENAME)
+        ########
+    
+        old_weather = read_csv_from_github(DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
+
+        ########
+        # make 'time_utc' in datetime
+        old_weather['time_utc'] = pd.to_datetime(old_weather['time_utc'])
+        # lösche alle daten vor START_DATE
+        old_weather = old_weather[old_weather['time_utc'] >= START_DATE]
+        
+        # lösche alle nan
+        # old_weather = old_weather.dropna().reset_index(drop=True)
+        # delete duplicates
+        
+        old_weather = old_weather.drop_duplicates().reset_index(drop=True)
+    else:
+        # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
+        old_weather = pd.DataFrame(columns=['entityId', 'time_utc'])
+        log.info(f'---------- No {WEATHER_DATA_FILENAME} file exists. Please provide such file with these columns:\nentityId, time_utc, temperature, windSpeed, precipitation')
+        return
+
+    # prüfen ob weather_station.csv vorhanden
+    try:
+        # Laden des existierenden DataFrame
+        weather_stations_data = pd.read_csv(WEATHER_STATIONS_FILENAME)
+        # make entity id list
+        WEATHER_STATION_IDS = weather_stations_data['entityId'].tolist()
+    except Exception as e:
+        log.info(f'---------- No {WEATHER_STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, station_name, longitude, latitude')
+        log.info(f'---------- Error: {e}')
+
+    # - timedelta(hours=1), damit der request_start_date nicht gleich END_DATE ist
+    # full_date_range = all timestamps (until now) of the timewindow needed for the model for prediction
+    full_date_range = pd.date_range(start=START_DATE, end=END_DATE - timedelta(hours=1), freq='h') 
+    # Liste von DataFrames
+    dataframes = []
+
+    # entfernen der einträge der station ids, die nicht in STATION_IDS ist
+    # Maske, die True ist für jede Zeile, deren entityId in STATION_IDS ist
+    mask = old_weather['entityId'].isin(WEATHER_STATION_IDS)
+    # Entfernen dieser Zeilen
+    old_weather = old_weather[mask]
+
+    ACCESS_TOKEN = request_access_token_if_needed()
+
+    for station_id in WEATHER_STATION_IDS:
+        # überprüfe für station_id, ob der zeitraum von START_DATE bis END_DATE in old_data_temp vorhanden ist:
+        # select one station
+        station_data = old_weather[old_weather['entityId'] == station_id]
+        # extract available dates
+        available_dates = station_data['time_utc']
+        # Ermitteln der fehlenden Daten
+        missing_dates = full_date_range[~full_date_range.isin(available_dates)]
+
+        # wenn ja, skip diese station_id
+        # wenn nein, mache ein request_start_date
+
+        # Daten nur für fehlende Zeiten anfordern
+        if not missing_dates.empty:
+            request_start_date = missing_dates[0]
+            # und requeste die nicht vorhandenen stunden bis zum END_DATE
+            data = fetch_weather_data(station_id, request_start_date, END_DATE, WEATHER_URL, ACCESS_TOKEN)
+
+            if data:
+            #     df = create_dataframe_from_api_data(data)
+            #     # und appende sie an das dataframe
+            #     dataframes.append(df)
+                df = create_dataframe_from_api_data(data)
+
+                # Identify missing hours within the fetched data
+                fetched_times = pd.to_datetime(df['time_utc'])
+                all_times = pd.date_range(start=request_start_date, end=END_DATE - timedelta(hours=1), freq='h')
+                missing_times = all_times.difference(fetched_times)
+
+                # Create NaN entries for those missing times
+                if not missing_times.empty:
+                    nan_data = pd.DataFrame({
+                        'entityId': [station_id] * len(missing_times),
+                        'time_utc': missing_times,
+                        'temperature': [-42] * len(missing_times),
+                        'windSpeed': [-42] * len(missing_times),
+                        'precipitation': [-42] * len(missing_times)
+                    })
+                    df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
+                    df = df.replace(-42, np.nan)
+                
+                # und appende sie an das dataframe
+                dataframes.append(df)
+
+    if dataframes:
+        # Alle neuen DataFrames der Stationen zusammenführen
+        new_weather = pd.concat(dataframes)
+        # make the entitiy_id a number 
+        new_weather['entityId'] = new_weather['entityId'].astype('int64')
+        # Zusammenführen des alten DataFrames mit dem neuen
+        combined_weather = pd.concat([old_weather, new_weather])
+        # Sortieren, nach entitiyId und time_utc
+        combined_weather = combined_weather.sort_values(by=['entityId', 'time_utc'])
+        # resete index
+        updated_weather = combined_weather.reset_index(drop=True)
+
+        # Update the csv-file in the github repo
+        log.info("----- Start updating file on GitHub -----")
+        csv_to_github = updated_weather.to_csv(index=False)
+        update_csv_on_github(csv_to_github, WEATHER_DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
+
+        weather_data_df = updated_weather.copy()
+
+        # count new records and unique Ids 
+        total_new_records = len(new_weather)
+        unique_stations = new_weather['entityId'].nunique()
+
+        log.info(f'---------- {total_new_records} new weather records fetched for {unique_stations} stations.')
+        log.info(f'---------- request start date: {request_start_date}')
+        log.info(f'---------- Data successfully fetched and saved for all WEATHER_STATION_IDS.')
+        message_type = 'success'
+        message_text = f'{total_new_records} neue Datenpunkte für {unique_stations} Wetterstationen abgerufen.'
+        log.info(f'---------- Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:    {END_DATE}')
+    else:
+        weather_data_df = old_weather.copy()
+
+        log.info('---------- No new data to process, data for every weatherstation is available. Existing data used.')
+        message_type = 'info'
+        message_text = 'Es sind bereits Daten für alle Wetterstationen vorhanden.'
+
+    process_time = time.time() - start_time
+    log.info(f'Weather-Data-fetching process completed in {round(process_time, 2)} seconds.')
+
+    return weather_data_df, message_type, message_text
+
+#################
 
 def get_current_dates():
     """Calculate the current start and end dates for data fetching."""
