@@ -9,6 +9,7 @@ from streamlit import session_state as ss
 import plotly.express as px
 import data as data
 import predictions as predictions
+import predictions_test as predictions_test
 import plotly.graph_objects as go
 import numpy as np
 
@@ -301,6 +302,8 @@ def main():
 
         weather_data_df, weather_data_message_type, weather_data_message_text = data.update_weather_data()
         data_df, data_message_type, data_message_text = data.update_station_data()
+        test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
+        # predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
         predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
         
         ss['weather_data_df'] = weather_data_df
@@ -399,6 +402,8 @@ def main():
             st.write("""Die Prio der Subareas wird wie folgt berechnet: """)
 
         st.dataframe(prio_df, use_container_width=True)
+
+        st.dataframe(test_df_cool, use_container_width=True)
 
         # st.info('st.info')
         # st.success('st.success')

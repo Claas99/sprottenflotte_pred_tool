@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+import os
 import pandas as pd
 import numpy as np
 import torch
@@ -11,6 +14,8 @@ import math
 from datetime import datetime, timedelta, timezone
 import streamlit as st
 import requests
+import joblib
+import base64
 
 import logging
 
@@ -55,8 +60,8 @@ class BiLSTM(nn.Module):
         batch_size = x.size(0)
 
         # Initialisiere hidden states für beide Richtungen (daher * 2)
-        h0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size).to(device)
-        c0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size).to(device)
+        h0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)#.to(device)
+        c0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)#.to(device)
 
         out, _ = self.lstm(x, (h0, c0))
         # Nimm nur den letzten Zeitschritt
@@ -95,15 +100,197 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     else:
         log.error(f"----- Failed to update Prediction file on GitHub: {r.content} ------")
 
-def inverse_scale_target(scaler, scaled_target, target_feature_index, original_feature_count):
-    # Prepare a dummy matrix with zeros
-    dummy = np.zeros((scaled_target.shape[0], original_feature_count))
+# def inverse_scale_target(scaler, scaled_target, target_feature_index, original_feature_count):
+#     # Prepare a dummy matrix with zeros
+#     dummy = np.zeros((scaled_target.shape[0], original_feature_count))
 
-    # Place scaled target feature where it originally belonged in full dataset
-    dummy[:, target_feature_index] = scaled_target.flatten()
+#     # Place scaled target feature where it originally belonged in full dataset
+#     dummy[:, target_feature_index] = scaled_target.flatten()
 
-    # Use inverse_transform, which applies only to non-zero entries when split like this
-    inversed_full = scaler.inverse_transform(dummy)
+#     # Use inverse_transform, which applies only to non-zero entries when split like this
+#     inversed_full = scaler.inverse_transform(dummy)
 
-    # Extract only the inversely transformed target value
-    return inversed_full[:, target_feature_index]
+#     # Extract only the inversely transformed target value
+#     return inversed_full[:, target_feature_index]
+
+# Return the prediction
+def predict(model, data):
+    model.eval()
+    with torch.no_grad():
+        return model(data)
+
+
+def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
+    # Filter weather data for a specific station
+    specific_weather_data = weather_data_df[weather_data_df['entityId'] == 5423951]
+
+    # Merge data_df with the specific weather data
+    combined_df = pd.merge(data_df, specific_weather_data, on='time_utc', how='left')
+    
+    # Merge the combined data with stations data to add latitude and longitude
+    final_df = pd.merge(combined_df, stations_df[['entityId', 'latitude', 'longitude']], on='entityId', how='left')
+    
+    # Select and rename columns as needed
+    final_df = final_df[['entityId', 'time_utc', 'availableBikeNumber', 'precipitation', 'windSpeed', 'temperature', 'latitude', 'longitude']]
+    # final_df.columns = ['EntityID', 'Timestamp', 'Precipitation', 'Wind Speed', 'Temperature', 'Latitude', 'Longitude']
+    
+    # make sin and cos day and year
+    # Extract seconds in day and calculate sine/cosine transformations
+    day = 24 * 60 * 60  # Total seconds in a day
+    year = 365.2425 * day  # Approximate total seconds in a year
+
+    # Ensure that all datetime objects are tz-naive (idk, had some error to prevent here)
+    # final_df['time_utc'] = final_df['time_utc'].dt.tz_localize(None)
+
+    # Timestamp seconds (linear value for point in time)
+    final_df['Seconds'] = final_df['time_utc'].map(pd.Timestamp.timestamp)
+
+    # Apply sine and cosine transformations
+    final_df['day_sin'] = np.sin(final_df['Seconds'] * (2* np.pi / day))
+    final_df['day_cos'] = np.cos(final_df['Seconds'] * (2 * np.pi / day))
+    final_df['year_sin'] = np.sin(final_df['Seconds'] * (2 * np.pi / year))
+    final_df['year_cos'] = np.cos(final_df['Seconds'] * (2 * np.pi / year))
+
+    # Drop temporary columns
+    final_df.drop(columns=['Seconds'], inplace=True)
+
+    return final_df
+
+
+def update_predictions(data_df, weather_data_df, stations_df):
+    
+    log.info('Prediction process started')
+
+    # make überprüfung, ob predictions needed at this time? otherwise the predictions would be generated every time the application gets refreshed
+    try:
+        # load in data_temp
+        # Laden des existierenden DataFrame
+        # data_temp = pd.read_csv(DATA_FILENAME)
+
+        data_temp = make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
+
+        # data_temp = data_df.copy()
+        data_temp['time_utc'] = pd.to_datetime(data_temp['time_utc'])
+        latest_data_time = data_temp['time_utc'].max()
+    except Exception as e:
+        log.info(f'No {DATA_FILENAME} file found.')
+        log.info(f'Error: {e}')
+        
+    # Prüfen, ob predictions.csv vorhanden ist
+    if os.path.exists(PREDICTIONS_FILENAME):
+        # Laden des existierenden DataFrame
+        data_temp_predictions = pd.read_csv(PREDICTIONS_FILENAME)
+        data_temp_predictions['prediction_time_utc'] = pd.to_datetime(data_temp_predictions['prediction_time_utc'])
+        earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
+        # überprüfen ob neue predictions necessary
+        if earliest_prediction_time > latest_data_time:
+            log.info("---------- No new predictions necessary, predictions are up to date.")
+            message_type = 'info'
+            message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
+            log.info('Prediction process completed')
+            return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
+        # else:
+            # Altes Daten löschen, da neue Predictions notwendig sind
+            # data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
+
+    # else:
+        # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
+        # data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber']) # to be adjusted
+
+    try:
+            # model saved torch.save(cnn_model.state_dict(), 'cnn_model.pth')
+        # load in the model
+        # Modellinitialisierung (Stellen Sie sicher, dass Sie alle benötigten Hyperparameter angeben)
+        loaded_model = BiLSTM(input_size, hidden_size, num_stacked_layers)
+        # Laden der Modellparameter
+        loaded_model.load_state_dict(torch.load(MODEL_FILENAME, weights_only=True))
+
+    except Exception as e:
+        log.info(f'---------- No {MODEL_FILENAME} file found.')
+        log.info(f'---------- Error: {e}')
+
+    try:
+            # scalar saved joblib.dump(scaler, 'scaler.pkl')
+        # load in the scalar
+        scaler = joblib.load(SCALER_FILENAME)
+
+    except Exception as e:
+        log.info(f'---------- No {SCALER_FILENAME} file found.')
+        log.info(f'---------- Error: {e}')
+
+    # make predictions
+    try:
+        dataframes = []
+        # for every unique entity id make predictions
+        entityId_list = data_temp.entityId.unique()
+        for entity in entityId_list:
+            data_for_prediction = data_temp[data_temp['entityId'] == entity]
+
+
+
+
+            ######## make input of model, in such form for model to use
+            # Select the 'availableBikeNumber' column, convert to float and create a tensor
+            data_for_prediction = torch.tensor(data_for_prediction['availableBikeNumber'].values).float()
+            data_for_prediction = data_for_prediction.unsqueeze(0).unsqueeze(0)  # Das Ergebnis ist ebenfalls [1, 1, 24]
+
+
+
+
+            # make predictions
+            entityId_predictions = predict(loaded_model, data_for_prediction)
+
+
+            ###### make predictions so that we get availableBikeNumber for temp_df
+            # entityId_predictions = entityId_predictions.unsqueeze(-1)
+            # make predictions real numbers, if model used scaled data for prediction
+            num_samples, prediction_length, _ = entityId_predictions.shape
+            entityId_predictions_reshaped = entityId_predictions.reshape(num_samples * prediction_length, -1)
+            # Inverse transform for target feature predictions
+            entityId_predictions_bikes = inverse_scale_target(scaler, entityId_predictions_reshaped, target_feature_index, original_feature_count).reshape(num_samples, prediction_length, -1)
+
+
+
+            #### create final prediction dataframe
+            # append to dataframe with entityId and predictions
+            # Assign dates to each prediction
+            start_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) 
+            # Erzeugen einer Liste von Zeitstempeln für jede Vorhersage
+            date_list = [start_date + timedelta(hours=i) for i in range(prediction_length)]
+            
+            # Create DataFrame for current entity predictions
+            temp_df = pd.DataFrame({
+                'entityId': entity,
+                'prediction_time_utc': date_list,
+                'prediction_availableBikeNumber': entityId_predictions_bikes.squeeze().tolist()
+            })
+
+            # Hinzufügen des temporären DataFrame zur Liste
+            dataframes.append(temp_df)
+
+        # Zusammenführen aller temporären DataFrames zu einem finalen DataFrame
+        data_temp_predictions = pd.concat(dataframes, ignore_index=True)
+
+        # Update the csv-file in the github repo
+        log.info("----- Start updating file on GitHub -----")
+        csv_to_github = data_temp_predictions.to_csv(index=False)
+        update_csv_on_github(csv_to_github, PREDICTIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
+        
+        message_type = 'success'
+        message_text = 'Es wurden neue Predictions für alle Stationen gemacht.'
+        
+        earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
+
+        log.info('---------- Predictions made successfully and saved for all STATION_IDS.')
+        log.info(f'---------- Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for:         {latest_data_time}')
+        log.info('Prediction process completed')
+
+        return data_temp_predictions, message_type, message_text
+
+    except Exception as e:
+        log.info(f'---------- Error: {e}')
+        message_type = 'error'
+        message_text = 'Fehler beim machen der Predictions.'
+        log.info('Prediction process completed')
+
+        return None, message_type, message_text
