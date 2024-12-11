@@ -270,7 +270,7 @@ def main():
         #     st.error("Failed to load historical data.")
 
         st.write(f"Daten der Stationen von {selected_option}")
-        subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Farbe-Info'] = subarea_df['Teilgebiet'], subarea_df['station_name'], subarea_df['Fahrräder Aktuell'], subarea_df['maximum_capacity'], subarea_df['color_info']
+        subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Farbe-Info'] = subarea_df['subarea'], subarea_df['station_name'], subarea_df['Fahrräder Aktuell'], subarea_df['maximum_capacity'], subarea_df['color_info']
         
         columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'Maximale Kapazität',  'Delta', 'Farbe-Info']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
