@@ -34,11 +34,9 @@ def main():
     # --- initialise ---
     # Initialise Streamlit Interface
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
-    st.write("""Thank you for using the Sprottenflotte prediciton model! This model is still in beta
-              - We are happy to hear your feedback.
-             Please report any issues to Claas Resow.""")
-    
-    st.write("""Stündliche Daten. Nur nach neuer vollen Stunde neu laden.""")
+    st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodel! Das Model befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
+             Bitte sende jegliches Feedback gerne an mobil@kielregion.de
+             Stündliche Daten. Nur nach neuer vollen Stunde neu laden.""")
 
     #
     stations_filename = "data/stations.csv"
