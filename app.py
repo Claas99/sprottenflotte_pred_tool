@@ -270,8 +270,9 @@ def main():
         #     st.error("Failed to load historical data.")
 
         st.write(f"Daten der Stationen von {selected_option}")
-
-        columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'color_info']
+        subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Farbe-Info'] = subarea_df['Teilgebiet'], subarea_df['station_name'], subarea_df['Fahrräder Aktuell'], subarea_df['maximum_capacity'], subarea_df['color_info']
+        
+        columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'Maximale Kapazität',  'Delta', 'Farbe-Info']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
         # st.dataframe(subarea_df, use_container_width=True)
@@ -430,14 +431,15 @@ def main():
                 too_high_df,
                 x='station_name',
                 y='count',
-                color='station_name',
+                color='count',
                 title=f"Anzahl Stunden zu voll pro Station in {selected_option}",
                 labels={
                     "station_name": "Station",
                     "count": "Anzahl Stunden"
                 },
                 width=plot_width,
-                height=plot_height
+                height=plot_height,
+                color_discrete_sequence=['Blues']  # This sets all bars to red
             )
             fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
             st.plotly_chart(fig_low)
@@ -447,14 +449,15 @@ def main():
                 too_low_df,
                 x='station_name',
                 y='count',
-                color='station_name',
+                color='count',
                 title=f"Anzahl Stunden zu leer pro Station in {selected_option}",
                 labels={
                     "station_name": "Station",
                     "count": "Anzahl Stunden"
                 },
                 width=plot_width,
-                height=plot_height
+                height=plot_height,
+                color_discrete_sequence=['Reds']  # This sets all bars to red
             )
             fig_high.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
             st.plotly_chart(fig_high)
