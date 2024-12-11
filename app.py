@@ -36,10 +36,10 @@ def main():
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
     st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodel! Das Model befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
              Bitte sende jegliches Feedback gerne an mobil@kielregion.de.""")
-    st.write("***")
+    
              
     st.write("""Die Daten werden stündlich neu geladen und neu vorhergesagt, daher wird bei jeder neuen vollen Stunde ein Ladeprozess im Hintergrund angestoßen. Dies kann ein paar Minunten dauern.""")
-
+    st.write("***")
     #
     stations_filename = "data/stations.csv"
     stations_df = pd.read_csv(stations_filename)
