@@ -435,7 +435,6 @@ def main():
                 width=plot_width,
                 height=plot_height
             )
-            fig_low.update_layout(xaxis_tickangle=45)
             st.plotly_chart(fig_low)
         
         with col2:
