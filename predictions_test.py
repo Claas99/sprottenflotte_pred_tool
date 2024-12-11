@@ -248,13 +248,13 @@ def update_predictions(data_df, weather_data_df, stations_df):
             data = data.reshape(1, 24, 10)
             
             # Make predictions
-            # predictions = predict(loaded_model, data)
+            predictions = predict(loaded_model, data)
             
             # # Inverse scale the predictions with scalarY
             # predictions = scaler_Y.inverse_transform(predictions)
 
             #.tolist()
-            return data
+            return predictions
 
 
 
