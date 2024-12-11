@@ -232,7 +232,7 @@ def main():
                                         bordercolor='#9ec044'))
 
         # Show the map
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, config={"scrollZoom": True})
 
         selected_station = st.selectbox("Wähle eine Station aus:", subarea_df['station_name'])
         station_data = subarea_df[subarea_df['station_name'] == selected_station].iloc[0]
