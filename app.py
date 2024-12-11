@@ -43,7 +43,7 @@ def main():
         test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
         # predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
         test_data = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
-        st.dataframe(test_data, use_container_width=True)
+        # st.dataframe(test_data, use_container_width=True)
         st.write(test_data.shape)
 
 
