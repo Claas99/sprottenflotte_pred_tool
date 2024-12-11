@@ -414,6 +414,10 @@ def main():
         too_high_df = too_high_df['station_name'].value_counts().reset_index()
         too_high_df.columns = ['station_name', 'count']
         
+        # Set fixed dimensions for the plots
+        plot_width = 600  # Adjust width as needed
+        plot_height = 400  # Adjust height as needed
+        
         # Create Streamlit columns
         col1, col2 = st.columns(2)
         
@@ -427,8 +431,11 @@ def main():
                 labels={
                     "station_name": "Station",
                     "count": "Anzahl Stunden"
-                }
+                },
+                width=plot_width,
+                height=plot_height
             )
+            fig_low.update_layout(xaxis_tickangle=45)
             st.plotly_chart(fig_low)
         
         with col2:
@@ -441,9 +448,13 @@ def main():
                 labels={
                     "station_name": "Station",
                     "count": "Anzahl Stunden"
-                }
+                },
+                width=plot_width,
+                height=plot_height
             )
+            fig_low.update_layout(xaxis_tickangle=45)
             st.plotly_chart(fig_high)
+
 
         
     st.button("Reset App/Reload", on_click=reset_app, key="reset_button")
