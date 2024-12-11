@@ -433,7 +433,7 @@ def main():
                 too_high_df,
                 x='station_name',
                 y='count',
-                color='count',
+                color='blue',
                 title=f"Anzahl Stunden zu voll pro Station in {selected_option}",
                 labels={
                     "station_name": "Station",
@@ -451,7 +451,7 @@ def main():
                 too_low_df,
                 x='station_name',
                 y='count',
-                color='count',
+                color='red',
                 title=f"Anzahl Stunden zu leer pro Station in {selected_option}",
                 labels={
                     "station_name": "Station",
