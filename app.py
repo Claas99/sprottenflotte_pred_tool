@@ -331,7 +331,7 @@ def main():
         st.plotly_chart(fig, config={"scrollZoom": True})
 
         st.write("***")
-        st.write("Stations Data:")
+        st.write(f"Daten der Stationen von {selected_option}")
 
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'prediction_1h', 'prediction_2h', 'prediction_3h', 'prediction_4h', 'prediction_5h', 'maximum_capacity', 'color_info_predictions']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
@@ -360,7 +360,7 @@ def main():
             x='deutsche_timezone',
             y='availableBikeNumber',
             color='station_name',
-            title="Bike Availability Over Time by Station",
+            title=f"Bike Availability Over Time by Station in {selected_option}",
             labels={
                 "deutsche_timezone": "Uhrzeit",
                 "availableBikeNumber": "Available Bikes",
@@ -388,6 +388,8 @@ def main():
         # Show the plot
         st.plotly_chart(fig)
 
+        st.write("***")
+        st.write(f"Zeitdaten der Stationen von {selected_option}")
         # st.dataframe(subarea_df[['entityId', 'station_name', 'availableBikeNumber', 'deutsche_timezone']], use_container_width=True)
         st.dataframe(subarea_df.pivot(index='station_name', columns='deutsche_timezone', values='availableBikeNumber'), use_container_width=True)
 
