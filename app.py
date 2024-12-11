@@ -363,9 +363,10 @@ def main():
             xaxis_title="Uhrzeit",
             yaxis_title="Available Bikes",
             legend_title="Station",
-            template="plotly_white"
+            template="plotly_white",
+            yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot')
     )
-        fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-6]}", line_width=2, line_dash="dash", line_color="blue")  
+        fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-6]}", line_width=2, line_dash="dash", line_color="black")  
 
         # Show the plot
         st.plotly_chart(fig)
