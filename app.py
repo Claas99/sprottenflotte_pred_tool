@@ -47,7 +47,7 @@ def main():
     # Check for first load or reset action
     if 'initialized' not in ss: # or st.button("Reset App", on_click=reset_app)
         reset_app()
-        with st.spinner:
+        with st.spinner("Daten werden geladen..."):
             weather_data_df, weather_data_message_type, weather_data_message_text = data.update_weather_data()
             st.toast("Wetter Daten geladen")
             data_df, data_message_type, data_message_text = data.update_station_data()
