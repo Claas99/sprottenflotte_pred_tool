@@ -44,7 +44,6 @@ def main():
         # predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
         test_data = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
         # st.dataframe(test_data, use_container_width=True)
-        st.write(test_data.shape)
         st.write(test_data)
 
 
