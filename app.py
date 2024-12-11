@@ -429,7 +429,7 @@ def main():
         col1, col2 = st.columns(2)
         
         with col1:
-            fig_low = px.bar(
+            fig_high = px.bar(
                 too_high_df,
                 x='station_name',
                 y='count',
@@ -443,11 +443,11 @@ def main():
                 height=plot_height,
                 color_discrete_sequence=['Blues']  # This sets all bars to red
             )
-            fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
+            fig_high.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
             st.plotly_chart(fig_low)
         
         with col2:
-            fig_high = px.bar(
+            fig_low = px.bar(
                 too_low_df,
                 x='station_name',
                 y='count',
@@ -461,7 +461,7 @@ def main():
                 height=plot_height,
                 color_discrete_sequence=['Reds']  # This sets all bars to red
             )
-            fig_high.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
+            fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
             st.plotly_chart(fig_high)
 
 
