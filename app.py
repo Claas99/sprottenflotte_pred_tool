@@ -365,7 +365,7 @@ def main():
         else:
             subarea_df = full_df[full_df['subarea'] == selected_option]
 
-        subarea_df['hour_day'] = subarea_df['deutsche_timezone'].dt.strftime('%H-%d')
+        subarea_df['hour_day'] = subarea_df['deutsche_timezone'].dt.strftime('%H Uhr %d.%m.')
 
         fig = px.line(
             subarea_df,
