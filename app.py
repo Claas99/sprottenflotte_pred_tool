@@ -155,9 +155,13 @@ def main():
                         - **Case 1** - Station X wird in 5h überfüllt/leer sein = Prio + 0.5
                         - **Case 2** - Station X wird 4h lang überfüllt/leer sein = Prio + 0.5
                         - **Case 3** - Station X wird 8h lang überfüllt/leer sein = Prio + 0.5
-                        - **Case 4** - Station X wird 24h lang überfüllt/leer sein = Prio + 1""")
-
-        st.dataframe(prio_df, use_container_width=True)
+                        - **Case 4** - Station X wird 24h lang überfüllt/leer sein = Prio + 1
+                        
+                        Aus allen Stationen wird dann der Durchschnitt pro Teilgebiet berechnet und hiernach sortiert.""")
+        prio_df['Teilgebiet'] = prio_df['subarea']
+        prio_df['Handlungsbedarf'] = prio_df['subarea_prio']
+        
+        st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
 
         st.dataframe(test_df_cool, use_container_width=True)
 
