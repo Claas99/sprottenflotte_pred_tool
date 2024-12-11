@@ -371,7 +371,7 @@ def main():
         fig.add_annotation(
             x=f"{subarea_df['deutsche_timezone'].iloc[-6]}",
             y=max(subarea_df['availableBikeNumber']),  # Adjust y position as necessary
-            text="Predictions",
+            text=" Predictions",
             showarrow=False,
             xanchor="left"  # Align text to the left of the vertical line
         )
