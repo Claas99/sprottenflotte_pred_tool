@@ -377,7 +377,7 @@ def main():
             title=f"Verfügbare Fahrräder im Teilgebiet {selected_option}",
             labels={
                 "deutsche_timezone": "Uhrzeit",
-                "availableBikeNumber": "Available Bikes",
+                "availableBikeNumber": "Verfügbare Fahrräder",
                 "station": "Station"
             }
         )
