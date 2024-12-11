@@ -171,7 +171,7 @@ def get_full_df_per_station(stations_df, predictions_df, subarea_df):
 
     full_df = pd.concat([stations_df[['entityId','time_utc','availableBikeNumber']], predictions_df[['entityId','time_utc','availableBikeNumber']]], ignore_index=True)
     full_df = full_df.sort_values(by=['entityId','time_utc']).reset_index(drop=True)
-    full_df = full_df.merge(subarea_df[['entityId', 'subarea', 'station_name']], on='entityId', how='left')
+    full_df = full_df.merge(subarea_df[['entityId', 'subarea', 'station_name', 'maximum_capacity']], on='entityId', how='left')
     full_df['deutsche_timezone'] = full_df['time_utc'] + pd.Timedelta(hours=1)
 
     return full_df
