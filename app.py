@@ -415,8 +415,8 @@ def main():
         too_high_df.columns = ['station_name', 'count']
         
         # Set fixed dimensions for the plots
-        plot_width = 300  # Adjust width as needed
-        plot_height = 200  # Adjust height as needed
+        plot_width = 800  # Adjust width as needed
+        plot_height = 600  # Adjust height as needed
         
         # Create Streamlit columns
         col1, col2 = st.columns(2)
