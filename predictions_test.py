@@ -245,7 +245,18 @@ def update_predictions(data_df, weather_data_df, stations_df):
                             'temperature', 'precipitation', 'windSpeed']].to_numpy().astype(np.float32)
             
             data = data.reshape(1, 24, 10)
-            return data
+
+            data = scaler_X.transform(data)
+            # data = data.reshape(1, 24, 10)
+            
+            # Make predictions
+            predictions = predict(loaded_model, data)
+            
+            # Inverse scale the predictions with scalarY
+            predictions = scaler_Y.inverse_transform(predictions)
+
+            #.tolist()
+            return predictions
 
 
 
