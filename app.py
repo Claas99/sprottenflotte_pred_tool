@@ -139,11 +139,11 @@ def main():
     selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
     # initialise tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Predictions", "Testebene"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Predictions", "Analyse"])
 
     # --- tab 1 ---
     with tab1:
-        st.write("### Vorhersage - Teilgebiete nach Handlungsbedarf")
+        st.write("### Teilgebiete nach Handlungsbedarf")
 
         with st.expander("ℹ️ Mehr Informationen zu der Berechnung der Prio anzeigen"):
             st.write("""
