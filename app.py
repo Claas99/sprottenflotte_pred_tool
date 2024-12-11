@@ -366,7 +366,7 @@ def main():
             template="plotly_white",
             yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot')
     )
-        fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-6]}", line_width=2, line_dash="dash", line_color="black")  
+        fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-6]}", line_width=2, line_dash="dash", line_color="black", annotation_text="Predictions", annotation_position="top right")  
 
         # Show the plot
         st.plotly_chart(fig)
