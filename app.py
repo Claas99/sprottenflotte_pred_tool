@@ -270,9 +270,9 @@ def main():
         #     st.error("Failed to load historical data.")
 
         st.write(f"Daten der Stationen von {selected_option}")
-        subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Farbe-Info'] = subarea_df['subarea'], subarea_df['station_name'], subarea_df['current_capacity'], subarea_df['maximum_capacity'], subarea_df['color_info']
+        subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Info'] = subarea_df['subarea'], subarea_df['station_name'], subarea_df['current_capacity'], subarea_df['maximum_capacity'], subarea_df['color_info']
         
-        columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'Maximale Kapazität',  'Delta', 'Farbe-Info']
+        columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'Maximale Kapazität',  'Delta', 'Info']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
         # st.dataframe(subarea_df, use_container_width=True)
@@ -347,7 +347,9 @@ def main():
         st.write("***")
         st.write(f"Daten der Stationen von {selected_option}")
 
-        columns_to_show = ['subarea', 'station_name', 'current_capacity', 'prediction_1h', 'prediction_2h', 'prediction_3h', 'prediction_4h', 'prediction_5h', 'maximum_capacity', 'color_info_predictions']
+        subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Info'] = subarea_df['subarea'], subarea_df['station_name'], subarea_df['current_capacity'], subarea_df['maximum_capacity'], subarea_df['color_info_predictions']
+        
+        columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'prediction_1h', 'prediction_2h', 'prediction_3h', 'prediction_4h', 'prediction_5h', 'Maximale Kapazität', 'Info']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
         # st.write("Daten:")
