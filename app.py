@@ -221,8 +221,7 @@ def main():
         # <--- Easter Egg ---
 
         # Set the Mapbox style (requires an internet connection)
-        fig.update_layout(mapbox_style="open-street-map",
-                          scrollZoom=True)
+        fig.update_layout(mapbox_style="open-street-map")
 
         # Adjust the hoverlabel color # bgcolor=subarea_df['color'],
         fig.update_traces(marker=dict(size=12),
