@@ -403,6 +403,7 @@ def main():
         st.write("***")
         st.write(f"Zeitdaten der Stationen von {selected_option}")
         # st.dataframe(subarea_df[['entityId', 'station_name', 'availableBikeNumber', 'deutsche_timezone']], use_container_width=True)
+        subarea_df = subarea_df.sort_values(by=[subarea_df['deutsche_timezone'].dt.day, subarea_df['deutsche_timezone'].dt.hour])
         st.dataframe(subarea_df.pivot(index='station_name', columns='hour_day', values='availableBikeNumber'), use_container_width=True)
 
     st.button("Reset App/Reload", on_click=reset_app, key="reset_button")
