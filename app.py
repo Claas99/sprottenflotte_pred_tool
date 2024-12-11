@@ -444,7 +444,7 @@ def main():
                 color_discrete_sequence=['Blues']  # This sets all bars to red
             )
             fig_high.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
-            st.plotly_chart(fig_low)
+            st.plotly_chart(fig_high)
         
         with col2:
             fig_low = px.bar(
@@ -462,7 +462,7 @@ def main():
                 color_discrete_sequence=['Reds']  # This sets all bars to red
             )
             fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
-            st.plotly_chart(fig_high)
+            st.plotly_chart(fig_low)
 
 
         
