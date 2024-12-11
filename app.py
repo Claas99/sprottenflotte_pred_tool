@@ -242,24 +242,24 @@ def main():
         st.markdown(f"[Klicken Sie hier, um {selected_station} in Google Maps zu öffnen]({google_maps_url})")
 
         st.write("***")
-        st.write("Historische Daten:")
+        # st.write("Historische Daten:")
 
-        if data_df is not None:
-            data_df['time_utc'] = pd.to_datetime(data_df['time_utc'])
-            data_df['deutsche_timezone'] = data_df['time_utc'] + pd.Timedelta(hours=1)
-            st.dataframe(data_df[['entityId','deutsche_timezone','availableBikeNumber']], use_container_width=True)
-        else:
-            st.error("Failed to load historical data.")
+        # if data_df is not None:
+        #     data_df['time_utc'] = pd.to_datetime(data_df['time_utc'])
+        #     data_df['deutsche_timezone'] = data_df['time_utc'] + pd.Timedelta(hours=1)
+        #     st.dataframe(data_df[['entityId','deutsche_timezone','availableBikeNumber']], use_container_width=True)
+        # else:
+        #     st.error("Failed to load historical data.")
 
         st.write("Stations Data:")
 
-        columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'Prio']
+        columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'color_info']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
-        st.dataframe(subarea_df, use_container_width=True)
+        # st.dataframe(subarea_df, use_container_width=True)
 
-        st.write("Wetterstation Data:")
-        st.dataframe(weather_data_df, use_container_width=True)
+        # st.write("Wetterstation Data:")
+        # st.dataframe(weather_data_df, use_container_width=True)
 
     # --- tab 3 ---
     with tab3:
@@ -326,6 +326,11 @@ def main():
         st.plotly_chart(fig, config={"scrollZoom": True})
 
         st.write("***")
+        st.write("Stations Data:")
+
+        columns_to_show = ['subarea', 'station_name', 'current_capacity', 'prediction_1h', 'prediction_2h', 'prediction_3h', 'prediction_4h', 'prediction_5h', 'maximum_capacity', 'color_info_predictions']
+        st.dataframe(subarea_df[columns_to_show], use_container_width=True)
+
         st.write("Daten:")
 
         if predictions_df is not None:
