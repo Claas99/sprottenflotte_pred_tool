@@ -25,8 +25,9 @@ log = logging.getLogger()
 
 ### Configurations
 DATA_FILENAME = 'data/data_temp.csv'
-MODEL_FILENAME = 'data/cnn_model.pth'
-SCALER_FILENAME = 'data/scaler.pkl'
+MODEL_FILENAME = 'data/biLSTM_whole_weights.pth'
+SCALER_X_FILENAME = 'data/scaler_X.joblib'
+SCALER_Y_FILENAME = 'data/scaler_y.joblib'
 PREDICTIONS_FILENAME = 'data/predictions.csv'
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
 NAME_REPO = "Claas99/sprottenflotte_pred_tool"
@@ -181,13 +182,17 @@ def update_predictions(data_df, weather_data_df, stations_df):
         data_temp_predictions = pd.read_csv(PREDICTIONS_FILENAME)
         data_temp_predictions['prediction_time_utc'] = pd.to_datetime(data_temp_predictions['prediction_time_utc'])
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
+
+        #### vorerst geskippt, um immer predictions zu machen
         # überprüfen ob neue predictions necessary
-        if earliest_prediction_time > latest_data_time:
-            log.info("---------- No new predictions necessary, predictions are up to date.")
-            message_type = 'info'
-            message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
-            log.info('Prediction process completed')
-            return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
+        # if earliest_prediction_time > latest_data_time:
+        #     log.info("---------- No new predictions necessary, predictions are up to date.")
+        #     message_type = 'info'
+        #     message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
+        #     log.info('Prediction process completed')
+        #     return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
+
+
         # else:
             # Altes Daten löschen, da neue Predictions notwendig sind
             # data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
@@ -211,10 +216,19 @@ def update_predictions(data_df, weather_data_df, stations_df):
     try:
             # scalar saved joblib.dump(scaler, 'scaler.pkl')
         # load in the scalar
-        scaler = joblib.load(SCALER_FILENAME)
+        scaler_X = joblib.load(SCALER_X_FILENAME)
 
     except Exception as e:
-        log.info(f'---------- No {SCALER_FILENAME} file found.')
+        log.info(f'---------- No {SCALER_X_FILENAME} file found.')
+        log.info(f'---------- Error: {e}')
+
+    try:
+            # scalar saved joblib.dump(scaler, 'scaler.pkl')
+        # load in the scalar
+        scaler_Y = joblib.load(SCALER_Y_FILENAME)
+
+    except Exception as e:
+        log.info(f'---------- No {SCALER_Y_FILENAME} file found.')
         log.info(f'---------- Error: {e}')
 
     # make predictions
@@ -229,26 +243,18 @@ def update_predictions(data_df, weather_data_df, stations_df):
             data = data_for_prediction[['availableBikeNumber', 'longitude', 'latitude',
                             'day_sin', 'day_cos', 'year_sin', 'year_cos',
                             'temperature', 'precipitation', 'windSpeed']].to_numpy().astype(np.float32)
-
-
-            # Select the 'availableBikeNumber' column, convert to float and create a tensor
-            data_for_prediction = torch.tensor(data_for_prediction['availableBikeNumber'].values).float()
-            data_for_prediction = data_for_prediction.unsqueeze(0).unsqueeze(0) 
+            
+            return data
 
 
 
+            # shape soll 1, 24, 10
+            # den scalieren mit scalarX
+            # in das modell
 
-            # make predictions
-            entityId_predictions = predict(loaded_model, data_for_prediction)
+            # entityId_predictions = predict(loaded_model, data_for_prediction)
 
-
-            ###### make predictions so that we get availableBikeNumber for temp_df
-            # entityId_predictions = entityId_predictions.unsqueeze(-1)
-            # make predictions real numbers, if model used scaled data for prediction
-            num_samples, prediction_length, _ = entityId_predictions.shape
-            entityId_predictions_reshaped = entityId_predictions.reshape(num_samples * prediction_length, -1)
-            # Inverse transform for target feature predictions
-            entityId_predictions_bikes = inverse_scale_target(scaler, entityId_predictions_reshaped, target_feature_index, original_feature_count).reshape(num_samples, prediction_length, -1)
+            # predictions mit scalarY zurück scalieren
 
 
 

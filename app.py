@@ -42,6 +42,10 @@ def main():
         data_df, data_message_type, data_message_text = data.update_station_data()
         test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
         # predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
+        data = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
+        st.dataframe(data, use_container_width=True)
+
+
         predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
         
         ss['test_df_cool'] = test_df_cool
