@@ -374,7 +374,7 @@ def main():
             x='deutsche_timezone',
             y='availableBikeNumber',
             color='station_name',
-            title=f"Bike Availability Over Time by Station in {selected_option}",
+            title=f"Verfügbare Fahrräder im Teilgebiet {selected_option}",
             labels={
                 "deutsche_timezone": "Uhrzeit",
                 "availableBikeNumber": "Available Bikes",
