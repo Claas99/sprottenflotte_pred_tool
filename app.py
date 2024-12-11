@@ -323,7 +323,7 @@ def main():
                                         bordercolor='#9ec044'))
 
         # Show the map
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, config={"scrollZoom": True})
 
         st.write("***")
         st.write("Daten:")
