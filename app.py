@@ -435,7 +435,7 @@ def main():
                 width=plot_width,
                 height=plot_height
             )
-            fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=10)))
+            fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
             st.plotly_chart(fig_low)
         
         with col2:
@@ -452,7 +452,7 @@ def main():
                 width=plot_width,
                 height=plot_height
             )
-            fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=10)))
+            fig_high.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
             st.plotly_chart(fig_high)
 
 
