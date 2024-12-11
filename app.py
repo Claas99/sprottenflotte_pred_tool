@@ -331,17 +331,17 @@ def main():
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'prediction_1h', 'prediction_2h', 'prediction_3h', 'prediction_4h', 'prediction_5h', 'maximum_capacity', 'color_info_predictions']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
-        st.write("Daten:")
+        # st.write("Daten:")
 
-        if predictions_df is not None:
-            predictions_df['time_utc'] = pd.to_datetime(predictions_df['time_utc'])
-            predictions_df['deutsche_timezone'] = predictions_df['time_utc'] + pd.Timedelta(hours=1)
-            predictions_df = predictions_df.merge(stations_df[['entityId', 'station_name']], on='entityId', how='left')
-            st.dataframe(predictions_df[['entityId', 'station_name', 'deutsche_timezone', 'availableBikeNumber']], use_container_width=True)
-            pivot_df = predictions_df.pivot(index='station_name', columns='deutsche_timezone', values='prediction_availableBikeNumber')
-            st.dataframe(pivot_df, use_container_width=True)
-        else:
-            st.error("Failed to load prediction data.")
+        # if predictions_df is not None:
+        #     predictions_df['time_utc'] = pd.to_datetime(predictions_df['time_utc'])
+        #     predictions_df['deutsche_timezone'] = predictions_df['time_utc'] + pd.Timedelta(hours=1)
+        #     predictions_df = predictions_df.merge(stations_df[['entityId', 'station_name']], on='entityId', how='left')
+        #     st.dataframe(predictions_df[['entityId', 'station_name', 'deutsche_timezone', 'availableBikeNumber']], use_container_width=True)
+        #     pivot_df = predictions_df.pivot(index='station_name', columns='deutsche_timezone', values='prediction_availableBikeNumber')
+        #     st.dataframe(pivot_df, use_container_width=True)
+        # else:
+        #     st.error("Failed to load prediction data.")
 
     # --- tab 4 ---
     with tab4:
