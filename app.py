@@ -39,10 +39,6 @@ def main():
              Please report any issues to Claas Resow.""")
     
     st.write("""Stündliche Daten. Nur nach neuer vollen Stunde neu laden.""")
-    
-    # initialise tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Predictions", "Testebene"])
-
 
     stations_filename = "data/stations.csv"
     stations_df = pd.read_csv(stations_filename)
@@ -151,8 +147,8 @@ def main():
 
     selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
-    # # initialise tabs
-    # tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Predictions", "Testebene"])
+    # initialise tabs
+    tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Predictions", "Testebene"])
 
     # --- tab 1 ---
     with tab1:
