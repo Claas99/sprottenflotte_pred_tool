@@ -359,6 +359,7 @@ def main():
 
     # --- tab 4 ---
     with tab4:
+        st.write("### Analyse")
         if selected_option == 'Alle':
             subarea_df = full_df
         else:
@@ -400,7 +401,7 @@ def main():
         st.write("***")
         st.write(f"Zeitdaten der Stationen von {selected_option}")
         # st.dataframe(subarea_df[['entityId', 'station_name', 'availableBikeNumber', 'deutsche_timezone']], use_container_width=True)
-        st.dataframe(subarea_df.pivot(index='station_name', columns='deutsche_timezone', values='availableBikeNumber'), use_container_width=True)
+        st.dataframe(subarea_df.pivot(index='station_name', columns='deutsche_timezone'.dt.hour, values='availableBikeNumber'), use_container_width=True)
 
     st.button("Reset App/Reload", on_click=reset_app, key="reset_button")
 
