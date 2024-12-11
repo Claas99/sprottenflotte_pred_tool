@@ -364,11 +364,7 @@ def main():
             subarea_df = full_df
         else:
             subarea_df = full_df[full_df['subarea'] == selected_option]
-
-        subarea_df['hour'] = subarea_df['deutsche_timezone'].dt.hour
-        subarea_df['day'] = subarea_df['deutsche_timezone'].dt.day
-        subarea_df['month'] = subarea_df['deutsche_timezone'].dt.month
-
+            
         fig = px.line(
             subarea_df,
             x='deutsche_timezone',
@@ -407,6 +403,49 @@ def main():
         # st.dataframe(subarea_df[['entityId', 'station_name', 'availableBikeNumber', 'deutsche_timezone']], use_container_width=True)
         st.dataframe(subarea_df.pivot(index='station_name', columns='deutsche_timezone', values='availableBikeNumber'))
 
+        # Filter too low and too high data
+        too_low_df = subarea_df[subarea_df['availableBikeNumber'] <= 0.2 * subarea_df['maximum_capacity']]
+        too_high_df = subarea_df[subarea_df['availableBikeNumber'] >= 0.8 * subarea_df['maximum_capacity']]
+        
+        # Get value counts and convert to DataFrame
+        too_low_df = too_low_df['station_name'].value_counts().reset_index()
+        too_low_df.columns = ['station_name', 'count']
+        
+        too_high_df = too_high_df['station_name'].value_counts().reset_index()
+        too_high_df.columns = ['station_name', 'count']
+        
+        # Create Streamlit columns
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            fig_low = px.bar(
+                too_high_df,
+                x='station_name',
+                y='count',
+                color='station_name',
+                title=f"Anzahl Stunden zu voll pro Station in {selected_option}",
+                labels={
+                    "station_name": "Station",
+                    "count": "Anzahl Stunden"
+                }
+            )
+            st.plotly_chart(fig_low)
+        
+        with col2:
+            fig_high = px.bar(
+                too_low_df,
+                x='station_name',
+                y='count',
+                color='station_name',
+                title=f"Anzahl Stunden zu leer pro Station in {selected_option}",
+                labels={
+                    "station_name": "Station",
+                    "count": "Anzahl Stunden"
+                }
+            )
+            st.plotly_chart(fig_high)
+
+        
     st.button("Reset App/Reload", on_click=reset_app, key="reset_button")
 
 # --- Entry Point ---
