@@ -244,10 +244,8 @@ def update_predictions(data_df, weather_data_df, stations_df):
                             'day_sin', 'day_cos', 'year_sin', 'year_cos',
                             'temperature', 'precipitation', 'windSpeed']].to_numpy().astype(np.float32)
             
-            data = data.reshape(1, 24, 10)
-
             data = scaler_X.transform(data)
-            # data = data.reshape(1, 24, 10)
+            data = data.reshape(1, 24, 10)
             
             # Make predictions
             # predictions = predict(loaded_model, data)
