@@ -256,7 +256,7 @@ def main():
         # else:
         #     st.error("Failed to load historical data.")
 
-        st.write("Stations Data:")
+        st.write(f"Daten der Stationen von {selected_option}")
 
         columns_to_show = ['subarea', 'station_name', 'current_capacity', 'maximum_capacity',  'Delta', 'color_info']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
