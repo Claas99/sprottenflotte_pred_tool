@@ -38,7 +38,7 @@ def main():
              Bitte sende jegliches Feedback gerne an mobil@kielregion.de.""")
     
              
-    st.write("""Die Daten werden stündlich neu geladen und neu vorhergesagt, daher wird bei jeder neuen vollen Stunde ein Ladeprozess im Hintergrund angestoßen. Dies kann ein paar Minunten dauern.""")
+    st.write("""Die Daten können stündlich neu geladen und neu vorhergesagt werden, in dem man das Fenster aktualisiert. Dies kann ein paar Minunten dauern.""")
     st.write("***")
     #
     stations_filename = "data/stations.csv"
