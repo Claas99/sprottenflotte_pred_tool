@@ -378,14 +378,14 @@ def main():
             labels={
                 "deutsche_timezone": "Uhrzeit",
                 "availableBikeNumber": "Verfügbare Fahrräder",
-                "station": "Station"
+                "station_name": "Station"
             }
         )
 
         # Customize the layout
         fig.update_layout(
             xaxis_title="Uhrzeit",
-            yaxis_title="Available Bikes",
+            yaxis_title="Verfügbare Fahrräder",
             legend_title="Station",
             template="plotly_white",
             yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot')
