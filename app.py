@@ -36,7 +36,7 @@ def main():
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
     st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodel! Das Model befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
              Bitte sende jegliches Feedback gerne an mobil@kielregion.de. 
-             ---
+             ***
              Die Daten werden stündlich neu geladen und neu vorhergesagt, daher wird bei jeder neuen vollen Stunde ein Ladeprozess im Hintergrund angestoßen. Dies kann ein paar Minunten dauern.""")
 
     #
@@ -145,11 +145,16 @@ def main():
         st.write("### Vorhersage - Teilgebiete nach Handlungsbedarf")
 
         with st.expander("ℹ️ Mehr Informationen zu der Berechnung der Prio anzeigen"):
-            st.write("""Die Prio der Subareas wird wie folgt berechnet: 
-                        - Station X wird in 5h überfüllt/leer sein = Prio + 0.5
-                        - Station X wird 4h lang überfüllt/leer sein = Prio + 0.5
-                        - Station X wird 8h lang überfüllt/leer sein = Prio + 0.5
-                        - Station X wird 24h lang überfüllt/leer sein = Prio + 1""")
+            st.write("""
+                        Grundsätzlich unterscheiden wir bei der Berechnung zwischen zwei Fällen: Eine Station hat mehr als 80% seiner maximalen Kapazität und ist daher zu voll.
+                        Oder eine Station hat weniger als 20% seiner maximalen Kapazität und ist daher zu leer. Je nachdem wie lange dieser Zustand anhält wird die Priorisierung erhöht.
+                        
+                        **Im Detail wird die Prio der Subareas wie folgt berechnet**: 
+            
+                        - **Case 1** - Station X wird in 5h überfüllt/leer sein = Prio + 0.5
+                        - **Case 2** - Station X wird 4h lang überfüllt/leer sein = Prio + 0.5
+                        - **Case 3** - Station X wird 8h lang überfüllt/leer sein = Prio + 0.5
+                        - **Case 4** - Station X wird 24h lang überfüllt/leer sein = Prio + 1""")
 
         st.dataframe(prio_df, use_container_width=True)
 
