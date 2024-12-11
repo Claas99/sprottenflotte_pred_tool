@@ -40,6 +40,7 @@ def main():
     
     st.write("""Stündliche Daten. Nur nach neuer vollen Stunde neu laden.""")
 
+    #
     stations_filename = "data/stations.csv"
     stations_df = pd.read_csv(stations_filename)
 
@@ -129,16 +130,6 @@ def main():
 
     # add the 5 predictions to stations_df
     stations_df = app_functions.add_predictions_to_stations_df(stations_df, predictions_df, color_map_predictions)
-
-    # # --- initialise ---
-    # # Initialise Streamlit Interface
-    # st.title("Sprottenflotte prediction model 🚲 x 🤖")
-    # st.write("""Thank you for using the Sprottenflotte prediciton model! This model is still in beta
-    #           - We are happy to hear your feedback.
-    #          Please report any issues to Claas Resow.""")
-    
-    # with st.expander(""):
-    #         st.write("""Stündliche Daten. Nur nach neuer vollen Stunde neu laden.""")
     
     prio_df = app_functions.measures_prio_of_subarea(data_df, predictions_df, stations_df)
 
