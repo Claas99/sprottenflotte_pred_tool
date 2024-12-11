@@ -47,13 +47,18 @@ def main():
     # Check for first load or reset action
     if 'initialized' not in ss: # or st.button("Reset App", on_click=reset_app)
         reset_app()
-
-        weather_data_df, weather_data_message_type, weather_data_message_text = data.update_weather_data()
-        data_df, data_message_type, data_message_text = data.update_station_data()
-        test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
-        # predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
-        test_data = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
-        # st.dataframe(test_data, use_container_width=True)
+        with st.spinner:
+            weather_data_df, weather_data_message_type, weather_data_message_text = data.update_weather_data()
+            st.toast("Wetter Daten geladen")
+            data_df, data_message_type, data_message_text = data.update_station_data()
+            st.toast("Historische Daten geladen")
+            test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
+            st.toast("Daten ins richtige Format gepackt")
+            # predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
+            test_data = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
+            st.toast("Predictions abgeschlossen", icon="🎉")
+            # st.dataframe(test_data, use_container_width=True)
+        st.balloons()
         st.write(test_data)
 
 
