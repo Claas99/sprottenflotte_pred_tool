@@ -366,8 +366,15 @@ def main():
             template="plotly_white",
             yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot')
     )
-        fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-6]}", line_width=2, line_dash="dash", line_color="black", annotation_text="Predictions", annotation_position="top right")  
-
+        fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-6]}", line_width=2, line_dash="dash", line_color="black")  
+        # Add annotation for the vertical line
+        fig.add_annotation(
+            x=f"{subarea_df['deutsche_timezone'].iloc[-6]}",
+            y=max(subarea_df['availableBikeNumber']),  # Adjust y position as necessary
+            text="Predictions",
+            showarrow=False,
+            xanchor="left"  # Align text to the left of the vertical line
+        )
         # Show the plot
         st.plotly_chart(fig)
 
