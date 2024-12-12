@@ -97,8 +97,8 @@ def main():
         random_subarea, new_lat, new_lon = data.update_random_bike_location(stations_df)
         ss['random_bike'] = {'subarea': random_subarea, 'latitude': new_lat, 'longitude': new_lon}
         # anzeigen des punktes als dataframe
-        bike_df = pd.DataFrame([ss['random_bike']])
-        st.dataframe(bike_df)
+        # bike_df = pd.DataFrame([ss['random_bike']])
+        # st.dataframe(bike_df)
         # <--- Easter Egg ---
 
     else:
@@ -189,8 +189,8 @@ def main():
         # st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0), use_container_width=True)
         st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: indianred' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0), use_container_width=True)
 
-        if model_selection == "Deep Learning Model":
-            st.dataframe(test_df_cool, use_container_width=True)
+        # if model_selection == "Deep Learning Model":
+        #     st.dataframe(test_df_cool, use_container_width=True)
     
     # --- tab 2 ---
     with tab2:
@@ -298,7 +298,7 @@ def main():
         def apply_color(row):
             # Assuming 'color' is the name of the column in your DataFrame
             return [f"background-color: {row['color']}" for _ in row]
-        st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
+        # st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
 
         st.dataframe(subarea_df, use_container_width=True)
 
