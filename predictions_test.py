@@ -143,7 +143,7 @@ def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
     final_df.drop(columns=['Seconds'], inplace=True)
 
     csv_to_github = final_df.to_csv(index=False)
-    update_csv_on_github(csv_to_github, 'data/test_data_for_model', NAME_REPO, GITHUB_TOKEN)
+    update_csv_on_github(csv_to_github, 'data/test_data_for_model.csv', NAME_REPO, GITHUB_TOKEN)
 
     return final_df
 
