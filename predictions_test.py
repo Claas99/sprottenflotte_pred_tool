@@ -239,7 +239,7 @@ def update_predictions(data_df, weather_data_df, stations_df):
             predictions = predict(loaded_model, torch.tensor(data).float())
             
             # # # Inverse scale the predictions with scalarY
-            predictions = scaler_Y.inverse_transform(predictions.numpy())
+            predictions = scaler_Y.inverse_transform(predictions.reshape(-1, 5))
 
             # return predictions.shape[1]
 
