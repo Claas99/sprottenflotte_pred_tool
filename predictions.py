@@ -177,7 +177,7 @@ def update_predictions(data_df):
         #    return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
         #else:
             # Altes Daten löschen, da neue Predictions notwendig sind
-        #    data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
+        data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
 
     else:
         # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
