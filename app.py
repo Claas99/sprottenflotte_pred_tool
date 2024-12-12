@@ -50,7 +50,7 @@ def main():
             ("Random Forest", "Deep Learning Model"),
             index=0
         )
-    
+    st.write(model_selection)
     # Check for first load or reset action
     if 'initialized' not in ss: # or st.button("Reset App", on_click=reset_app)
         reset_app()
