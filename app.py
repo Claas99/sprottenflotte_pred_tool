@@ -302,13 +302,14 @@ def main():
             # Assuming 'color' is the name of the column in your DataFrame
             color = "white"  # Default color
             if row['Info'] == 'zu leer':
-                color = 'lightcoral'
+                color = '#ffcccc'
             elif row['Info'] == 'überfüllt':
-                color = 'cornflowerblue'
+                color = '#cce5ff'
             elif row['Info'] == 'okay':
-                color = 'lightgreen'
+                color = '#ccffcc'
             return [f"background-color: {color}" for _ in row]
-        # st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
+        
+        st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
 
         st.dataframe(subarea_df.style.apply(apply_color, axis=1), use_container_width=True)
 
