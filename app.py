@@ -11,8 +11,8 @@ import app_functions as app_functions
 import data as data
 import predictions_rf as predictions_rf
 import predictions_dl as predictions_dl
-import plotly.graph_objects as go
-import numpy as np
+# import plotly.graph_objects as go
+# import numpy as np
 
 
 # --- Streamlit Configuration ---
@@ -187,8 +187,8 @@ def main():
         
         # st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
         st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:2, :], **{'background-color': 'lightblue'}), use_container_width=True)
-        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: red' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:4, :], **{'background-color': 'lightcoral'}), use_container_width=True)
-        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: red' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:4, :], **{'background-color': 'lightcoral'}).set_properties(axis=0, **{'background-color': 'red'}).set_properties(axis=1, **{'background-color': 'red'}), use_container_width=True)
+        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: red' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0), use_container_width=True)
+        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: red' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:4, :], **{'background-color': 'lightcoral'}).set_properties(axis=0, **{'background-color': 'red'}), use_container_width=True)
 
         if model_selection == "Deep Learning Model":
             st.dataframe(test_df_cool, use_container_width=True)
