@@ -43,7 +43,7 @@ def main():
         model_selection = st.radio(
             "Wähle ein Prediction Model aus:",
             ("Random Forest", "Deep Learning Model"),
-            index=1
+            index=0
         )
     st.write(f"Ausgewähltes Model: {model_selection}")
     
