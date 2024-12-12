@@ -173,12 +173,12 @@ def update_predictions(data_df, weather_data_df, stations_df):
 
         #### vorerst geskippt, um immer predictions zu machen
         # überprüfen ob neue predictions necessary
-        # if earliest_prediction_time > latest_data_time:
-        #     log.info("---------- No new predictions necessary, predictions are up to date.")
-        #     message_type = 'info'
-        #     message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
-        #     log.info('Prediction process completed')
-        #     return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
+        if earliest_prediction_time > latest_data_time:
+            log.info("---------- No new predictions necessary, predictions are up to date.")
+            message_type = 'info'
+            message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
+            log.info('Prediction process completed')
+            return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
 
 
         # else:
