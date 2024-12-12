@@ -386,7 +386,9 @@ def main():
             subarea_df = full_df
         else:
             subarea_df = full_df[full_df['subarea'] == selected_option]
-        subarea_df['Station'] = subarea_df['station_name']
+        # subarea_df['Station'] = subarea_df['station_name']
+        subarea_df.loc[:, 'Station'] = subarea_df['station_name']
+
         fig = px.line(
             subarea_df,
             x='deutsche_timezone',
