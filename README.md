@@ -8,7 +8,10 @@ The Sprottenflotte Prediction Tool is a Streamlit application designed to predic
 
 
 ```
-
+.streamlit
+ └── config.toml		- UI theming and configuration
+.devcontainer
+ └── devcontainer.json		- Sets up a consistent development environment
 data
  ├── bike_to_weather_station.csv
  ├── data_temp.csv			- Stores temporary station data fetched from the API
@@ -36,10 +39,6 @@ poetry.lock			- Contains the exact versions of all dependencies used in the proj
 pyproject.toml			- Specifies the project metadata and dependencies. Functions as a configuration file for the Poetry dependency manager
 README.md
 .gitignore
-.streamlit
- └── config.toml		- UI theming and configuration
-.devcontainer
- └── devcontainer.json		- Sets up a consistent development environment
 ```
 
 ## Usage
@@ -51,6 +50,7 @@ README.md
 ## Requirements
 
 - Python 3.10 or above.
+- Peotry is used for requirements settings
 - Streamlit, Pandas, NumPy, PyTorch, etc., are specified in `pyproject.toml`.
 
 ## Data Flow
@@ -62,6 +62,8 @@ README.md
 ## Contributing
 
 Contributions are welcome. Please fork the repository and submit a pull request with your ideas or improvements.
+
+- After pushes to this repository, please reboot the Streamlit app to make sure all changes are applied
 
 ## License
 
