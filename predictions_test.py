@@ -255,7 +255,7 @@ def update_predictions(data_df, weather_data_df, stations_df):
             temp_df = pd.DataFrame({
                 'entityId': entity,
                 'prediction_time_utc': date_list,
-                'prediction_availableBikeNumber': predictions#.tolist()
+                'prediction_availableBikeNumber': predictions.flatten()#.tolist()
             })
 
             # Hinzufügen des temporären DataFrame zur Liste
