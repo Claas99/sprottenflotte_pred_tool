@@ -242,20 +242,20 @@ def update_predictions(data_df, weather_data_df, stations_df):
             predictions = scaler_Y.inverse_transform(predictions.numpy())
 
             #.tolist()
-            return predictions.shape[1]
+            # return predictions.shape[1]
 
             #### create final prediction dataframe
             # append to dataframe with entityId and predictions
             # Assign dates to each prediction
             start_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) 
             # Erzeugen einer Liste von Zeitstempeln für jede Vorhersage
-            date_list = [start_date + timedelta(hours=i) for i in range(predictions.shape[0])]
+            date_list = [start_date + timedelta(hours=i) for i in range(predictions.shape[1])]
             
             # Create DataFrame for current entity predictions
             temp_df = pd.DataFrame({
                 'entityId': entity,
                 'prediction_time_utc': date_list,
-                'prediction_availableBikeNumber': entityId_predictions_bikes.squeeze().tolist()
+                'prediction_availableBikeNumber': predictions#.tolist()
             })
 
             # Hinzufügen des temporären DataFrame zur Liste
