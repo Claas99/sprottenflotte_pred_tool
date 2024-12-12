@@ -295,9 +295,19 @@ def main():
         columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'Maximale Kapazität',  'Delta', 'Info']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
+        # def apply_color(row):
+        #     # Assuming 'color' is the name of the column in your DataFrame
+        #     return [f"background-color: {row['color']}" for _ in row]
         def apply_color(row):
             # Assuming 'color' is the name of the column in your DataFrame
-            return [f"background-color: {row['color']}" for _ in row]
+            color = "white"  # Default color
+            if row['info'] == 'zu leer':
+                color = 'lightcoral'
+            elif row['info'] == 'überfüllt':
+                color = 'cornflowerblue'
+            elif row['info'] == 'okay':
+                color = 'lightgreen'
+            return [f"background-color: {color}" for _ in row]
         # st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
 
         st.dataframe(subarea_df.style.apply(apply_color, axis=1), use_container_width=True)
