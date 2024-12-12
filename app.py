@@ -187,7 +187,7 @@ def main():
         
         # st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
         # st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0), use_container_width=True)
-        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: indianred' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0), use_container_width=True)
+        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: indianred' if i < 2 else 'background-color: lightcoral' if i < 3 else '' for i in range(len(x))], axis=0), use_container_width=True)
 
         # if model_selection == "Deep Learning Model":
         #     st.dataframe(test_df_cool, use_container_width=True)
@@ -293,11 +293,8 @@ def main():
         subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Info'] = subarea_df['subarea'], subarea_df['station_name'], subarea_df['current_capacity'], subarea_df['maximum_capacity'], subarea_df['color_info']
         
         columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'Maximale Kapazität',  'Delta', 'Info']
-        st.dataframe(subarea_df[columns_to_show], use_container_width=True)
+        # st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
-        # def apply_color(row):
-        #     # Assuming 'color' is the name of the column in your DataFrame
-        #     return [f"background-color: {row['color']}" for _ in row]
         def apply_color(row):
             # Assuming 'color' is the name of the column in your DataFrame
             color = "white"  # Default color
@@ -311,7 +308,7 @@ def main():
         
         st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
 
-        st.dataframe(subarea_df.style.apply(apply_color, axis=1), use_container_width=True)
+        # st.dataframe(subarea_df, use_container_width=True)
 
         # st.write("Wetterstation Data:")
         # st.dataframe(weather_data_df, use_container_width=True)
