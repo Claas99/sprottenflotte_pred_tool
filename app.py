@@ -46,6 +46,11 @@ def main():
             index=1
         )
     st.write(f"Ausgewähltes Model: {model_selection}")
+    
+    # Initialisieren der Session State Variable für Modellauswahl
+    if 'last_model_selection' not in ss:
+        ss['last_model_selection'] = model_selection
+
     st.write("***")
     #
     stations_filename = "data/stations.csv"
@@ -53,27 +58,29 @@ def main():
 
     
     # Check for first load or reset action
-    if 'initialized' not in ss: # or st.button("Reset App", on_click=reset_app)
+    if 'initialized' not in ss or ss['last_model_selection'] != model_selection:
         reset_app()
         with st.spinner("Wetter Daten werden geladen..."):
             weather_data_df, weather_data_message_type, weather_data_message_text = data.update_weather_data()
             st.toast("Wetter Daten geladen", icon="🌦️")
+
         with st.spinner("Historische Daten werden geladen..."):
             data_df, data_message_type, data_message_text = data.update_station_data()
             st.toast("Historische Daten geladen", icon="🕵️‍♂️")
+
         if model_selection == "Random Forest":
             predictions_file = "data/predictions_random_forest.csv"
             with st.spinner("Predictions werden berechnet..."):
                 predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung 
         else: 
             predictions_file = "data/predictions_dl.csv"
-            test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
             with st.spinner("Predictions werden berechnet..."):
                 predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
+
+            test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
             ss['test_df_cool'] = test_df_cool
         st.toast("Predictions abgeschlossen", icon="🤖")
         st.balloons()
-        
         
 
         ss['weather_data_df'] = weather_data_df
@@ -81,6 +88,8 @@ def main():
         ss['predictions_df'] = predictions_df
 
         ss['initialized'] = True
+        ss['last_model_selection'] = model_selection
+
         # if data_message_type == 'success':
         # --- Easter Egg --->
         # Set random bike position in session state 
@@ -178,14 +187,8 @@ def main():
         
         st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
 
-        st.dataframe(test_df_cool, use_container_width=True)
-
-        # st.info('st.info')
-        # st.success('st.success')
-        # st.error('st.error')
-        # st.warning('st.warning')
-        # st.button('Show Info', help='helping', icon='ℹ️', disabled=True)
-        # st.radio('Show Info', options=[], help='helping for sure')
+        if model_selection == "Deep Learning Model":
+            st.dataframe(test_df_cool, use_container_width=True)
     
     # --- tab 2 ---
     with tab2:
