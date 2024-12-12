@@ -186,7 +186,7 @@ def main():
         prio_df['Handlungsbedarf'] = prio_df['subarea_prio']
         
         st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
-        st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0), use_container_width=True)
+        st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:2, :], **{'background-color': 'lightblue'}), use_container_width=True)
 
         if model_selection == "Deep Learning Model":
             st.dataframe(test_df_cool, use_container_width=True)
