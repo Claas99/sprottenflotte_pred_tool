@@ -8,29 +8,39 @@ The Sprottenflotte Prediction Tool is a Streamlit application designed to predic
 
 
 ```
+
 data
- ├── 
- └──
+ ├── bike_to_weather_station.csv
+ ├── data_temp.csv			- Stores temporary station data fetched from the API
+ ├── predictions_dl.csv			- Contains prediction data from the deep learning model
+ ├── predictions_rf.csv			- Contains prediction data from the random forest model
+ ├── stations.csv			- Contains metadata about each bike station, such as location and capacity
+ ├── test_data_for_model.csv
+ ├── weather_data_temp.csv		- Stores weather data related to the stations
+ └── weather_stations.csv		- Contains metadata about each weather station, such as location
+models
+ ├── 5pred_biLSTM_whole_weights.pth	- Weights for the Bidirectional LSTM model used in predictions
+ ├── model_rf.joblib			- Serialized Random Forest model for making predictions
+ ├── scaler_rf.joblib			- Scaler for Random Forest data used in predictions
+ ├── scaler_X.joblib			- Scaler for LSTM feature data used in predictions
+ └── scaler_y.joblib			- Scaler for LSTM target data used in predictions
 
-app_functions.py
-app.py
-data.py
-data_temp.csv
-predictions_dl.py
-predictions_rf.py
+app_functions.py		- Collection of helper functions for data manipulation and UI functions
+app.py				- Main application script to launch the Streamlit app
+data.py				- Manages data fetching from external APIs and synchronization with GitHub
+predictions_dl.py		- Manages deep learning model predictions
+predictions_rf.py		- Manages random forest model predictions
 
+AUTHORS				- Lists the contributors to the repository
+poetry.lock			- Contains the exact versions of all dependencies used in the project to ensure consistency across different environments
+pyproject.toml			- Specifies the project metadata and dependencies. Functions as a configuration file for the Poetry dependency manager
 README.md
 .gitignore
+.streamlit
+ └── config.toml		- UI theming and configuration
+.devcontainer
+ └── devcontainer.json		- Sets up a consistent development environment
 ```
-
-
-- **app.py**: Main application script to launch the Streamlit app.
-- **config.toml**: UI theming and configuration.
-- **app_functions.py**: Collection of helper functions for data manipulation and UI functions.
-- **data.py**: Manages data fetching from external APIs and synchronization with GitHub.
-- **predictions_dl.py**: Manages deep learning model predictions.
-- **predictions_rf.py**: Manages random forest model predictions.
-- **devcontainer.json**: Sets up a consistent development environment.
 
 ## Usage
 
@@ -41,14 +51,7 @@ README.md
 ## Requirements
 
 - Python 3.10 or above.
-- Streamlit, Pandas, NumPy, PyTorch, etc., are specified in `requirements.txt` or `pyproject.toml`.
-
-## Getting Started
-
-1. Clone the repository: `git clone git@github.com:yourusername/sprottenflotte_pred_tool.git`
-2. Create a virtual environment and activate it.
-3. Install dependencies: `pip install -r requirements.txt`.
-4. Run the app: `streamlit run app.py`.
+- Streamlit, Pandas, NumPy, PyTorch, etc., are specified in `pyproject.toml`.
 
 ## Data Flow
 
@@ -62,4 +65,4 @@ Contributions are welcome. Please fork the repository and submit a pull request 
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE.md file for details.
+This project is licensed under ...
