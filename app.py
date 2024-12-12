@@ -301,11 +301,11 @@ def main():
         def apply_color(row):
             # Assuming 'color' is the name of the column in your DataFrame
             color = "white"  # Default color
-            if row['info'] == 'zu leer':
+            if row['Info'] == 'zu leer':
                 color = 'lightcoral'
-            elif row['info'] == 'überfüllt':
+            elif row['Info'] == 'überfüllt':
                 color = 'cornflowerblue'
-            elif row['info'] == 'okay':
+            elif row['Info'] == 'okay':
                 color = 'lightgreen'
             return [f"background-color: {color}" for _ in row]
         # st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
