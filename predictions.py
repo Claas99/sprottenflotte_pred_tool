@@ -169,15 +169,15 @@ def update_predictions(data_df):
         data_temp_predictions['prediction_time_utc'] = pd.to_datetime(data_temp_predictions['prediction_time_utc'])
         earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
         # überprüfen ob neue predictions necessary
-        #if earliest_prediction_time > latest_data_time:
-        #    log.info("---------- No new predictions necessary, predictions are up to date.")
-        #    message_type = 'info'
-        #    message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
-        #    log.info('Prediction process completed')
-        #    return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
-        #else:
+        if earliest_prediction_time > latest_data_time:
+            log.info("---------- No new predictions necessary, predictions are up to date.")
+            message_type = 'info'
+            message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
+            log.info('Prediction process completed')
+            return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
+        else:
             # Altes Daten löschen, da neue Predictions notwendig sind
-        data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
+            data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
 
     else:
         # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
