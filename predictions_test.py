@@ -257,7 +257,7 @@ def update_predictions(data_df, weather_data_df, stations_df):
                 'prediction_time_utc': date_list,
                 'prediction_availableBikeNumber': predictions.flatten()#.tolist()
             })
-            log.info(f"{predictions}")
+            log.info(f"{entity}: {predictions}")
 
             # Hinzufügen des temporären DataFrame zur Liste
             dataframes.append(temp_df)

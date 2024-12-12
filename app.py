@@ -53,7 +53,7 @@ def main():
         with st.spinner("Historische Daten werden geladen..."):
             data_df, data_message_type, data_message_text = data.update_station_data()
             st.toast("Historische Daten geladen", icon="🕵️‍♂️")
-            # test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
+            test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
         with st.spinner("Predictions werden berechnet..."):
             predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
             # predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung
@@ -61,7 +61,7 @@ def main():
             st.toast("Predictions abgeschlossen", icon="🤖")
         st.balloons()
         
-        # ss['test_df_cool'] = test_df_cool
+        ss['test_df_cool'] = test_df_cool
 
         ss['weather_data_df'] = weather_data_df
         ss['data_df'] = data_df
@@ -92,7 +92,7 @@ def main():
         pred_message_type = None # 'info'
         pred_message_text = None # 'Es sind bereits Predictions für alle Stationen vorhanden.'
 
-        # test_df_cool = ss.get('test_df_cool')
+        test_df_cool = ss.get('test_df_cool')
         
         # st.write("Data is already initialized, no need to reload. Only reload nach voller Stunde")
 
@@ -165,7 +165,7 @@ def main():
         
         st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
 
-        # st.dataframe(test_df_cool, use_container_width=True)
+        st.dataframe(test_df_cool, use_container_width=True)
 
         # st.info('st.info')
         # st.success('st.success')
