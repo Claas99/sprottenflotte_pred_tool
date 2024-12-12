@@ -61,9 +61,11 @@ def main():
             data_df, data_message_type, data_message_text = data.update_station_data()
             st.toast("Historische Daten geladen", icon="🕵️‍♂️")
         if model_selection == "Random Forest":
+            predictions_file = "data/predictions_random_forest.csv"
             with st.spinner("Predictions werden berechnet..."):
                 predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung 
         else: 
+            predictions_file = "data/predictions_dl.csv"
             test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
             with st.spinner("Predictions werden berechnet..."):
                 predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
@@ -107,7 +109,7 @@ def main():
         
     
     if predictions_df is None:
-        predictions_df = pd.read_csv('data/predictions.csv')
+        predictions_df = pd.read_csv(predictions_file)
         st.error("predictions_df is None")
     
     full_df = app_functions.get_full_df_per_station(data_df, predictions_df, stations_df)
