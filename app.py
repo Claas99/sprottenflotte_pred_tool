@@ -39,18 +39,20 @@ def main():
     
              
     st.write("""Die Daten können stündlich neu geladen und neu vorhergesagt werden, in dem man das Fenster aktualisiert. Dies kann ein paar Minunten dauern.""")
-    st.write("***")
-    #
-    stations_filename = "data/stations.csv"
-    stations_df = pd.read_csv(stations_filename)
-
     with st.sidebar:
         model_selection = st.radio(
             "Wähle ein Prediction Model aus:",
             ("Random Forest", "Deep Learning Model"),
             index=0
         )
-    st.write(model_selection)
+    st.write(f"Ausgewähltes Model: {model_selection}")
+    st.write(type(model_selection))
+    st.write("***")
+    #
+    stations_filename = "data/stations.csv"
+    stations_df = pd.read_csv(stations_filename)
+
+    
     # Check for first load or reset action
     if 'initialized' not in ss: # or st.button("Reset App", on_click=reset_app)
         reset_app()
