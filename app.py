@@ -186,8 +186,8 @@ def main():
         prio_df['Handlungsbedarf'] = prio_df['subarea_prio']
         
         # st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
-        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:2, :], **{'background-color': 'lightblue'}), use_container_width=True)
-        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: tomatoRed' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0), use_container_width=True)
+        # st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0), use_container_width=True)
+        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: indianred' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0), use_container_width=True)
 
         if model_selection == "Deep Learning Model":
             st.dataframe(test_df_cool, use_container_width=True)
@@ -295,7 +295,12 @@ def main():
         columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'Maximale Kapazität',  'Delta', 'Info']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
-        # st.dataframe(subarea_df, use_container_width=True)
+        def apply_color(row):
+            # Assuming 'color' is the name of the column in your DataFrame
+            return [f"background-color: {row['color']}" for _ in row]
+        st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
+
+        st.dataframe(subarea_df, use_container_width=True)
 
         # st.write("Wetterstation Data:")
         # st.dataframe(weather_data_df, use_container_width=True)
