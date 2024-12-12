@@ -65,7 +65,7 @@ class BiLSTM(nn.Module):
         h0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)#.to(device)
         c0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)#.to(device)
 
-        out,  = self.lstm(x, (h0, c0))
+        out, _ = self.lstm(x, (h0, c0))
         out = self.fc(out[:, -1, :])
         return out
 
