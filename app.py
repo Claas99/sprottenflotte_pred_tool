@@ -111,7 +111,7 @@ def main():
     
     if predictions_df is None:
         predictions_df = pd.read_csv(predictions_file)
-        st.error("predictions_df is None")
+        st.error("predictions_df ist None, es werden alte Predictons benutzt")
     
     full_df = app_functions.get_full_df_per_station(data_df, predictions_df, stations_df)
     

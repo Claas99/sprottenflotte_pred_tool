@@ -97,9 +97,9 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     # Update durchführen
     r = requests.put(url, json=payload, headers=headers)
     if r.status_code == 200:
-        log.info("----- Prediction file updated successfully on GitHub -----")
+        log.info(f"----- Prediction file {filepath} updated successfully on GitHub -----")
     else:
-        log.error(f"----- Failed to update Prediction file on GitHub: {r.content} ------")
+        log.error(f"----- Failed to update Prediction file {filepath} on GitHub: {r.content} ------")
 
 
 def read_csv_from_github(filepath, repo, token, branch="main"):
@@ -108,7 +108,7 @@ def read_csv_from_github(filepath, repo, token, branch="main"):
 
     r = requests.get(url, headers=headers)
     if r.status_code != 200:
-        log.error(f"----- Failed to get Data file from Github: {r.content} ------")
+        log.error(f"----- Failed to get Prediction file {filepath} from Github: {r.content} ------")
         return None
 
     file_content = r.json()['content']

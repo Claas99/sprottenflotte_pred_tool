@@ -88,7 +88,7 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     # Update vorbereiten
     content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
     payload = {
-        "message": "Update Prediction CSV file",
+        "message": f"Update {filepath} file",
         "content": content_base64,
         "sha": sha,
         "branch": branch,
@@ -97,9 +97,9 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     # Update durchführen
     r = requests.put(url, json=payload, headers=headers)
     if r.status_code == 200:
-        log.info("----- Prediction file updated successfully on GitHub -----")
+        log.info(f"----- Prediction file {filepath} updated successfully on GitHub -----")
     else:
-        log.error(f"----- Failed to update Prediction file on GitHub: {r.content} ------")
+        log.error(f"----- Failed to update Prediction file {filepath} on GitHub: {r.content} ------")
 
 
 # Return the prediction
