@@ -24,8 +24,8 @@ log = logging.getLogger()
 
 ### Configurations
 DATA_FILENAME = 'data/data_temp.csv'
-MODEL_FILENAME = 'data/model_rf.joblib' # 'data/cnn_model.pth'
-SCALER_FILENAME = 'data/scaler_rf.joblib' # 'data/scaler.pkl'
+MODEL_FILENAME = 'models/model_rf.joblib' # 'data/cnn_model.pth'
+SCALER_FILENAME = 'models/scaler_rf.joblib' # 'data/scaler.pkl'
 PREDICTIONS_FILENAME = 'data/predictions_random_forest.csv'
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
 NAME_REPO = "Claas99/sprottenflotte_pred_tool"

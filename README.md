@@ -1,90 +1,65 @@
-# sprottenflotte_pred_tool
-<<<<<<< HEAD
+# Sprottenflotte Prediction Tool
 
-A prediction model for sprottenflotte/kielregion
+## Overview
 
-Structure:
+The Sprottenflotte Prediction Tool is a Streamlit application designed to predict bike availability using machine learning models. It retrieves live data from relevant APIs and uses predictive models to offer useful insights.
+
+## Structure
+
 
 ```
+data
+ ├── 
+ └──
+
+app_functions.py
+app.py
 data.py
 data_temp.csv
-prediction.py
-predictions.csv
-station_data.csv
- 
-requirements.txt
+predictions_dl.py
+predictions_rf.py
+
 README.md
 .gitignore
-sample.env
 ```
 
-This lauches a website
 
+- **app.py**: Main application script to launch the Streamlit app.
+- **config.toml**: UI theming and configuration.
+- **app_functions.py**: Collection of helper functions for data manipulation and UI functions.
+- **data.py**: Manages data fetching from external APIs and synchronization with GitHub.
+- **predictions_dl.py**: Manages deep learning model predictions.
+- **predictions_rf.py**: Manages random forest model predictions.
+- **devcontainer.json**: Sets up a consistent development environment.
 
-Python scripts functionality:
+## Usage
 
+1. Clone the repository.
+2. Set up your environment using the `devcontainer.json` or manually install required dependencies.
+3. Run `app.py` using Streamlit to launch the application interface.
 
+## Requirements
 
+- Python 3.10 or above.
+- Streamlit, Pandas, NumPy, PyTorch, etc., are specified in `requirements.txt` or `pyproject.toml`.
 
-## Step 1: Installation:
+## Getting Started
 
-### 1. Clone the repository from GitHub
+1. Clone the repository: `git clone git@github.com:yourusername/sprottenflotte_pred_tool.git`
+2. Create a virtual environment and activate it.
+3. Install dependencies: `pip install -r requirements.txt`.
+4. Run the app: `streamlit run app.py`.
 
-Clone the repository to a nice place on your machine via:
+## Data Flow
 
-```
-git clone git@github.com:Claas99/sprottenflotte_pred_tool.git
-```
+- Data is fetched using API requests in `data.py`.
+- Predictions are processed by either `predictions_dl.py` or `predictions_rf.py`.
+- UI updates are handled within `app.py` by calling `app_functions.py`.
 
-### 2. Create a new environment
+## Contributing
 
-#### 2.1 Virtual environment
+Contributions are welcome. Please fork the repository and submit a pull request with your ideas or improvements.
 
-Make a new virtual .venv environment with python version 3.12 or an conda environment.
+## License
 
-#### 2.2 Conda environment
-
-Create a new Conda environment for this project with a specific version of Python:
-
-```
-conda create --name application_project_2024 python=3.12
-```
-
-Initialize Conda for shell interaction:
-
-To make Conda available in you current shell execute the following:
-
-```
-conda init
-```
-
-### 3. Install packages from requirements.txt
-
-Install packages in environment:
-
-```
-pip install -r requirements.txt
-```
-
-## Step 2: Create a .env file
-
-Create a .env file in the project directory.
-
-This .env file will store sensitive information such as passwords, email and client secrets securely. The .env file is not under version control and therefore secure, because it is added to the .gitignore file.
-
-**Note:** You can use the `sample.env` file, which serves as a template, for creating your own `.env` file.
-
-```
-# password for keycloak
-PASSWORD="*************"
-
-# client_secret
-CLIENT_SECRET="fP81XZ5OTt5iRJ7qhyyTCv4eQtpGqc5i"
-
-# email username for addix API
-USERNAME_EMAIL='email@website.de'
-
-```
-=======
-A prediction model for sprottenflotte/kielregion
->>>>>>> ffab171956a1d4ddfe6198014864e737cc81a0e3
+This project is licensed under the MIT License - see the LICENSE.md file for details.
