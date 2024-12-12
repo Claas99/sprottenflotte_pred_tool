@@ -9,8 +9,8 @@ from streamlit import session_state as ss
 import plotly.express as px
 import app_functions as app_functions
 import data as data
-import predictions as predictions
-import predictions_test as predictions_test
+import predictions_rf as predictions_rf
+import predictions_dl as predictions_dl
 import plotly.graph_objects as go
 import numpy as np
 
@@ -71,13 +71,13 @@ def main():
         if model_selection == "Random Forest":
             predictions_file = "data/predictions_random_forest.csv"
             with st.spinner("Predictions werden berechnet..."):
-                predictions_df, pred_message_type, pred_message_text = predictions.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung 
+                predictions_df, pred_message_type, pred_message_text = predictions_rf.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung 
         else: 
             predictions_file = "data/predictions_dl.csv"
             with st.spinner("Predictions werden berechnet..."):
-                predictions_df, pred_message_type, pred_message_text = predictions_test.update_predictions(data_df, weather_data_df, stations_df)
+                predictions_df, pred_message_type, pred_message_text = predictions_dl.update_predictions(data_df, weather_data_df, stations_df)
 
-            test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
+            test_df_cool = predictions_dl.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
             ss['test_df_cool'] = test_df_cool
         st.toast("Predictions abgeschlossen", icon="🤖")
         # st.balloons()
