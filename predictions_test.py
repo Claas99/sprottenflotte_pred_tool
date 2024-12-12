@@ -41,8 +41,8 @@ learning_rate = 0.001
 num_epochs = 10
     
 class BiLSTM(nn.Module):
-    def init(self, inputsize, hidden_size, num_stacked_layers):
-        super().init()
+    def __init__(self, input_size, hidden_size, num_stacked_layers):
+        super().__init__()
         self.hidden_size = hidden_size
         self.num_stacked_layers = num_stacked_layers
 
