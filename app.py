@@ -293,7 +293,7 @@ def main():
         subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Info'] = subarea_df['subarea'], subarea_df['station_name'], subarea_df['current_capacity'], subarea_df['maximum_capacity'], subarea_df['color_info']
         
         columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'Maximale Kapazität',  'Delta', 'Info']
-        # st.dataframe(subarea_df[columns_to_show], use_container_width=True)
+        st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
         def apply_color(row):
             # Assuming 'color' is the name of the column in your DataFrame
@@ -306,7 +306,7 @@ def main():
                 color = '#ccffcc'
             return [f"background-color: {color}" for _ in row]
         
-        st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
+        st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1).format("{:.2f}"), use_container_width=True)
 
         # st.dataframe(subarea_df, use_container_width=True)
 
