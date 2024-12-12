@@ -242,26 +242,14 @@ def update_predictions(data_df, weather_data_df, stations_df):
             predictions = scaler_Y.inverse_transform(predictions.numpy())
 
             #.tolist()
-            return predictions
-
-
-
-            # shape soll 1, 24, 10
-            # den scalieren mit scalarX
-            # in das modell
-
-            # entityId_predictions = predict(loaded_model, data_for_prediction)
-
-            # predictions mit scalarY zurück scalieren
-
-
+            return predictions.shape[0]
 
             #### create final prediction dataframe
             # append to dataframe with entityId and predictions
             # Assign dates to each prediction
             start_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) 
             # Erzeugen einer Liste von Zeitstempeln für jede Vorhersage
-            date_list = [start_date + timedelta(hours=i) for i in range(prediction_length)]
+            date_list = [start_date + timedelta(hours=i) for i in range(predictions.shape[0])]
             
             # Create DataFrame for current entity predictions
             temp_df = pd.DataFrame({
