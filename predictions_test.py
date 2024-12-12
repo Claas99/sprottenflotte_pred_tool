@@ -241,7 +241,6 @@ def update_predictions(data_df, weather_data_df, stations_df):
             # # # Inverse scale the predictions with scalarY
             predictions = scaler_Y.inverse_transform(predictions.numpy())
 
-            #.tolist()
             # return predictions.shape[1]
 
             #### create final prediction dataframe
