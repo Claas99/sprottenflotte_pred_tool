@@ -60,7 +60,7 @@ def main():
             st.toast("Predictions abgeschlossen 🤖", icon="🎉")
         st.balloons()
         
-        ss['test_df_cool'] = test_df_cool
+        # ss['test_df_cool'] = test_df_cool
 
         ss['weather_data_df'] = weather_data_df
         ss['data_df'] = data_df
@@ -91,7 +91,7 @@ def main():
         pred_message_type = None # 'info'
         pred_message_text = None # 'Es sind bereits Predictions für alle Stationen vorhanden.'
 
-        test_df_cool = ss.get('test_df_cool')
+        # test_df_cool = ss.get('test_df_cool')
         
         # st.write("Data is already initialized, no need to reload. Only reload nach voller Stunde")
 
@@ -164,7 +164,7 @@ def main():
         
         st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
 
-        st.dataframe(test_df_cool, use_container_width=True)
+        # st.dataframe(test_df_cool, use_container_width=True)
 
         # st.info('st.info')
         # st.success('st.success')
