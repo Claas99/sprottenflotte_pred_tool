@@ -178,7 +178,7 @@ def main():
         
         st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
 
-        # st.dataframe(test_df_cool, use_container_width=True)
+        st.dataframe(test_df_cool, use_container_width=True)
 
         # st.info('st.info')
         # st.success('st.success')
