@@ -185,8 +185,10 @@ def main():
         prio_df['Teilgebiet'] = prio_df['subarea']
         prio_df['Handlungsbedarf'] = prio_df['subarea_prio']
         
-        st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
-        st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:2, :], **{'background-color': 'lightblue'}), use_container_width=True)
+        # st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
+        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:2, :], **{'background-color': 'lightblue'}), use_container_width=True)
+        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: red' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:4, :], **{'background-color': 'lightcoral'}), use_container_width=True)
+        st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: red' if i < 3 else 'background-color: lightcoral' if i < 5 else '' for i in range(len(x))], axis=0).set_properties(subset=pd.IndexSlice[0:4, :], **{'background-color': 'lightcoral'}).set_properties(axis=0, **{'background-color': 'red'}).set_properties(axis=1, **{'background-color': 'red'}), use_container_width=True)
 
         if model_selection == "Deep Learning Model":
             st.dataframe(test_df_cool, use_container_width=True)
@@ -194,7 +196,7 @@ def main():
     # --- tab 2 ---
     with tab2:
         st.write("### Historische Analyse")
-        app_functions.print_message(weather_data_message_type, weather_data_message_text)
+        # app_functions.print_message(weather_data_message_type, weather_data_message_text)
         app_functions.print_message(data_message_type, data_message_text)
 
         with st.expander("ℹ️ Mehr Informationen zur Karte anzeigen"):
