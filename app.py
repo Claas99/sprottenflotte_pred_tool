@@ -306,7 +306,7 @@ def main():
                 color = '#ccffcc'
             return [f"background-color: {color}" for _ in row]
         
-        st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
+        st.dataframe(subarea_df[columns_to_show].astype(int).style.apply(apply_color, axis=1), use_container_width=True)
 
         # st.dataframe(subarea_df, use_container_width=True)
 
