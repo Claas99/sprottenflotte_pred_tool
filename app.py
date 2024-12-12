@@ -57,7 +57,7 @@ def main():
     stations_df = pd.read_csv(stations_filename)
 
     
-    # Check for first load or reset action
+    # Check for first load or model selection has changed
     if 'initialized' not in ss or ss['last_model_selection'] != model_selection:
         reset_app()
         with st.spinner("Wetter Daten werden geladen..."):
@@ -80,7 +80,7 @@ def main():
             test_df_cool = predictions_test.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
             ss['test_df_cool'] = test_df_cool
         st.toast("Predictions abgeschlossen", icon="🤖")
-        st.balloons()
+        # st.balloons()
         
 
         ss['weather_data_df'] = weather_data_df
