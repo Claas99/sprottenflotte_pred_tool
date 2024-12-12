@@ -386,7 +386,7 @@ def main():
             subarea_df = full_df
         else:
             subarea_df = full_df[full_df['subarea'] == selected_option]
-            
+        subarea_df['Station'] = subarea_df['station_name']
         fig = px.line(
             subarea_df,
             x='deutsche_timezone',
@@ -423,7 +423,7 @@ def main():
         st.write("***")
         st.write(f"Zeitdaten der Stationen von {selected_option}")
         # st.dataframe(subarea_df[['entityId', 'station_name', 'availableBikeNumber', 'deutsche_timezone']], use_container_width=True)
-        st.dataframe(subarea_df.pivot(index='station_name', columns='deutsche_timezone', values='availableBikeNumber'))
+        st.dataframe(subarea_df.pivot(index='Station', columns='deutsche_timezone', values='availableBikeNumber'))
 
         # Filter too low and too high data
         too_low_df = subarea_df[subarea_df['availableBikeNumber'] <= 0.2 * subarea_df['maximum_capacity']]
