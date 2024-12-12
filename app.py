@@ -44,6 +44,13 @@ def main():
     stations_filename = "data/stations.csv"
     stations_df = pd.read_csv(stations_filename)
 
+    with st.sidebar:
+    model_selection = st.radio(
+        "Wähle ein Prediction Model aus:",
+        ("Random Forest", "Deep Learning Model"),
+        index=0
+    )
+    
     # Check for first load or reset action
     if 'initialized' not in ss: # or st.button("Reset App", on_click=reset_app)
         reset_app()
