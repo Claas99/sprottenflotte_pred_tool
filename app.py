@@ -46,7 +46,6 @@ def main():
             index=0
         )
     st.write(f"Ausgewähltes Model: {model_selection}")
-    st.write(type(model_selection))
     st.write("***")
     #
     stations_filename = "data/stations.csv"
