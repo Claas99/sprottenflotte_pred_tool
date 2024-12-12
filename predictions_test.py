@@ -23,11 +23,12 @@ import logging
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 log = logging.getLogger()
 
+
 ### Configurations
 DATA_FILENAME = 'data/data_temp.csv'
-MODEL_FILENAME = 'data/biLSTM_whole_weights.pth'
-SCALER_X_FILENAME = 'data/scaler_X_2.joblib'
-SCALER_Y_FILENAME = 'data/scaler_y_2.joblib'
+MODEL_FILENAME = 'data/5pred_biLSTM_whole_weights.pth'
+SCALER_X_FILENAME = 'data/scaler_X.joblib'
+SCALER_Y_FILENAME = 'data/scaler_y.joblib'
 PREDICTIONS_FILENAME = 'data/predictions.csv'
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
 NAME_REPO = "Claas99/sprottenflotte_pred_tool"
@@ -38,10 +39,10 @@ hidden_size = 8
 num_stacked_layers = 2
 learning_rate = 0.001
 num_epochs = 10
-
+    
 class BiLSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, num_stacked_layers):
-        super().__init__()
+    def init(self, input_size, hidden_size, num_stacked_layers):
+        super().init()
         self.hidden_size = hidden_size
         self.num_stacked_layers = num_stacked_layers
 
@@ -54,8 +55,8 @@ class BiLSTM(nn.Module):
             bidirectional=True  # Dies macht das LSTM bidirektional
         )
 
-        # Da bidirektional, verdoppelt sich die Ausgabegröße
-        self.fc = nn.Linear(hidden_size * 2, 1)
+        # Da bidirektional, verdoppelt sich die Ausgabegröße, # Change output size from 1 to 5
+        self.fc = nn.Linear(hidden_size * 2, 5)
 
     def forward(self, x):
         batch_size = x.size(0)
@@ -64,8 +65,7 @@ class BiLSTM(nn.Module):
         h0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)#.to(device)
         c0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)#.to(device)
 
-        out, _ = self.lstm(x, (h0, c0))
-        # Nimm nur den letzten Zeitschritt
+        out,  = self.lstm(x, (h0, c0))
         out = self.fc(out[:, -1, :])
         return out
 
@@ -101,18 +101,6 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     else:
         log.error(f"----- Failed to update Prediction file on GitHub: {r.content} ------")
 
-# def inverse_scale_target(scaler, scaled_target, target_feature_index, original_feature_count):
-#     # Prepare a dummy matrix with zeros
-#     dummy = np.zeros((scaled_target.shape[0], original_feature_count))
-
-#     # Place scaled target feature where it originally belonged in full dataset
-#     dummy[:, target_feature_index] = scaled_target.flatten()
-
-#     # Use inverse_transform, which applies only to non-zero entries when split like this
-#     inversed_full = scaler.inverse_transform(dummy)
-
-#     # Extract only the inversely transformed target value
-#     return inversed_full[:, target_feature_index]
 
 # Return the prediction
 def predict(model, data):
