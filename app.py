@@ -384,7 +384,7 @@ def main():
         subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Info'] = subarea_df['subarea'], subarea_df['station_name'], subarea_df['current_capacity'], subarea_df['maximum_capacity'], subarea_df['color_info_predictions']
         
         columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'prediction_1h', 'prediction_2h', 'prediction_3h', 'prediction_4h', 'prediction_5h', 'Maximale Kapazität', 'Info']
-        st.dataframe(subarea_df[columns_to_show], use_container_width=True)
+        # st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
         def apply_color_prediction(row):
             color_map_predictions = {
