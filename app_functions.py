@@ -28,9 +28,9 @@ def make_dataframe_of_subarea(selected_option, stations_df):
         subarea_df = stations_df[stations_df['subarea'] == selected_option]
 
     subarea_df = subarea_df.sort_values(
-        ['Prio', 'Delta'],
-        ascending=[False, False],  # Sortiere 'Prio' absteigend und 'Delta' in Bezug auf den absoluten Wert
-        key=lambda col: (col if col.name != 'Delta' else abs(col))
+        'Delta',
+        ascending=False,  # Sortiere 'Prio' absteigend und 'Delta' in Bezug auf den absoluten Wert
+        key=lambda col: abs(col)
     ).reset_index(drop=True)
     subarea_df.index += 1  # Setze den Index auf 1 beginnend
     return subarea_df
@@ -63,30 +63,30 @@ def add_current_capacity_to_stations_df(stations_df, data_df, color_map):
     - data_df: DataFrame containing the latest data used to compute the current capacity.
 
     Returns:
-    - Updated stations_df with added columns: 'current_capacity', 'Delta', 'Prio', 'color_info', and 'color'.
+    - Updated stations_df with added columns: 'current_capacity', 'Delta', 'color_info', and 'color'.
     """
     # Get the latest capacity values from data_df
     latest_available_bikes = get_latest_available_bikes(data_df)
 
     # Add the current capacity values to the stations_df
-    stations_df['current_capacity'] = stations_df['entityId'].map(latest_available_bikes).round()
+    stations_df['current_capacity'] = stations_df['entityId'].map(latest_available_bikes).round().astype(int)
 
     # Calculate the Delta to max_capacity
-    stations_df['Delta'] = stations_df['current_capacity'] - stations_df['maximum_capacity']
+    stations_df['Delta'] = (stations_df['current_capacity'] - stations_df['maximum_capacity']).astype(int)
 
-    # Define conditions for priority calculation
-    conditions = [
-        (stations_df['current_capacity'] > 0.9 * stations_df['maximum_capacity']) | 
-        (stations_df['current_capacity'] < 0.1 * stations_df['maximum_capacity']),  # Very high or very low
-        (stations_df['current_capacity'] > 0.8 * stations_df['maximum_capacity']) | 
-        (stations_df['current_capacity'] < 0.2 * stations_df['maximum_capacity'])   # High or low
-    ]
+    # # Define conditions for priority calculation
+    # conditions = [
+    #     (stations_df['current_capacity'] > 0.9 * stations_df['maximum_capacity']) | 
+    #     (stations_df['current_capacity'] < 0.1 * stations_df['maximum_capacity']),  # Very high or very low
+    #     (stations_df['current_capacity'] > 0.8 * stations_df['maximum_capacity']) | 
+    #     (stations_df['current_capacity'] < 0.2 * stations_df['maximum_capacity'])   # High or low
+    # ]
 
-    # Define priority choices according to conditions
-    choices = ['❗️❗️', '❗️']
+    # # Define priority choices according to conditions
+    # choices = ['❗️❗️', '❗️']
 
-    # Assign priority to stations
-    stations_df['Prio'] = np.select(conditions, choices, default='')
+    # # Assign priority to stations
+    # stations_df['Prio'] = np.select(conditions, choices, default='')
 
     # Add a new column to indicate color based on station conditions
     stations_df['color_info'] = stations_df.apply(
