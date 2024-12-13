@@ -305,6 +305,7 @@ def main():
             elif row['Info'] == 'okay':
                 color = '#ccffcc'
             return [f"background-color: {color}" for _ in row]
+            # return ['' if column == 'Station' else f"background-color: {color}" for column in row.index]
         
         st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
 
@@ -384,6 +385,20 @@ def main():
         
         columns_to_show = ['Teilgebiet', 'Station', 'Fahrräder Aktuell', 'prediction_1h', 'prediction_2h', 'prediction_3h', 'prediction_4h', 'prediction_5h', 'Maximale Kapazität', 'Info']
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
+
+        def apply_color_prediction(row):
+            # Assuming 'color' is the name of the column in your DataFrame
+            color = "white"  # Default color
+            if row['color_predictions'] == 'red':
+                color = '#ffcccc'
+            elif row['color_predictions'] == 'blue':
+                color = '#cce5ff'
+            elif row['color_predictions'] == 'green':
+                color = '#ccffcc'
+            return [f"background-color: {color}" for _ in row]
+            # return ['' if column == 'Station' else f"background-color: {color}" for column in row.index]
+        
+        st.dataframe(subarea_df[columns_to_show].style.apply(apply_color_prediction, axis=1), use_container_width=True)
 
         # st.write("Daten:")
 
