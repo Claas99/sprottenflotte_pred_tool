@@ -311,7 +311,16 @@ def main():
             color = color_map.get(row['Info'], 'white')  # Default to 'white' if not found
             return ['' if column != 'Station' else f"background-color: {color}" for column in row.index]
         
-        st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1).format("{:.0f}"), use_container_width=True)
+        # st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
+
+        applied_style = subarea_df[columns_to_show].style.apply(apply_color, axis=1)
+
+        # Apply formatting only to numeric columns
+        for col in columns_to_show:
+            if subarea_df[col].dtype in ['float64', 'int64']:
+                applied_style = applied_style.format(formatter="{:.0f}", subset=[col])
+
+        st.dataframe(applied_style, use_container_width=True)
 
         st.dataframe(subarea_df, use_container_width=True)
 
