@@ -387,18 +387,23 @@ def main():
         st.dataframe(subarea_df[columns_to_show], use_container_width=True)
 
         def apply_color_prediction(row):
-            # Assuming 'color' is the name of the column in your DataFrame
-            color = "white"  # Default color
-            if row['color_predictions'] == 'red':
-                color = '#ffcccc'
-            elif row['color_predictions'] == 'blue':
-                color = '#cce5ff'
-            elif row['color_predictions'] == 'green':
-                color = '#ccffcc'
-            return [f"background-color: {color}" for _ in row]
-            # return ['' if column == 'Station' else f"background-color: {color}" for column in row.index]
-        
+            color_map_predictions = {
+                'zu leer - zu leer': 'red',
+                'zu leer - okay': 'green',
+                'zu leer - überfüllt': 'blue',
+                'überfüllt - zu leer': 'red',
+                'überfüllt - okay': 'green',
+                'überfüllt - überfüllt': 'blue',
+                'okay - zu leer': 'red',
+                'okay - okay': 'green',
+                'okay - überfüllt': 'blue',
+                'no data': 'grey'
+            }
+            color = color_map_predictions.get(row['Info'], 'white')  # Default to 'white' if not found
+            return ['' if column == 'Station' else f"background-color: {color}" for column in row.index]
+
         st.dataframe(subarea_df[columns_to_show].style.apply(apply_color_prediction, axis=1), use_container_width=True)
+
 
         # st.write("Daten:")
 
