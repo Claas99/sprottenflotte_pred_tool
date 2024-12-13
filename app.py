@@ -304,7 +304,7 @@ def main():
                 'no data': 'grey'
             }
             # return [f"background-color: {color}" for _ in row]
-            color = color_map_predictions.get(row['Info'], 'white')  # Default to 'white' if not found
+            color = color_map.get(row['Info'], 'white')  # Default to 'white' if not found
             return ['' if column != 'Station' else f"background-color: {color}" for column in row.index]
         
         st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
