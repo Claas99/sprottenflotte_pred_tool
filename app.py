@@ -304,8 +304,8 @@ def main():
                 color = '#cce5ff'
             elif row['Info'] == 'okay':
                 color = '#ccffcc'
-            return [f"background-color: {color}" for _ in row]
-            # return ['' if column == 'Station' else f"background-color: {color}" for column in row.index]
+            # return [f"background-color: {color}" for _ in row]
+            return ['' if column != 'Station' else f"background-color: {color}" for column in row.index]
         
         st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
 
@@ -388,16 +388,16 @@ def main():
 
         def apply_color_prediction(row):
             color_map_predictions = {
-                'zu leer - zu leer': 'red',
-                'zu leer - okay': 'green',
-                'zu leer - überfüllt': 'blue',
-                'überfüllt - zu leer': 'red',
-                'überfüllt - okay': 'green',
-                'überfüllt - überfüllt': 'blue',
-                'okay - zu leer': 'red',
-                'okay - okay': 'green',
-                'okay - überfüllt': 'blue',
-                'no data': 'grey'
+                'zu leer - zu leer': '#ffcccc',
+                'zu leer - okay': '#ccffcc',
+                'zu leer - überfüllt': '#cce5ff',
+                'überfüllt - zu leer': '#ffcccc',
+                'überfüllt - okay': '#ccffcc',
+                'überfüllt - überfüllt': '#cce5ff',
+                'okay - zu leer': '#ffcccc',
+                'okay - okay': '#ccffcc',
+                'okay - überfüllt': '#cce5ff',
+                'no data': '#cccccc'
             }
             color = color_map_predictions.get(row['Info'], 'white')  # Default to 'white' if not found
             return ['' if column != 'Station' else f"background-color: {color}" for column in row.index]
