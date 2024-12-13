@@ -69,20 +69,6 @@ def add_current_capacity_to_stations_df(stations_df, data_df, color_map):
     # Calculate the Delta to max_capacity
     stations_df['Delta'] = (stations_df['current_capacity'] - stations_df['maximum_capacity'])#.astype(int)
 
-    # # Define conditions for priority calculation
-    # conditions = [
-    #     (stations_df['current_capacity'] > 0.9 * stations_df['maximum_capacity']) | 
-    #     (stations_df['current_capacity'] < 0.1 * stations_df['maximum_capacity']),  # Very high or very low
-    #     (stations_df['current_capacity'] > 0.8 * stations_df['maximum_capacity']) | 
-    #     (stations_df['current_capacity'] < 0.2 * stations_df['maximum_capacity'])   # High or low
-    # ]
-
-    # # Define priority choices according to conditions
-    # choices = ['❗️❗️', '❗️']
-
-    # # Assign priority to stations
-    # stations_df['Prio'] = np.select(conditions, choices, default='')
-
     # Add a new column to indicate color based on station conditions
     stations_df['color_info'] = stations_df.apply(
         lambda row: 'no data' if pd.isna(row['current_capacity'])

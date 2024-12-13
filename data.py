@@ -310,6 +310,20 @@ def create_dataframe_from_api_data(data):
     return df
 
 
+def get_current_dates():
+    """Calculate the current start and end dates for data fetching."""
+    # API mit UTC time steps
+    # Calculate the end date by rounding down to the closest whole hour in UTC !,
+    # to make sure to get hourly averages for whole hours with API request
+
+    # Calculate the end date as the current time rounded down to the nearest hour
+    end_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    # Set start_date as 24 hours before the end_date
+    start_date = end_date - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
+
+    return start_date, end_date
+
+
 def update_station_data():
     """
     Updates and saves bike station data by fetching new data for specified stations and dates, then combining it with existing data.
@@ -485,7 +499,6 @@ def update_station_data():
     return data_temp_df, message_type, message_text
 
 
-##########
 def update_weather_data():
     """
     ss
@@ -636,49 +649,7 @@ def update_weather_data():
 
     return weather_data_df, message_type, message_text
 
-#################
 
-def get_current_dates():
-    """Calculate the current start and end dates for data fetching."""
-    # API mit UTC time steps
-    # Calculate the end date by rounding down to the closest whole hour in UTC !,
-    # to make sure to get hourly averages for whole hours with API request
-
-    # Calculate the end date as the current time rounded down to the nearest hour
-    end_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
-    # Set start_date as 24 hours before the end_date
-    start_date = end_date - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
-
-    return start_date, end_date
-
-
-# def get_max_capacity(stationID, subareas_df) -> int:
-#     """
-#     Retrieves the maximum capacity of a station based on its station ID.
-
-#     This function searches for a station in a predefined DataFrame of stations
-#     and returns its maximum capacity. If the station is not found, it returns 0.
-
-#     :param stationID: The ID of the station whose maximum capacity is to be retrieved.
-#     :type stationID: str
-
-#     :return: The maximum capacity of the station as an integer. Returns 0 if the station is not found.
-#     :rtype: int
-
-#     :raises ValueError: If the input stationID is not a string.
-#     """
-#     # Suche nach der Station mit der gegebenen ID
-#     station = subareas_df[subareas_df['entityId'] == stationID]
-
-#     # Überprüfen, ob die Station gefunden wurde
-#     if not station.empty:
-#         # Extrahieren der maximalen Kapazität
-#         max_capacity = station['maximum_capacity'].iloc[0]
-#         return int(max_capacity)
-#     else:
-#         # Rückgabe von 0, wenn die Station nicht gefunden wurde
-#         return 0
-    
 # --- Easter Egg --->
 def update_random_bike_location(stations_df):
     """Select a random subarea and assign random coordinates."""
