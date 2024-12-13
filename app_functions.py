@@ -69,10 +69,10 @@ def add_current_capacity_to_stations_df(stations_df, data_df, color_map):
     latest_available_bikes = get_latest_available_bikes(data_df)
 
     # Add the current capacity values to the stations_df
-    stations_df['current_capacity'] = stations_df['entityId'].map(latest_available_bikes).round().astype(int)
+    stations_df['current_capacity'] = stations_df['entityId'].map(latest_available_bikes).round()#.astype(int)
 
     # Calculate the Delta to max_capacity
-    stations_df['Delta'] = (stations_df['current_capacity'] - stations_df['maximum_capacity']).astype(int)
+    stations_df['Delta'] = (stations_df['current_capacity'] - stations_df['maximum_capacity'])#.astype(int)
 
     # # Define conditions for priority calculation
     # conditions = [
