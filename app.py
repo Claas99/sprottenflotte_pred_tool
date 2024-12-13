@@ -69,7 +69,7 @@ def main():
             st.toast("Historische Daten geladen", icon="🕵️‍♂️")
 
         if model_selection == "Random Forest":
-            predictions_file = "data/predictions_random_forest.csv"
+            predictions_file = "data/predictions_rf.csv"
             with st.spinner("Predictions werden berechnet..."):
                 predictions_df, pred_message_type, pred_message_text = predictions_rf.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung 
         else: 
