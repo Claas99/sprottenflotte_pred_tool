@@ -272,6 +272,9 @@ def main():
         # Show the map
         st.plotly_chart(fig, config={"scrollZoom": True})
 
+        current_hour = pd.Timestamp.now(tz="Europe/Berlin").hour
+        st.write(f"Stand: {current_hour}")
+        
         selected_station = st.selectbox("Wähle eine Station aus:", subarea_df['station_name'])
         station_data = subarea_df[subarea_df['station_name'] == selected_station].iloc[0]
 
