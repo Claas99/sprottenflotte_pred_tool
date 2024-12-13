@@ -297,14 +297,14 @@ def main():
 
         def apply_color(row):
             # Assuming 'color' is the name of the column in your DataFrame
-            color = "white"  # Default color
-            if row['Info'] == 'zu leer':
-                color = '#ffcccc'
-            elif row['Info'] == 'überfüllt':
-                color = '#cce5ff'
-            elif row['Info'] == 'okay':
-                color = '#ccffcc'
+            color_map = {
+                'überfüllt': 'blue',
+                'zu leer': 'red',
+                'okay': 'green',
+                'no data': 'grey'
+            }
             # return [f"background-color: {color}" for _ in row]
+            color = color_map_predictions.get(row['Info'], 'white')  # Default to 'white' if not found
             return ['' if column != 'Station' else f"background-color: {color}" for column in row.index]
         
         st.dataframe(subarea_df[columns_to_show].style.apply(apply_color, axis=1), use_container_width=True)
