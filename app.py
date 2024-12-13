@@ -298,10 +298,10 @@ def main():
         def apply_color(row):
             # Assuming 'color' is the name of the column in your DataFrame
             color_map = {
-                'überfüllt': 'blue',
-                'zu leer': 'red',
-                'okay': 'green',
-                'no data': 'grey'
+                'überfüllt': '#cce5ff',
+                'zu leer': '#ffcccc',
+                'okay': '#ccffcc',
+                'no data': '#cccccc'
             }
             # return [f"background-color: {color}" for _ in row]
             color = color_map.get(row['Info'], 'white')  # Default to 'white' if not found
