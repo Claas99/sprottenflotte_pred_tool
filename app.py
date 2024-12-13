@@ -46,6 +46,10 @@ def main():
             index=0
         )
     st.write(f"Ausgewähltes Model: {model_selection}")
+
+    current_hour = pd.Timestamp.now(tz="Europe/Berlin").hour
+    st.write(f"Stand: {current_hour - 1} - {current_hour} Uhr")
+        
     
     # Initialisieren der Session State Variable für Modellauswahl
     if 'last_model_selection' not in ss:
