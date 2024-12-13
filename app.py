@@ -1,18 +1,20 @@
-# Here will be the code for the frontend
-
-
-from enum import Enum, auto
+#!/usr/bin/env python3
 
 import pandas as pd
+import plotly.express as px
 import streamlit as st
 from streamlit import session_state as ss
-import plotly.express as px
+
 import app_functions as app_functions
 import data as data
-import predictions_rf as predictions_rf
 import predictions_dl as predictions_dl
-# import plotly.graph_objects as go
-# import numpy as np
+import predictions_rf as predictions_rf
+
+
+### Configurations
+stations_filename = "data/stations.csv"
+predictions_rf_filename = "data/predictions_rf.csv"
+predictions_dl_filename = "data/predictions_dl.csv"
 
 
 # --- Streamlit Configuration ---
@@ -20,7 +22,6 @@ st.set_page_config(page_title="Sprottenflotte prediction model", page_icon="🚲
 
 def reset_app():
     """Resets the app."""
-
     # clear session state
     ss.clear()
 
@@ -36,9 +37,8 @@ def main():
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
     st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodel! Das Model befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
              Bitte sende jegliches Feedback gerne an mobil@kielregion.de.""")
-    
-             
     st.write("""Die Daten können stündlich neu geladen und neu vorhergesagt werden, in dem man das Fenster aktualisiert. Dies kann ein paar Minunten dauern.""")
+    
     with st.sidebar:
         model_selection = st.radio(
             "Wähle ein Prediction Model aus:",
@@ -50,16 +50,14 @@ def main():
     current_hour = pd.Timestamp.now(tz="Europe/Berlin").hour
     st.write(f"Stand: {current_hour - 1} - {current_hour} Uhr")
         
-    
     # Initialisieren der Session State Variable für Modellauswahl
     if 'last_model_selection' not in ss:
         ss['last_model_selection'] = model_selection
 
     st.write("***")
-    #
-    stations_filename = "data/stations.csv"
-    stations_df = pd.read_csv(stations_filename)
 
+    # load station info
+    stations_df = pd.read_csv(stations_filename)
     
     # Check for first load or model selection has changed
     if 'initialized' not in ss or ss['last_model_selection'] != model_selection:
@@ -73,19 +71,14 @@ def main():
             st.toast("Historische Daten geladen", icon="🕵️‍♂️")
 
         if model_selection == "Random Forest":
-            predictions_file = "data/predictions_rf.csv"
+            predictions_file = predictions_rf_filename
             with st.spinner("Predictions werden berechnet..."):
                 predictions_df, pred_message_type, pred_message_text = predictions_rf.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung 
         else: 
-            predictions_file = "data/predictions_dl.csv"
+            predictions_file = predictions_dl_filename
             with st.spinner("Predictions werden berechnet..."):
                 predictions_df, pred_message_type, pred_message_text = predictions_dl.update_predictions(data_df, weather_data_df, stations_df)
-
-            test_df_cool = predictions_dl.make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
-            ss['test_df_cool'] = test_df_cool
-        st.toast("Predictions abgeschlossen", icon="🤖")
-        # st.balloons()
-        
+        st.toast("Predictions abgeschlossen", icon="🤖")        
 
         ss['weather_data_df'] = weather_data_df
         ss['data_df'] = data_df
@@ -94,10 +87,8 @@ def main():
         ss['initialized'] = True
         ss['last_model_selection'] = model_selection
 
-        # if data_message_type == 'success':
         # --- Easter Egg --->
         # Set random bike position in session state 
-        # if 'random_bike' not in ss: # or data_message_type == 'success': 
         random_subarea, new_lat, new_lon = data.update_random_bike_location(stations_df)
         ss['random_bike'] = {'subarea': random_subarea, 'latitude': new_lat, 'longitude': new_lon}
         # anzeigen des punktes als dataframe
@@ -117,9 +108,6 @@ def main():
         predictions_df = ss.get('predictions_df')
         pred_message_type = None # 'info'
         pred_message_text = None # 'Es sind bereits Predictions für alle Stationen vorhanden.'
-
-        if model_selection == "Deep Learning Model":
-            test_df_cool = ss.get('test_df_cool')
         
     
     if predictions_df is None:
@@ -169,6 +157,7 @@ def main():
     # initialise tabs
     tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Predictions", "Analyse"])
 
+
     # --- tab 1 ---
     with tab1:
         st.write("### Teilgebiete nach Handlungsbedarf")
@@ -192,10 +181,8 @@ def main():
         # st.dataframe(prio_df[['Teilgebiet','Handlungsbedarf']] , use_container_width=True)
         # st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: lightblue' if i < 3 else '' for i in range(len(x))], axis=0), use_container_width=True)
         st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: indianred' if i < 2 else 'background-color: lightcoral' if i < 3 else '' for i in range(len(x))], axis=0), use_container_width=True)
-
-        # if model_selection == "Deep Learning Model":
-        #     st.dataframe(test_df_cool, use_container_width=True)
     
+
     # --- tab 2 ---
     with tab2:
         st.write("### Historische Analyse")
@@ -284,14 +271,6 @@ def main():
         st.markdown(f"[Klicken Sie hier, um {selected_station} in Google Maps zu öffnen]({google_maps_url})")
 
         st.write("***")
-        # st.write("Historische Daten:")
-
-        # if data_df is not None:
-        #     data_df['time_utc'] = pd.to_datetime(data_df['time_utc'])
-        #     data_df['deutsche_timezone'] = data_df['time_utc'] + pd.Timedelta(hours=1)
-        #     st.dataframe(data_df[['entityId','deutsche_timezone','availableBikeNumber']], use_container_width=True)
-        # else:
-        #     st.error("Failed to load historical data.")
 
         st.write(f"Daten der Stationen von {selected_option}")
         subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Info'] = subarea_df['subarea'], subarea_df['station_name'], subarea_df['current_capacity'], subarea_df['maximum_capacity'], subarea_df['color_info']
@@ -326,6 +305,7 @@ def main():
 
         # st.write("Wetterstation Data:")
         # st.dataframe(weather_data_df, use_container_width=True)
+
 
     # --- tab 3 ---
     with tab3:
@@ -426,18 +406,6 @@ def main():
 
         st.dataframe(applied_style, use_container_width=True)
 
-
-        # st.write("Daten:")
-
-        # if predictions_df is not None:
-        #     predictions_df['time_utc'] = pd.to_datetime(predictions_df['time_utc'])
-        #     predictions_df['deutsche_timezone'] = predictions_df['time_utc'] + pd.Timedelta(hours=1)
-        #     predictions_df = predictions_df.merge(stations_df[['entityId', 'station_name']], on='entityId', how='left')
-        #     st.dataframe(predictions_df[['entityId', 'station_name', 'deutsche_timezone', 'availableBikeNumber']], use_container_width=True)
-        #     pivot_df = predictions_df.pivot(index='station_name', columns='deutsche_timezone', values='prediction_availableBikeNumber')
-        #     st.dataframe(pivot_df, use_container_width=True)
-        # else:
-        #     st.error("Failed to load prediction data.")
 
     # --- tab 4 ---
     with tab4:
@@ -540,7 +508,6 @@ def main():
             )
             fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
             st.plotly_chart(fig_low)
-
 
         
     st.button("Reset App/Reload", on_click=reset_app, key="reset_button")

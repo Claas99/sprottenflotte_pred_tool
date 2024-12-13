@@ -1,74 +1,29 @@
 #!/usr/bin/env python3
 
-# requirements.txt !
 import os
-import math
-from datetime import datetime, timedelta, timezone
-
-import numpy as np
-import pandas as pd
-import torch
-import torch.nn as nn
-import joblib
-import requests
-import streamlit as st
 import base64
-from sklearn.preprocessing import MinMaxScaler
+import logging
+from datetime import datetime, timedelta, timezone
 from io import StringIO
 
-import logging
+import requests
+import joblib
+import pandas as pd
+import numpy as np
+import streamlit as st
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 log = logging.getLogger()
 
+
 ### Configurations
 DATA_FILENAME = 'data/data_temp.csv'
-MODEL_FILENAME = 'models/model_rf.joblib' # 'data/cnn_model.pth'
-SCALER_FILENAME = 'models/scaler_rf.joblib' # 'data/scaler.pkl'
+MODEL_FILENAME = 'models/model_rf.joblib'
+SCALER_FILENAME = 'models/scaler_rf.joblib'
 PREDICTIONS_FILENAME = 'data/predictions_rf.csv'
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
 NAME_REPO = "Claas99/sprottenflotte_pred_tool"
-
-### Model
-# Model hyperparameters
-input_size = 24
-in_channels = 1
-out_channels = 2
-kernel_size = 4
-stride = 2
-dropout_prob = 0.2
-prediction_length_steps = 5
-activation = torch.nn.ReLU()
-
-original_feature_count = 1 # full_dataset.shape[1]
-target_feature_index = 0
-
-class ConvModel(nn.Module):
-
-    def __init__(self, input_size, out_channels, kernel_size, stride, dropout_prob):
-        super(ConvModel, self).__init__()
-        
-        self.input_size = input_size # size of features # sequence length, not feature count
-        self.out_channels = out_channels
-        self.kernel_size = kernel_size
-        self.stride = stride
-        
-        self.conv1d = nn.Conv1d(in_channels, out_channels, kernel_size, stride=stride)
-        self.dropout = nn.Dropout(dropout_prob)
-        self.conv1d_output_size=out_channels*math.floor((input_size-kernel_size)/stride +1)
-        
-        self.hidden_layer_size=int(self.conv1d_output_size/2)
-        self.lin = nn.Linear(self.conv1d_output_size, self.hidden_layer_size)  
-        self.lin2 = nn.Linear(self.hidden_layer_size, prediction_length_steps)  
-        
-        
-    def forward(self, x):
-        x_conv_output = activation(self.conv1d(x))
-        x_reshape = x_conv_output.reshape(x_conv_output.size(0), -1)
-        x_lin1 = activation(self.lin(x_reshape))
-        x_lin1 = self.dropout(x_lin1)
-        return self.lin2(x_lin1)
     
 
 ### Functions
@@ -133,13 +88,6 @@ def inverse_scale_target(scaler, scaled_target, target_feature_index, original_f
     return inversed_full[:, target_feature_index]
 
 
-# Return the prediction
-def predict(model, data):
-    model.eval()
-    with torch.no_grad():
-        return model(data)
-
-
 def update_predictions(data_df):
     
     log.info('Prediction process started')
@@ -149,6 +97,7 @@ def update_predictions(data_df):
         # load in data_temp
         # Laden des existierenden DataFrame
         # data_temp = pd.read_csv(DATA_FILENAME)
+
         data_temp = data_df.copy()
         data_temp['time_utc'] = pd.to_datetime(data_temp['time_utc'])
         latest_data_time = data_temp['time_utc'].max()
@@ -184,13 +133,6 @@ def update_predictions(data_df):
         # data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber']) # to be adjusted
 
     try:
-            # model saved torch.save(cnn_model.state_dict(), 'cnn_model.pth')
-        # load in the model
-        # # Modellinitialisierung (Stellen Sie sicher, dass Sie alle benötigten Hyperparameter angeben)
-        # loaded_model = ConvModel(input_size, out_channels, kernel_size, stride, dropout_prob)
-        # # Laden der Modellparameter
-        # loaded_model.load_state_dict(torch.load(MODEL_FILENAME, weights_only=True))
-
         # load in the model
         model = joblib.load(MODEL_FILENAME)
 
@@ -215,7 +157,6 @@ def update_predictions(data_df):
         for entity in entityId_list:
             data_for_prediction = data_temp[data_temp['entityId'] == entity].copy()
 
-            # new ->
             data_for_prediction['Month'] = data_for_prediction['time_utc'].dt.month
             data_for_prediction['Day'] = data_for_prediction['time_utc'].dt.day
             data_for_prediction['Hour'] = data_for_prediction['time_utc'].dt.hour
@@ -254,46 +195,6 @@ def update_predictions(data_df):
 
             # Hinzufügen des temporären DataFrame zur Liste
             dataframes.append(temp_df)
-            # <- new
-
-            #############################
-            # # Select the 'availableBikeNumber' column, convert to float and create a tensor
-            # data_for_prediction_values = data_for_prediction['availableBikeNumber'].values.reshape(-1, 1)
-
-            # # Scale the data
-            # data_for_prediction_values_scaled = scaler.transform(data_for_prediction_values)
-
-            # # make the data in such form for model to use
-            # # Select the 'availableBikeNumber' column, convert to float and create a tensor
-            # data_for_prediction = torch.tensor(data_for_prediction['availableBikeNumber'].values).float()
-            # data_for_prediction = data_for_prediction.unsqueeze(0).unsqueeze(0)  # Das Ergebnis ist ebenfalls [1, 1, 24]
-
-            # # make predictions
-            # entityId_predictions = predict(loaded_model, data_for_prediction)
-            # entityId_predictions = entityId_predictions.unsqueeze(-1)
-
-            # # make predictions real numbers, if model used scaled data for prediction
-            # num_samples, prediction_length, _ = entityId_predictions.shape
-            # entityId_predictions_reshaped = entityId_predictions.reshape(num_samples * prediction_length, -1)
-            # # Inverse transform for target feature predictions
-            # entityId_predictions_bikes = inverse_scale_target(scaler, entityId_predictions_reshaped, target_feature_index, original_feature_count).reshape(num_samples, prediction_length, -1)
-
-            # # append to dataframe with entityId and predictions
-            # # Assign dates to each prediction
-            # start_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) 
-            # # Erzeugen einer Liste von Zeitstempeln für jede Vorhersage
-            # date_list = [start_date + timedelta(hours=i) for i in range(prediction_length)]
-            
-            # # Create DataFrame for current entity predictions
-            # temp_df = pd.DataFrame({
-            #     'entityId': entity,
-            #     'prediction_time_utc': date_list,
-            #     'prediction_availableBikeNumber': entityId_predictions_bikes.squeeze().tolist()
-            # })
-
-            # # Hinzufügen des temporären DataFrame zur Liste
-            # dataframes.append(temp_df)
-            #############################
 
         # Zusammenführen aller temporären DataFrames zu einem finalen DataFrame
         data_temp_predictions = pd.concat(dataframes, ignore_index=True)

@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
 
-# requirements.txt !
+import base64
+import logging
 import os
+import random
 import re
+import time
 from datetime import datetime, timedelta, timezone
+from io import StringIO
 
-import dotenv
-import pandas as pd
 import numpy as np
+import pandas as pd
 import requests
 import streamlit as st
-import base64
-import time
-import logging
-import random
-from io import StringIO
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 log = logging.getLogger()
+
 
 ### Configurations
 PASSWORD = st.secrets['PASSWORD']
@@ -35,14 +34,13 @@ WEATHER_DATA_FILENAME = 'data/weather_data_temp.csv'
 WEATHER_STATIONS_FILENAME  = 'data/weather_stations.csv'
 WEATHER_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:WeatherObserved:OWM:"
 
-# Global variable to store the access token and its expiration time
+
+### Global variable to store the access token and its expiration time
 access_token_cache = {
     'token': None,
     'expires_at': None
 }
 
-# link_data_file = "https://drive.google.com/file/d/1GeUkYnxxc-JPww0RW9ps39Qp4Y4j4yDZ/view?usp=sharing"
-# output = "data"
 
 ### Functions
 def update_csv_on_github(new_content, filepath, repo, token, branch="main"):

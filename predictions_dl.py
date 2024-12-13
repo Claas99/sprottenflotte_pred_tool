@@ -1,23 +1,17 @@
 #!/usr/bin/env python3
 
 import os
+import base64
+import logging
+from datetime import datetime, timedelta, timezone
+
+import requests
+import joblib
 import pandas as pd
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader, TensorDataset, ConcatDataset
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-import math
-from datetime import datetime, timedelta, timezone
 import streamlit as st
-import requests
-import joblib
-import base64
-
-import logging
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -33,7 +27,8 @@ PREDICTIONS_FILENAME = 'data/predictions_dl.csv'
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
 NAME_REPO = "Claas99/sprottenflotte_pred_tool"
 
-# Initialize the Bidirectional LSTM model
+
+### Initialize the Bidirectional LSTM model
 input_size = 10  # Number of features
 hidden_size = 8
 num_stacked_layers = 2
@@ -68,7 +63,6 @@ class BiLSTM(nn.Module):
         out, _ = self.lstm(x, (h0, c0))
         out = self.fc(out[:, -1, :])
         return out
-
 
 
 ### Functions
