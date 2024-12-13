@@ -417,6 +417,15 @@ def main():
 
         st.dataframe(subarea_df[columns_to_show].style.apply(apply_color_prediction, axis=1), use_container_width=True)
 
+        applied_style = subarea_df[columns_to_show].style.apply(apply_color_prediction, axis=1)
+
+        # Apply formatting only to numeric columns
+        for col in columns_to_show:
+            if subarea_df[col].dtype in ['float64', 'int64']:
+                applied_style = applied_style.format(formatter="{:.0f}", subset=[col])
+
+        st.dataframe(applied_style, use_container_width=True)
+
 
         # st.write("Daten:")
 
