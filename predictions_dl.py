@@ -11,7 +11,7 @@ import torch
 import torch.nn as nn
 import streamlit as st
 
-from data import update_csv_on_github
+from data import update_csv_on_github, read_csv_from_github
 
 
 # --- Logging ---
@@ -157,125 +157,118 @@ def predict(model, data):
     
 
 def update_predictions(data_df, weather_data_df, stations_df):
-    
-    log.info('Prediction process started')
+    """
+    Processes input data through a prediction model and updates predictions if outdated or unavailable.
 
-    # make überprüfung, ob predictions needed at this time? otherwise the predictions would be generated every time the application gets refreshed
+    This function aggregates data necessary for prediction, checks if there's a need to update predictions based
+    on the latest data timestamps and the earliest prediction timestamp available and then proceeds to generate
+    predictions using a pre-trained LSTM model. It finally saves these predictions to a CSV and updates an existing
+    GitHub repository with the latest prediction data.
+
+    Parameters:
+    - data_df (pd.DataFrame): DataFrame containing recent data about bike availability.
+    - weather_data_df (pd.DataFrame): DataFrame containing recent weather information.
+    - stations_df (pd.DataFrame): DataFrame containing station-specific information.
+
+    Returns:
+    - tuple: Returns a tuple consisting of the DataFrame of updated predictions, a message type indicating the 
+             result of the operation ('info', 'success', or 'error'), and a message text providing detail on 
+             the operation's outcome.
+    """
+    # Log the start of the prediction process
+    log.info('Deep Learning prediction process started')
+
     try:
-        # load in data_temp
-        # Laden des existierenden DataFrame
-        # data_temp = pd.read_csv(DATA_FILENAME)
-
+        # Prepare data for prediction model from input dataframes
         data_temp = make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df)
-
-        # data_temp = data_df.copy()
         data_temp['time_utc'] = pd.to_datetime(data_temp['time_utc'])
-        latest_data_time = data_temp['time_utc'].max()
+        latest_data_time = data_temp['time_utc'].max() # Latest timestamp of data available
     except Exception as e:
         log.info(f'No {DATA_FILENAME} file found.')
         log.info(f'Error: {e}')
-        
-    # Prüfen, ob predictions.csv vorhanden ist
-    if os.path.exists(PREDICTIONS_FILENAME):
-        # Laden des existierenden DataFrame
-        data_temp_predictions = pd.read_csv(PREDICTIONS_FILENAME)
-        data_temp_predictions['prediction_time_utc'] = pd.to_datetime(data_temp_predictions['prediction_time_utc'])
-        earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min()
 
-        #### vorerst geskippt, um immer predictions zu machen
-        # überprüfen ob neue predictions necessary
-        if earliest_prediction_time > latest_data_time:
-            log.info("---------- No new predictions necessary, predictions are up to date.")
-            message_type = 'info'
-            message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
-            log.info('Prediction process completed')
-            return data_temp_predictions, message_type, message_text # Beenden der Funktion, wenn keine neuen Predictions nötig sind
-
-
-        # else:
-            # Altes Daten löschen, da neue Predictions notwendig sind
-            # data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber'])
-
-    # else:
-        # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
-        # data_temp_predictions = pd.DataFrame(columns=['entityId', 'prediction_time_utc', 'prediction_availableBikeNumber']) # to be adjusted
-
+    # Attempt to load prediction data from GitHub. 
     try:
-            # model saved torch.save(cnn_model.state_dict(), 'cnn_model.pth')
-        # load in the model
-        # Modellinitialisierung (Stellen Sie sicher, dass Sie alle benötigten Hyperparameter angeben)
-        loaded_model = BiLSTM(input_size, hidden_size, num_stacked_layers)
-        # Laden der Modellparameter
-        loaded_model.load_state_dict(torch.load(MODEL_FILENAME, weights_only=True))
+        # Read the existing prediction data from the GitHub repository
+        data_temp_predictions = read_csv_from_github(PREDICTIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
+        data_temp_predictions['prediction_time_utc'] = pd.to_datetime(data_temp_predictions['prediction_time_utc'])
+        earliest_prediction_time = data_temp_predictions['prediction_time_utc'].min() # Earliest timestamp of predictions available
+    except Exception as e:
+        # Log a message indicating the absence of the data file and necessary action.
+        log.info(f'---------- No {PREDICTIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, prediction_time_utc, prediction_availableBikeNumber')
+        log.info(f'---------- Error: {e}')
 
+    # Check if it's necessary to update the prediction data
+    if earliest_prediction_time > latest_data_time:
+        log.info("---------- No new predictions necessary, predictions are up to date.")
+        message_type = 'info'
+        message_text = 'Es sind bereits Predictions für alle Stationen vorhanden.'
+        log.info('Deep Learning prediction process completed')
+        return data_temp_predictions, message_type, message_text # Exit the function if no new predictions are required
+
+    # Attempt to load model file.
+    try:
+        loaded_model = BiLSTM(input_size, hidden_size, num_stacked_layers)
+        loaded_model.load_state_dict(torch.load(MODEL_FILENAME, weights_only=True))
     except Exception as e:
         log.info(f'---------- No {MODEL_FILENAME} file found.')
         log.info(f'---------- Error: {e}')
 
+    # Attempt to load scaler x file.
     try:
-            # scalar saved joblib.dump(scaler, 'scaler.pkl')
-        # load in the scalar
         scaler_X = joblib.load(SCALER_X_FILENAME)
-
     except Exception as e:
         log.info(f'---------- No {SCALER_X_FILENAME} file found.')
         log.info(f'---------- Error: {e}')
 
+    # Attempt to load scaler y file.
     try:
-            # scalar saved joblib.dump(scaler, 'scaler.pkl')
-        # load in the scalar
         scaler_Y = joblib.load(SCALER_Y_FILENAME)
-
     except Exception as e:
         log.info(f'---------- No {SCALER_Y_FILENAME} file found.')
         log.info(f'---------- Error: {e}')
 
-    # make predictions
+    # Perform model predictions for each unique station and compile results
     try:
         dataframes = []
-        # for every unique entity id make predictions
         entityId_list = data_temp.entityId.unique()
         for entity in entityId_list:
             data_for_prediction = data_temp[data_temp['entityId'] == entity]
 
-            ######## make input of model, in such form for model to use
+            # prepare data for prediction
             data = data_for_prediction[['availableBikeNumber', 'longitude', 'latitude',
                             'day_sin', 'day_cos', 'year_sin', 'year_cos',
                             'temperature', 'precipitation', 'windSpeed']].to_numpy().astype(np.float32)
-            
+            # scale the data with scaler_X
             data = scaler_X.transform(data)
             data = data.reshape(1, 24, 10)
             
-            # Make predictions
+            # Make the predictions
             predictions = predict(loaded_model, torch.tensor(data).float())
             
-            # # # Inverse scale the predictions with scalarY
+            # Scale predictions back to original scale with scalar_Y
             predictions = scaler_Y.inverse_transform(predictions.reshape(-1, 5))
 
-            # return predictions.shape[1]
-
-            #### create final prediction dataframe
-            # append to dataframe with entityId and predictions
-            # Assign dates to each prediction
+            # Create final prediction dataframe
             start_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) 
-            # Erzeugen einer Liste von Zeitstempeln für jede Vorhersage
+            # Generate a list of timestamps for each prediction
             date_list = [start_date + timedelta(hours=i) for i in range(predictions.shape[1])]
             
             # Create DataFrame for current entity predictions
             temp_df = pd.DataFrame({
                 'entityId': entity,
                 'prediction_time_utc': date_list,
-                'prediction_availableBikeNumber': predictions.flatten()#.tolist()
+                'prediction_availableBikeNumber': predictions.flatten()
             })
             log.info(f"{entity}: {predictions}")
 
-            # Hinzufügen des temporären DataFrame zur Liste
+            # Add the temporary DataFrame to the list
             dataframes.append(temp_df)
 
-        # Zusammenführen aller temporären DataFrames zu einem finalen DataFrame
+        # Merge all temporary DataFrames into one final DataFrame
         data_temp_predictions = pd.concat(dataframes, ignore_index=True)
 
-        # Update the csv-file in the github repo
+        # Update the csv-file in the GitHub repo
         log.info("----- Start updating file on GitHub -----")
         csv_to_github = data_temp_predictions.to_csv(index=False)
         update_csv_on_github(csv_to_github, PREDICTIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
@@ -287,7 +280,7 @@ def update_predictions(data_df, weather_data_df, stations_df):
 
         log.info('---------- Predictions made successfully and saved for all STATION_IDS.')
         log.info(f'---------- Time in UTC:\n          Earliest Prediction for: {earliest_prediction_time}\n          Latest Data for:         {latest_data_time}')
-        log.info('Prediction process completed')
+        log.info('Deep Learning prediction process completed')
 
         return data_temp_predictions, message_type, message_text
 
@@ -295,6 +288,6 @@ def update_predictions(data_df, weather_data_df, stations_df):
         log.info(f'---------- Error: {e}')
         message_type = 'error'
         message_text = 'Fehler beim machen der Predictions.'
-        log.info('Prediction process completed')
+        log.info('Deep Learning prediction process completed')
 
         return None, message_type, message_text
