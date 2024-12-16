@@ -20,6 +20,7 @@ predictions_dl_filename = "data/predictions_dl.csv"
 # --- Streamlit Configuration ---
 st.set_page_config(page_title="Sprottenflotte prediction model", page_icon="🚲", layout="wide")
 
+# --- Helper Function - Reset the app ---
 def reset_app():
     """Resets the app."""
     # clear session state
@@ -38,19 +39,22 @@ def main():
     st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodel! Das Model befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
              Bitte sende jegliches Feedback gerne an mobil@kielregion.de.""")
     st.write("""Die Daten können stündlich neu geladen und neu vorhergesagt werden, in dem man das Fenster aktualisiert. Dies kann ein paar Minunten dauern.""")
-    
+
+    # Create sidebar to choose between Random Forest and DL Model
     with st.sidebar:
         model_selection = st.radio(
             "Wähle ein Prediction Model aus:",
             ("Random Forest", "Deep Learning Model"),
             index=0
         )
+    # Display the selected model
     st.write(f"Ausgewähltes Model: {model_selection}")
 
+    # Display the latest point of time in the data
     current_hour = pd.Timestamp.now(tz="Europe/Berlin").hour
     st.write(f"Stand: {current_hour - 1} - {current_hour} Uhr")
         
-    # Initialisieren der Session State Variable für Modellauswahl
+    # Initialize the session state for the model
     if 'last_model_selection' not in ss:
         ss['last_model_selection'] = model_selection
 
@@ -62,20 +66,26 @@ def main():
     # Check for first load or model selection has changed
     if 'initialized' not in ss or ss['last_model_selection'] != model_selection:
         reset_app()
+
+        # Use a spinner while loading the weather data
         with st.spinner("Wetter Daten werden geladen..."):
             weather_data_df, weather_data_message_type, weather_data_message_text = data.update_weather_data()
             st.toast("Wetter Daten geladen", icon="🌦️")
 
+        # Use a spinner while loading the historical data
         with st.spinner("Historische Daten werden geladen..."):
             data_df, data_message_type, data_message_text = data.update_station_data()
             st.toast("Historische Daten geladen", icon="🕵️‍♂️")
 
+        # Adapt the predictions file to the model
         if model_selection == "Random Forest":
             predictions_file = predictions_rf_filename
+            # Use a spinner while loading the prediction data
             with st.spinner("Predictions werden berechnet..."):
                 predictions_df, pred_message_type, pred_message_text = predictions_rf.update_predictions(data_df) # use data_df weil in der function sonst eine veraltete version von den daten eingelesen wird, wichtig bei stundenänderung 
         else: 
             predictions_file = predictions_dl_filename
+            # Use a spinner while loading the prediction data
             with st.spinner("Predictions werden berechnet..."):
                 predictions_df, pred_message_type, pred_message_text = predictions_dl.update_predictions(data_df, weather_data_df, stations_df)
         st.toast("Predictions abgeschlossen", icon="🤖")        
@@ -123,7 +133,7 @@ def main():
         'no data': 'grey'
     }
 
-    # add current capacity and color to stations_df
+    # Add current capacity and color to stations_df
     stations_df = app_functions.add_current_capacity_to_stations_df(stations_df, data_df, color_map)
 
     # Map the colors based on a predefined color map
