@@ -160,17 +160,15 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
     This function posts user credentials and client details to the specified token URL of an OAuth authentication server,
     and tries to retrieve an access token. If successful, the access token is returned.
 
-    :param USERNAME_EMAIL: The username or email associated with the user account.
-    :type USERNAME_EMAIL: str
-    :param PASSWORD: The password for the user account.
-    :type PASSWORD: str
-    :param CLIENT_SECRET: The secret key associated with the client application.
-    :type CLIENT_SECRET: str
+    Parameters:
+    - USERNAME_EMAIL (str): The username or email associated with the user account.
+    - PASSWORD (str): The password for the user account.
+    - CLIENT_SECRET (str): The secret key associated with the client application.
 
-    :return: The access token if successfully requested, otherwise None.
-    :rtype: str or None
+    Returns:
+    - access_token (str or None): The access token if successfully requested; otherwise, None.
     """
-
+    # URL to retrieve the access token from the OAuth provider
     token_url = 'https://accounts.kielregion.addix.io/realms/infoportal/protocol/openid-connect/token'
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -189,11 +187,13 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
     #     'client_secret': CLIENT_SECRET   # abfragen, oder gilt der dann immer?
     # }
 
+    # Performing the HTTP POST request to get the access token
     response = requests.post(token_url, headers=headers, data=data)
 
+    # Check response status code
     if response.status_code == 200:
-        token_data = response.json()
-        access_token = token_data.get('access_token')
+        token_data = response.json() # Parse JSON response
+        access_token = token_data.get('access_token') # Extract access token
         if access_token:
             log.info("---------- Access Token successfully requested")
             return access_token
@@ -206,51 +206,57 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
 
 
 def get_current_dates():
-    """Calculate the current start and end dates for data fetching."""
-    # API mit UTC time steps
-    # Calculate the end date by rounding down to the closest whole hour in UTC !,
-    # to make sure to get hourly averages for whole hours with API request
+    """
+    Calculates and returns the start and end dates for data fetching operations, rounded to the nearest whole hour.
 
+    This function computes the current time adjusted to UTC and rounds it down to the nearest whole hour to make sure
+    that hourly averages are calculated for complete hours when making subsequent API requests.
+
+    Parameters:
+    - None
+
+    Returns:
+    - (datetime, datetime): A tuple containing the start and end datetime objects. The start date is 24 hours before the end date.
+    """
     # Calculate the end date as the current time rounded down to the nearest hour
     end_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
-    # Set start_date as 24 hours before the end_date
-    start_date = end_date - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
+    # Setting start date as exactly 24 hours before the end date
+    start_date = end_date - timedelta(days=1)
 
     return start_date, end_date
 
 
 def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
     """
-    Retrieves data for a specified bike hire docking station over a given time period.
+    Retrieves bike availability data for a specified bike hire docking station over a given time period.
 
-    This function connects to a specified URL to access data regarding the availability of bikes. It
-    makes an HTTP GET request with authentication and specific query parameters to gather
-    aggregated data across the specified dates.
+    This function performs an HTTP GET request to a specified API URL, making use of query parameters
+    for the specific station ID and date range. The received data reflects the hourly average available 
+    number of bikes at the specified station.
 
-    :param station_id: Unique identifier for the bike hire docking station.
-    :type station_id: str
-    :param from_date: The start date and time from when the data is to be fetched.
-    :type from_date: datetime
-    :param to_date: The end date and time until when the data is to be fetched.
-    :type to_date: datetime
-    :param BASE_URL: The base URL of the API where the bike data is hosted.
-    :type BASE_URL: str
-    :param ACCESS_TOKEN: The access token for authenticating the API request.
-    :type ACCESS_TOKEN: str
+    Parameters:
+    - station_id (str): Unique identifier for the bike hire docking station.
+    - from_date (datetime): The start date and time from when the data is to be fetched.
+    - to_date (datetime): The end date and time until when the data is to be fetched.
+    - BASE_URL (str): The base URL of the API where data about the bike station is hosted.
+    - ACCESS_TOKEN (str): The access token required for authenticating the API request.
 
-    :return: A JSON object containing the response data if successful, None otherwise. The JSON includes
-             aggregated available bike numbers per hour. If the request fails, an error message and status
-             code are printed.
-    :rtype: dict or None
-    
-    :raises Exception: Raises an error with status code and text if the response is unsuccessful.
+    Returns:
+    - response_data (dict or None): A dictionary containing the fetched data if the request is successful; otherwise, None.
+                                    The dictionary includes hourly averaged available bike numbers. If the request fails,
+                                    it logs an error with the status code and message and returns None.
+
+    Raises:
+    - Exception: If the response from the server is unsuccessful, logs the error status and message.
     """
-
-    url = f"{BASE_URL}{station_id}"
+    # Construct the full API endpoint URL
+    url = f"{BASE_URL}/{station_id}"
+    # Set headers including the authorization token
     headers = {
         'NGSILD-Tenant': 'infoportal',
         'Authorization': f'Bearer {ACCESS_TOKEN}'
     }
+    # Define the parameters for the API request based on provided dates and aggregation requirements
     params = {
         'type': 'BikeHireDockingStation',
         'fromDate': from_date.isoformat(),
@@ -259,23 +265,46 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
         'aggrPeriod': 'hour',
         'aggrMethod': 'avg'
     }
+    # Perform the GET request
     response = requests.get(url, headers=headers, params=params)
 
     if response.status_code == 200:
-        # log.info(f'Got a response for station_id: {station_id}')
-        return response.json()
+        return response.json() # Return the parsed JSON data
     else:
+        # Log a detailed error message including request details and response status
         log.info(f'---------- No response for station_id: {station_id}\n          from date: {from_date}\n          to date: {to_date}')
         log.info(f"---------- Error: {response.status_code}, {response.text}")
         return None
 
 
 def fetch_weather_data(station_id, from_date, to_date, WEATHER_URL, ACCESS_TOKEN):
+    """
+    Retrieves weather data for a specified observation station over a defined time range.
+
+    This function connects to a weather data API using specific credentials and queries weather 
+    observations, such as temperature, wind speed, and precipitation, aggregated hourly over the 
+    specified date range.
+
+    Parameters:
+    - station_id (str): Unique identifier for the weather observation station.
+    - from_date (datetime): Starting datetime for the data retrieval.
+    - to_date (datetime): Ending datetime for the data retrieval.
+    - WEATHER_URL (str): Base URL of the weather data API.
+    - ACCESS_TOKEN (str): Token used for API request authentication.
+
+    Returns:
+    - response_data (dict or None): If the request is successful, returns a dictionary representing the weather data
+                                  aggregated over selected attributes for each hour between the dates specified.
+                                  Returns None if the request is unsuccessful, alongside error logs detailing the issue.
+    """
+    # Construct the full API endpoint URL
     url = f"{WEATHER_URL}{station_id}"
+    # Set headers including the authorization token
     headers = {
         'NGSILD-Tenant': 'infoportal',
         'Authorization': f'Bearer {ACCESS_TOKEN}'
     }
+    # Define the parameters for the API request based on provided dates and aggregation requirements
     params = {
         'type': 'WeatherObserved',
         'fromDate': from_date.isoformat(),
@@ -284,12 +313,13 @@ def fetch_weather_data(station_id, from_date, to_date, WEATHER_URL, ACCESS_TOKEN
         'aggrPeriod': 'hour',
         'aggrMethod': 'avg'
     }
+    # Perform the GET request
     response = requests.get(url, headers=headers, params=params)
 
     if response.status_code == 200:
-        # log.info(f'Got a response for weather_station_id: {station_id}')
-        return response.json()
+        return response.json() # Return the parsed JSON data
     else:
+        # Log a detailed error message including request details and response status
         log.info(f'---------- No response for weather_station_id: {station_id}\n          from date: {from_date}\n          to date: {to_date}')
         log.info(f"---------- Error: {response.status_code}, {response.text}")
         return None
@@ -299,52 +329,45 @@ def create_dataframe_from_api_data(data):
     """
     Converts data received from an API response into a structured pandas DataFrame.
 
-    This function parses data from a JSON-like dictionary that includes time indices,
-    entity identifiers, and various attributes into a DataFrame that can be used for 
-    further data analysis or visualization.
+    This function takes JSON-like data containing time indices, entity identifiers, and attributes,
+    and transforms it into a pandas DataFrame. This DataFrame is suitable for further analysis or visualization.
+    This approach allows data fetched from APIs to be easily manipulated and analyzed in Python using pandas.
 
-    :param data: The data received from an API request, expected to include keys like 
-                 'index', 'entityId', and 'attributes' which contain measurement values.
-    :type data: dict
+    Parameters:
+    - data (dict): API data in dictionary format, expected to contain keys 'index', 'entityId', and 'attributes',
+                   where 'attributes' is a list of dictionaries with at least a 'name' and 'values'.
 
-    :return: A DataFrame with time indices, an entity id extracted from 'entityId', and columns 
-             for each attribute contained within 'attributes'. This DataFrame is restructured to 
-             place 'entityId' and 'time_utc' columns first.
-    :rtype: pandas.DataFrame
+    Returns:
+    - df (pandas.DataFrame): A DataFrame where the first columns are 'entityId' and 'time_utc', followed by columns
+                             for each attribute in 'attributes'. This DataFrame organizes the data with time indices
+                             and provides easy access to different measured attributes.
 
-    :raises ValueError: If essential keys such as 'index', 'entityId', or 'attributes' are missing in the data.
+    Raises:
+    - ValueError: Raised if the essential keys 'index', 'entityId', or 'attributes' are missing in the 'data' dictionary.
     """
-
+    # Ensure all required keys are present in the data dictionary
     if not all(key in data for key in ['index', 'entityId', 'attributes']):
         raise ValueError("Data missing one of the essential keys: 'index', 'entityId', 'attributes'")
-    
-    # Dictionary to store attribute values
-    # attribute_data = {}
 
-    # Extract the index from the response
+    # Convert the index to a pandas datetime object as it assumes 'index' is in ISO 8601 format
     time_index = pd.to_datetime(data['index'])
 
-    # Extract entityId and entityType
+    # Extract the entity ID; assumed to be a string directly under 'entityId'
     entity_id = data['entityId']
 
     # Extract the number after "KielRegion" or "OWM" from the entityId
     match = re.search(r'(?:KielRegion|OWM):(\d+)', entity_id)
     entity_id_number = match.group(1) if match else ''  # Get the number or set to empty if not found
 
-    # Loop through each attribute dictionary in 'attributes'
-    # for attribute in data['attributes']:
-    #     attr_name = attribute['attrName']
-    #     attribute_data[attr_name] = attribute.get('values', [])
-
-    # Dictionary to accumulate attribute values
+    # Create a dictionary to collect attribute names and their respective values
     attribute_data = {attr['attrName']: attr.get('values', []) for attr in data['attributes']}
     
-    # Create a pandas DataFrame from the dictionary
+    # Generate a DataFrame from the collected attribute data
     df = pd.DataFrame(attribute_data)
-    # Add the entityId number and index values as new columns
+    
+    # Insert 'entityId' and 'time_utc' in the DataFrame
     df['entityId'] = entity_id_number
     df['time_utc'] = time_index
-
     # Reorder the columns to have 'entityId' first, then 'time', followed by the rest
     column_order = ['entityId', 'time_utc'] + [col for col in df.columns if col not in ['entityId', 'time_utc']]
     df = df[column_order]
@@ -354,160 +377,149 @@ def create_dataframe_from_api_data(data):
 
 def update_station_data():
     """
-    Updates and saves bike station data by fetching new data for specified stations and dates, then combining it with existing data.
+    Processes and updates bike station data by retrieving new data from an API and merging it with existing data.
 
-    This function first checks if there exists previous data in a specified CSV file,
-    and loads it if available. It then identifies any gaps in the data between START_DATE and END_DATE,
-    and makes API requests to fetch missing data for those specific time periods and station IDs.
-    The newly fetched data is then combined with the previously existing data, the combined data is sorted and saved back to the CSV file.
+    This function checks for existing data within a specified range (START_DATE to END_DATE) from a local CSV file.
+    It identifies gaps in the data for specific stations and dates, fetches the missing data using API calls,
+    combines it with the existing data, sorts the combined data, and saves it back to the CSV file.
+    Logs are generated throughout the process to track data fetching and updating status.
 
     Parameters:
-    - DATA_FILENAME (str): The file path for reading and writing data.
-    - STATIONS_FILENAME (str): The file path for reading and writing station data.
-    - START_DATE (datetime): The starting datetime from which data needs to be fetched.
-    - END_DATE (datetime): The ending datetime until which data needs to be fetched.
-    - BASE_URL (str): The base URL to which API requests should be made.
-    - ACCESS_TOKEN (str): The token used for authenticating API requests.
+    - DATA_FILENAME (str): File path for reading and saving bike station data.
+    - STATIONS_FILENAME (str): File path for fetching station-specific configurations or data.
+    - START_DATE (datetime): Start date for fetching data.
+    - END_DATE (datetime): End date for fetching data.
+    - BASE_URL (str): Base URL for the API from which to fetch data.
+    - ACCESS_TOKEN (str): Authentication token used for making API requests.
 
     Returns:
-    - None: This function does not return any value but prints a message to the console about the process completion or any errors encountered.
-
-    No return value is expected. The function logs messages indicating successful or failed data fetching attempts,
-    and shows the number of new records fetched and total unique stations updated.
-    If no new data is fetched, it notifies that existing data is used.
+    - None: The function doesn't return a value but outputs logs about the completion of processing or errors encountered.
 
     Side Effects:
-    - Read and write operations on a CSV file.
-    - API requests sent to a remote service.
-    - Potentially modifies global state if global variables or mutable data types are passed and manipulated.
+    - Performs read and write operations on a CSV file.
+    - Makes HTTP requests to an external API.
+    - Modifies global state through potential manipulations in global variables or data structures used across the application.
     """
-
+    # Log the initiation of the data-fetching process.
     log.info('Data-fetching process started')
     start_time = time.time()
 
-    # Get the current start and end dates
+    # Retrieve the current valid start and end dates for data fetching.
     START_DATE, END_DATE = get_current_dates()
 
-    # Prüfen, ob data_temp.csv vorhanden ist
-    if os.path.exists(DATA_FILENAME):
-        # # Laden des existierenden DataFrame
-        # old_data_temp = pd.read_csv(DATA_FILENAME)
-        ########
-    
+    # Attempt to load data file from GitHub.
+    try:
+        # Read the existing data from the GitHub repository
         old_data_temp = read_csv_from_github(DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
-        ########
-        # make 'time_utc' in datetime
+        # Convert the 'time_utc' column to datetime format for time-based operations.
         old_data_temp['time_utc'] = pd.to_datetime(old_data_temp['time_utc'])
-        # lösche alle daten vor START_DATE
+        # Filter out (delete) data records that are before the START_DATE.
         old_data_temp = old_data_temp[old_data_temp['time_utc'] >= START_DATE]
-        
-        # lösche alle nan
-        # old_data_temp = old_data_temp.dropna().reset_index(drop=True)
-        # delete duplicates
-        
+        # Remove duplicate records to maintain uniqueness in the dataset.
         old_data_temp = old_data_temp.drop_duplicates().reset_index(drop=True)
-    else:
-        # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
-        old_data_temp = pd.DataFrame(columns=['entityId', 'time_utc'])
+    except Exception as e:
+        # Log a message indicating the absence of the data file and necessary action.
         log.info(f'---------- No {STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, time_utc, availableBikeNumber')
-        return
+        log.info(f'---------- Error: {e}')
 
-    # prüfen ob station.csv vorhanden
+    # Attempt to load station configuration data from GitHub.
     try:
-        # # Laden des existierenden DataFrame
-        # stations_data = pd.read_csv(STATIONS_FILENAME)
-
-        ########
-    
+        # Read the existing data from the GitHub repository    
         stations_data = read_csv_from_github(STATIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
-        ########
-
-        # make entity id list
+        # Extract a list of station IDs for which data needs to be fetched.
         STATION_IDS = stations_data['entityId'].tolist()
     except Exception as e:
+        # Log error messages if there's an issue in fetching or parsing the stations data.
         log.info(f'---------- No {STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, station_name, maximum_capacity, longitude, latitude, subarea')
         log.info(f'---------- Error: {e}')
 
-    # - timedelta(hours=1), damit der request_start_date nicht gleich END_DATE ist
-    # full_date_range = all timestamps (until now) of the timewindow needed for the model for prediction
+    # Get all timestamps (until now) of the timewindow, needed for the model prediction.
+    # Subtract one hour from the END_DATE to ensure the request_start_date is not the same as END_DATE.
+    # This avoids fetching data for an incomplete hour if the process runs at the top of the hour.
     full_date_range = pd.date_range(start=START_DATE, end=END_DATE - timedelta(hours=1), freq='h') 
-    # Liste von DataFrames
+
+    # Initialize an empty list to hold the DataFrames for each station's data.
     dataframes = []
 
-    # entfernen der einträge der station ids, die nicht in STATION_IDS ist
-    # Maske, die True ist für jede Zeile, deren entityId in STATION_IDS ist
+    # Create a boolean mask that is True for rows where the 'entityId' is in the list of station IDs (STATION_IDS).
     mask = old_data_temp['entityId'].isin(STATION_IDS)
-    # Entfernen dieser Zeilen
+    # Apply the mask to filter the data, removing any entries that do not match the specified station IDs.
     old_data_temp = old_data_temp[mask]
 
+    # Request the necessary access token if the existing one is expired or not available.
     ACCESS_TOKEN = request_access_token_if_needed()
 
+    # Iterate through each station ID to process data required for each station.
     for station_id in STATION_IDS:
-        # überprüfe für station_id, ob der zeitraum von START_DATE bis END_DATE in old_data_temp vorhanden ist:
-        # select one station
+        # Filter data for a specific station based on 'entityId'.
         station_data = old_data_temp[old_data_temp['entityId'] == station_id]
-        # extract available dates
+        # Extract the available dates from the data that's already been fetched for this station.
         available_dates = station_data['time_utc']
-        # Ermitteln der fehlenden Daten
+        # Determine which dates are missing from the complete date range that should have data.
         missing_dates = full_date_range[~full_date_range.isin(available_dates)]
 
-        # wenn ja, skip diese station_id
-        # wenn nein, mache ein request_start_date
-
-        # Daten nur für fehlende Zeiten anfordern
+        # Proceed only if there are missing dates that need data fetching.
         if not missing_dates.empty:
+            # The first missing date will be used as the start point for new data fetching.
             request_start_date = missing_dates[0]
-            # und requeste die nicht vorhandenen stunden bis zum END_DATE
+            
+            # Fetch missing station data from the specified request start date till the END_DATE.
             data = fetch_station_data(station_id, request_start_date, END_DATE, BASE_URL, ACCESS_TOKEN)
             if data:
-            #     df = create_dataframe_from_api_data(data)
-            #     # und appende sie an das dataframe
-            #     dataframes.append(df)
+                # Convert the fetched data to a DataFrame formatted for easier integration.
                 df = create_dataframe_from_api_data(data)
 
-                # Identify missing hours within the fetched data
+                # Identify any hours within the fetched time range that were still not covered.
                 fetched_times = pd.to_datetime(df['time_utc'])
+                # Create a complete datetime range between the requested start and end dates.
                 all_times = pd.date_range(start=request_start_date, end=END_DATE - timedelta(hours=1), freq='h')
+                # Find difference which indicates missing times in the fetched data.
                 missing_times = all_times.difference(fetched_times)
 
-                # Create NaN entries for those missing times
+                # Handle missing times by filling them with NaN entries in the DataFrame.
                 if not missing_times.empty:
                     nan_data = pd.DataFrame({
                         'entityId': [station_id] * len(missing_times),
                         'time_utc': missing_times,
+                        # Automatically insert a known placeholder that will be replaced by NaN values.
                         'availableBikeNumber': [-42] * len(missing_times)
                     })
+                    # Combine the newly fetched data with the missing time data.
                     df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
+                    # Replace the placeholder with NaN to signify missing actual measurements.
                     df = df.replace(-42, np.nan)
                 
-                # und appende sie an das dataframe
+                # Append the prepared DataFrame to the list of DataFrames to be further processed.
                 dataframes.append(df)
 
+    # Check if there are any data frames collected in the list.
     if dataframes:
-        # Alle neuen DataFrames der Stationen zusammenführen
+        # Merge all new data frames that contain information from different stations.
         new_data_temp = pd.concat(dataframes)
-        # make the entitiy_id a number 
+        # Convert the 'entityId' to a numeric type for consistent processing.
         new_data_temp['entityId'] = new_data_temp['entityId'].astype('int64')
-        # Zusammenführen des alten DataFrames mit dem neuen
+        # Merge the old data frame (previously existing data) with the new, freshly fetched data.
         combined_data_temp = pd.concat([old_data_temp, new_data_temp])
-        # Sortieren, nach entitiyId und time_utc
+        # Sort the combined data frame by 'entityId' and 'time_utc' for order and easy traceability.
         combined_data_temp = combined_data_temp.sort_values(by=['entityId', 'time_utc'])
-        # resete index
+        # Reset the index for good data structure and accessibility.
         updated_data_temp = combined_data_temp.reset_index(drop=True)
 
-        # Update the csv-file in the github repo
+        # Update the csv-file in the GitHub repository.
         log.info("----- Start updating file on GitHub -----")
         csv_to_github = updated_data_temp.to_csv(index=False)
         update_csv_on_github(csv_to_github, DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
+        # Copy the updated DataFrame for return or further processing.
         data_temp_df = updated_data_temp.copy()
 
-        # count new records and unique Ids 
+        # Compute the number of new records and unique stations.
         total_new_records = len(new_data_temp)
         unique_stations = new_data_temp['entityId'].nunique()
 
+        # Log the number of new records and the unique stations fetched.
         log.info(f'---------- {total_new_records} new records fetched for {unique_stations} stations.')
         log.info(f'---------- request start date: {request_start_date}')
         log.info(f'---------- Data successfully fetched and saved for all STATION_IDS.')
@@ -515,113 +527,92 @@ def update_station_data():
         message_text = f'{total_new_records} neue Datenpunkte für {unique_stations} Stationen abgerufen.'
         log.info(f'---------- Time in UTC:\n          Start Date:  {START_DATE}\n          End Date:    {END_DATE}')
     else:
+        # Copy the old data frame if no new data has been fetched.
         data_temp_df = old_data_temp.copy()
 
+        # Log that no new data has been processed and existing data is being used.
         log.info('---------- No new data to process, data for every station is available. Existing data used.')
         message_type = 'info'
         message_text = 'Es sind bereits Daten für alle Stationen vorhanden.'
 
+    # Calculate the time taken for the entire data fetching process.
     process_time = time.time() - start_time
     log.info(f'Data-fetching process completed in {round(process_time, 2)} seconds.')
 
+    # Return the updated data frame and messages about the processing status.
     return data_temp_df, message_type, message_text
 
 
 def update_weather_data():
     """
-    ss
-    """
+    Updates and integrates new weather data into an existing dataset stored on GitHub.
 
+    This function retrieves current weather data for specified weather stations between a starting and ending date. 
+    It checks for missing data points within the specified date range, fetches missing data, and merges it with the 
+    existing data. Then, the updated dataset is uploaded back to GitHub.
+
+    Parameters:
+    - WEATHER_DATA_FILENAME (str): The GitHub file path for reading and writing weather data.
+    - NAME_REPO (str): The name of the repository where weather data is stored.
+    - GITHUB_TOKEN (str): The authentication token for accessing GitHub.
+    - WEATHER_STATIONS_FILENAME (str): The file path for metadata about weather stations.
+    - WEATHER_URL (str): The base URL for the weather data API.
+    - ACCESS_TOKEN (str): The token used for authenticating API requests.
+
+    Returns:
+    - tuple: Contains the updated DataFrame, a message type (success/info), and a message text detailing
+             the outcome of the update process.
+    """
     log.info('Weather-Data-fetching process started')
     start_time = time.time()
 
-    # Get the current start and end dates
     START_DATE, END_DATE = get_current_dates()
 
-    # Prüfen, ob data_temp.csv vorhanden ist
-    if os.path.exists(WEATHER_DATA_FILENAME):
-        # # Laden des existierenden DataFrame
-        # old_weather = pd.read_csv(WEATHER_DATA_FILENAME)
-        ########
-    
+
+    try:
         old_weather = read_csv_from_github(WEATHER_DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
-        ########
-        # make 'time_utc' in datetime
         old_weather['time_utc'] = pd.to_datetime(old_weather['time_utc'])
-        # lösche alle daten vor START_DATE
         old_weather = old_weather[old_weather['time_utc'] >= START_DATE]
-        
-        # lösche alle nan
-        # old_weather = old_weather.dropna().reset_index(drop=True)
-        # delete duplicates
-        
         old_weather = old_weather.drop_duplicates().reset_index(drop=True)
-    else:
-        # Erstellen eines leeren DataFrame, wenn die Datei nicht existiert
-        old_weather = pd.DataFrame(columns=['entityId', 'time_utc'])
+    except Exception as e:
         log.info(f'---------- No {WEATHER_DATA_FILENAME} file exists. Please provide such file with these columns:\nentityId, time_utc, temperature, windSpeed, precipitation')
-        return
+        log.info(f'---------- Error: {e}')
 
-    # prüfen ob weather_station.csv vorhanden
+
     try:
-        # # Laden des existierenden DataFrame
-        # weather_stations_data = pd.read_csv(WEATHER_STATIONS_FILENAME)
-        ########
-    
         weather_stations_data = read_csv_from_github(WEATHER_STATIONS_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
-        ########
-        # make entity id list
         WEATHER_STATION_IDS = weather_stations_data['entityId'].tolist()
     except Exception as e:
         log.info(f'---------- No {WEATHER_STATIONS_FILENAME} file exists. Please provide such file with these columns:\nentityId, station_name, longitude, latitude')
         log.info(f'---------- Error: {e}')
 
-    # - timedelta(hours=1), damit der request_start_date nicht gleich END_DATE ist
-    # full_date_range = all timestamps (until now) of the timewindow needed for the model for prediction
     full_date_range = pd.date_range(start=START_DATE, end=END_DATE - timedelta(hours=1), freq='h') 
-    # Liste von DataFrames
+
     dataframes = []
 
-    # entfernen der einträge der station ids, die nicht in STATION_IDS ist
-    # Maske, die True ist für jede Zeile, deren entityId in STATION_IDS ist
     mask = old_weather['entityId'].isin(WEATHER_STATION_IDS)
-    # Entfernen dieser Zeilen
     old_weather = old_weather[mask]
 
     ACCESS_TOKEN = request_access_token_if_needed()
 
     for station_id in WEATHER_STATION_IDS:
-        # überprüfe für station_id, ob der zeitraum von START_DATE bis END_DATE in old_data_temp vorhanden ist:
-        # select one station
         station_data = old_weather[old_weather['entityId'] == station_id]
-        # extract available dates
         available_dates = station_data['time_utc']
-        # Ermitteln der fehlenden Daten
         missing_dates = full_date_range[~full_date_range.isin(available_dates)]
 
-        # wenn ja, skip diese station_id
-        # wenn nein, mache ein request_start_date
-
-        # Daten nur für fehlende Zeiten anfordern
         if not missing_dates.empty:
             request_start_date = missing_dates[0]
-            # und requeste die nicht vorhandenen stunden bis zum END_DATE
-            data = fetch_weather_data(station_id, request_start_date, END_DATE, WEATHER_URL, ACCESS_TOKEN)
 
+            data = fetch_weather_data(station_id, request_start_date, END_DATE, WEATHER_URL, ACCESS_TOKEN)
             if data:
-            #     df = create_dataframe_from_api_data(data)
-            #     # und appende sie an das dataframe
-            #     dataframes.append(df)
                 df = create_dataframe_from_api_data(data)
 
-                # Identify missing hours within the fetched data
                 fetched_times = pd.to_datetime(df['time_utc'])
                 all_times = pd.date_range(start=request_start_date, end=END_DATE - timedelta(hours=1), freq='h')
                 missing_times = all_times.difference(fetched_times)
 
-                # Create NaN entries for those missing times
                 if not missing_times.empty:
                     nan_data = pd.DataFrame({
                         'entityId': [station_id] * len(missing_times),
@@ -633,29 +624,21 @@ def update_weather_data():
                     df = pd.concat([df, nan_data], ignore_index=True).sort_values(by='time_utc')
                     df = df.replace(-42, np.nan)
                 
-                # und appende sie an das dataframe
                 dataframes.append(df)
 
     if dataframes:
-        # Alle neuen DataFrames der Stationen zusammenführen
         new_weather = pd.concat(dataframes)
-        # make the entitiy_id a number 
         new_weather['entityId'] = new_weather['entityId'].astype('int64')
-        # Zusammenführen des alten DataFrames mit dem neuen
         combined_weather = pd.concat([old_weather, new_weather])
-        # Sortieren, nach entitiyId und time_utc
         combined_weather = combined_weather.sort_values(by=['entityId', 'time_utc'])
-        # resete index
         updated_weather = combined_weather.reset_index(drop=True)
 
-        # Update the csv-file in the github repo
         log.info("----- Start updating file on GitHub -----")
         csv_to_github = updated_weather.to_csv(index=False)
         update_csv_on_github(csv_to_github, WEATHER_DATA_FILENAME, NAME_REPO, GITHUB_TOKEN)
 
         weather_data_df = updated_weather.copy()
 
-        # count new records and unique Ids 
         total_new_records = len(new_weather)
         unique_stations = new_weather['entityId'].nunique()
 
@@ -680,7 +663,26 @@ def update_weather_data():
 
 # --- Easter Egg --->
 def update_random_bike_location(stations_df):
-    """Select a random subarea and assign random coordinates."""
+    """
+    Selects a random subarea from the stations dataframe and assigns new random geographical coordinates.
+
+    This function is primarily intended as an easter egg or demonstration and not for production use.
+    It reads a CSV file containing bike station information, randomly picks a subarea if multiple exist,
+    and assigns a random latitude and longitude to that subarea. The new location coordinates are not 
+    bounded by any geospatial limits related to the subarea and can technically be anywhere in the world.
+
+    Parameters:
+    - stations_df (pandas.DataFrame): Dataframe containing information about bike stations,
+                                      particularly expecting a 'subarea' column.
+
+    Returns:
+    - tuple: Returns a tuple containing the random subarea, new latitude, and new longitude if
+             multiple subareas exist. Returns (None, None, None) if only one or no subareas exist.
+             (str or None, float or None, float or None)
+    
+    Note:
+    - Ensure the input DataFrame contains a 'subarea' column with valid data.
+    """
     stations_df = pd.read_csv(STATIONS_FILENAME)
 
     if len(stations_df['subarea'].unique()) > 1:
