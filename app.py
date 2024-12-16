@@ -38,7 +38,7 @@ def main():
     st.title("Sprottenflotte prediction model 🚲 x 🤖")
     st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodel! Das Model befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
              Bitte sende jegliches Feedback gerne an mobil@kielregion.de.""")
-    st.write("""Die Daten können stündlich neu geladen und neu vorhergesagt werden, in dem man das Fenster aktualisiert. Dies kann ein paar Minunten dauern.""")
+    st.write("""Die Daten können stündlich neu geladen und neu vorhergesagt werden, indem man das Fenster aktualisiert. Dies kann ein paar Minunten dauern.""")
 
     # Create sidebar to choose between Random Forest and DL Model
     with st.sidebar:
