@@ -18,7 +18,7 @@ predictions_dl_filename = "data/predictions_dl.csv"
 
 
 # --- Streamlit Configuration ---
-st.set_page_config(page_title="Sprottenflotte prediction model", page_icon="🚲", layout="wide")
+st.set_page_config(page_title="Sprottenflotte Vorhersagemodell", page_icon="🚲", layout="wide")
 
 # --- Helper Function - Reset the app ---
 def reset_app():
@@ -35,20 +35,20 @@ def reset_app():
 def main():
     # --- initialise ---
     # Initialise Streamlit Interface
-    st.title("Sprottenflotte prediction model 🚲 x 🤖")
-    st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodel! Das Model befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
+    st.title("Sprottenflotte Vorhersagemodell 🚲 x 🤖")
+    st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodell! Das Modell befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
              Bitte sende jegliches Feedback gerne an mobil@kielregion.de.""")
     st.write("""Die Daten können stündlich neu geladen und neu vorhergesagt werden, indem man das Fenster aktualisiert. Dies kann ein paar Minunten dauern.""")
 
     # Create sidebar to choose between Random Forest and DL Model
     with st.sidebar:
         model_selection = st.radio(
-            "Wähle ein Prediction Model aus:",
+            "Wähle ein Vorhersagemodell aus:",
             ("Random Forest", "Deep Learning Model"),
             index=0
         )
     # Display the selected model
-    st.write(f"Ausgewähltes Model: {model_selection}")
+    st.write(f"Ausgewähltes Modell: {model_selection}")
 
     # Display the latest point of time in the data
     current_hour = pd.Timestamp.now(tz="Europe/Berlin").hour
