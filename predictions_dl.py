@@ -13,6 +13,8 @@ import torch
 import torch.nn as nn
 import streamlit as st
 
+from data import update_csv_on_github
+
 
 # --- Logging ---
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -69,34 +71,34 @@ class BiLSTM(nn.Module):
 
 
 # --- Functions ---
-def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
-    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
-    headers = {'Authorization': f'token {token}'}
+# def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
+#     url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+#     headers = {'Authorization': f'token {token}'}
 
-    # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
-    r = requests.get(url, headers=headers)
-    if r.status_code != 200:
-        log.error(f"Failed to get file info: {r.content}")
-        return
+#     # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
+#     r = requests.get(url, headers=headers)
+#     if r.status_code != 200:
+#         log.error(f"Failed to get file info: {r.content}")
+#         return
     
-    old_content = r.json()
-    sha = old_content['sha']
+#     old_content = r.json()
+#     sha = old_content['sha']
 
-    # Update vorbereiten
-    content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
-    payload = {
-        "message": f"Update {filepath} file",
-        "content": content_base64,
-        "sha": sha,
-        "branch": branch,
-    }
+#     # Update vorbereiten
+#     content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
+#     payload = {
+#         "message": f"Update {filepath} file",
+#         "content": content_base64,
+#         "sha": sha,
+#         "branch": branch,
+#     }
 
-    # Update durchführen
-    r = requests.put(url, json=payload, headers=headers)
-    if r.status_code == 200:
-        log.info(f"----- Prediction file {filepath} updated successfully on GitHub -----")
-    else:
-        log.error(f"----- Failed to update Prediction file {filepath} on GitHub: {r.content} ------")
+#     # Update durchführen
+#     r = requests.put(url, json=payload, headers=headers)
+#     if r.status_code == 200:
+#         log.info(f"----- Prediction file {filepath} updated successfully on GitHub -----")
+#     else:
+#         log.error(f"----- Failed to update Prediction file {filepath} on GitHub: {r.content} ------")
 
 
 # Return the prediction
