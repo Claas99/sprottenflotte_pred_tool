@@ -19,7 +19,6 @@ data
  ├── predictions_dl.csv			- Contains prediction data from the deep learning model
  ├── predictions_rf.csv			- Contains prediction data from the random forest model
  ├── stations.csv			- Contains metadata about each bike station, such as location and capacity
- ├── test_data_for_model.csv
  ├── weather_data_temp.csv		- Stores weather data related to the stations
  └── weather_stations.csv		- Contains metadata about each weather station, such as location
 models
