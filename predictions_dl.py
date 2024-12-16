@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
 import os
-import base64
 import logging
 from datetime import datetime, timedelta, timezone
 
-import requests
 import joblib
 import pandas as pd
 import numpy as np
@@ -34,11 +32,12 @@ NAME_REPO = "Claas99/sprottenflotte_pred_tool"
 
 
 # --- initialisation of the Bidirectional LSTM model --- 
-input_size = 10  # Number of features
-hidden_size = 8
-num_stacked_layers = 2
-learning_rate = 0.001
-num_epochs = 10
+# Define constants for the BiLSTM network configuration
+input_size = 10  # Number of input features in the input tensor
+hidden_size = 8  # Dimensionality of the output space for LSTM layers
+num_stacked_layers = 2  # Number of LSTM layers to be stacked
+learning_rate = 0.001  # Learning rate for the optimizer
+num_epochs = 10  # Number of times to iterate over the training data
     
 class BiLSTM(nn.Module):
     def __init__(self, input_size, hidden_size, num_stacked_layers):
@@ -46,106 +45,116 @@ class BiLSTM(nn.Module):
         self.hidden_size = hidden_size
         self.num_stacked_layers = num_stacked_layers
 
-        # Hauptunterschied: bidirectional=True
+        # Initialize the LSTM layer.
+        # bidirectional=True converts the LSTM model to a bidirectional LSTM, processing data in both forward and backward directions
         self.lstm = nn.LSTM(
             input_size,
             hidden_size,
             num_stacked_layers,
             batch_first=True,
-            bidirectional=True  # Dies macht das LSTM bidirektional
+            bidirectional=True
         )
 
-        # Da bidirektional, verdoppelt sich die Ausgabegröße, # Change output size from 1 to 5
+        # The output from the bidirectional LSTM will have double the size of the hidden_size
+        # because it concatenates the hidden states from both directions.
+        # Here we map the concatenated hidden states to 5 output features.
         self.fc = nn.Linear(hidden_size * 2, 5)
 
     def forward(self, x):
         batch_size = x.size(0)
 
-        # Initialisiere hidden states für beide Richtungen (daher * 2)
-        h0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)#.to(device)
-        c0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)#.to(device)
+        # Initialize hidden and cell states for LSTM layers.
+        # Note: the size needs to consider both number of layers and directions (hence *2 for bidirectional)
+        h0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)
+        c0 = torch.zeros(self.num_stacked_layers * 2, batch_size, self.hidden_size)
 
+        # Forward propagate the LSTM.
+        # Input x shape: (batch, seq, feature)
+        # Output out shape: (batch, seq, num_directions * hidden_size)
         out, _ = self.lstm(x, (h0, c0))
+
+        # Pass the output of the last time step through a fully connected layer.
         out = self.fc(out[:, -1, :])
+
         return out
 
 
 # --- Functions ---
-# def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
-#     url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
-#     headers = {'Authorization': f'token {token}'}
-
-#     # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
-#     r = requests.get(url, headers=headers)
-#     if r.status_code != 200:
-#         log.error(f"Failed to get file info: {r.content}")
-#         return
-    
-#     old_content = r.json()
-#     sha = old_content['sha']
-
-#     # Update vorbereiten
-#     content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
-#     payload = {
-#         "message": f"Update {filepath} file",
-#         "content": content_base64,
-#         "sha": sha,
-#         "branch": branch,
-#     }
-
-#     # Update durchführen
-#     r = requests.put(url, json=payload, headers=headers)
-#     if r.status_code == 200:
-#         log.info(f"----- Prediction file {filepath} updated successfully on GitHub -----")
-#     else:
-#         log.error(f"----- Failed to update Prediction file {filepath} on GitHub: {r.content} ------")
-
-
-# Return the prediction
-def predict(model, data):
-    model.eval()
-    with torch.no_grad():
-        return model(data)
-
-
 def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
+    """
+    Prepares a dataframe for a prediction model by merging bike availability data with weather and station data.
+
+    This function first filters weather data for a specific station and merges it with the main data frame (data_df) that 
+    includes bike availability. Then, it merges this combined data frame with station geographic data. Moreover, it
+    compounds sine and cosine transformations of time data to capture cyclical nature of days and years, providing useful 
+    features for time series prediction models.
+
+    Parameters:
+    - data_df (pandas.DataFrame): DataFrame containing primary data including 'entityId' and 'time_utc'.
+    - weather_data_df (pandas.DataFrame): DataFrame containing weather data including 'entityId' for stations, 
+                                          'time_utc', and weather conditions like 'temperature', 'windSpeed', and 'precipitation'.
+    - stations_df (pandas.DataFrame): DataFrame containing station data including 'entityId' and geographical data 
+                                      ('latitude', 'longitude').
+
+    Returns:
+    - pandas.DataFrame: A DataFrame ready for use in machine learning models, containing combined information from the
+                        input DataFrames and additional calculated features useful for predictions.
+
+    Note:
+    - The function assumes that the 'time_utc' in the `data_df` and `weather_data_df` are aligned and the 'entityId' in 
+      `data_df` matches with 'entityId' in `stations_df` for correct data merging.
+    """
+    # TODO: make it so that it is the neares station
     # Filter weather data for a specific station
     specific_weather_data = weather_data_df[weather_data_df['entityId'] == 5423951]
 
-    # Merge data_df with the specific weather data
+    # Merge general data with specific weather conditions based on Universal Coordinate Time (UTC)
     combined_df = pd.merge(data_df, specific_weather_data[['time_utc', 'precipitation', 'temperature', 'windSpeed']], on='time_utc', how='left')
     
-    # Merge the combined data with stations data to add latitude and longitude
+    # Further merge combined data with station data to add geographical coordinates
     final_df = pd.merge(combined_df, stations_df[['entityId', 'latitude', 'longitude']], on='entityId', how='left')
     
-    # Select and rename columns as needed
+    # Ensure the final DataFrame presents specific columns in an orderly manner
     final_df = final_df[['entityId', 'time_utc', 'availableBikeNumber', 'precipitation', 'temperature', 'windSpeed', 'latitude', 'longitude']]
     
-    # make sin and cos day and year
-    # Extract seconds in day and calculate sine/cosine transformations
+    # Constants representing seconds in a day and a year
     day = 24 * 60 * 60  # Total seconds in a day
     year = 365.2425 * day  # Approximate total seconds in a year
 
-    # Ensure that all datetime objects are tz-naive (idk, had some error to prevent here)
-    # final_df['time_utc'] = final_df['time_utc'].dt.tz_localize(None)
-
-    # Timestamp seconds (linear value for point in time)
+    # Add timestamp representation
     final_df['Seconds'] = final_df['time_utc'].map(pd.Timestamp.timestamp)
 
-    # Apply sine and cosine transformations
+    # Apply trigonometric transformations to capture cyclical nature of time
     final_df['day_sin'] = np.sin(final_df['Seconds'] * (2* np.pi / day))
     final_df['day_cos'] = np.cos(final_df['Seconds'] * (2 * np.pi / day))
     final_df['year_sin'] = np.sin(final_df['Seconds'] * (2 * np.pi / year))
     final_df['year_cos'] = np.cos(final_df['Seconds'] * (2 * np.pi / year))
 
-    # Drop temporary columns
+    # Remove the Seconds column as it is no longer needed after transformations
     final_df.drop(columns=['Seconds'], inplace=True)
-
-    # csv_to_github = final_df.to_csv(index=False)
-    # update_csv_on_github(csv_to_github, 'data/test_data_for_model.csv', NAME_REPO, GITHUB_TOKEN)
 
     return final_df
 
+
+def predict(model, data):
+    """
+    Invokes the prediction method on a given model with provided data.
+
+    The function sets the model to evaluation mode (disabling dropout and batch normalization layers 
+    during inference) and disables gradient calculations to improve performance and reduce memory usage 
+    during inference.
+
+    Parameters:
+    - model (torch.nn.Module): The trained PyTorch model to be used for prediction.
+    - data (torch.Tensor): The input data as a PyTorch tensor on which the prediction is to be made.
+
+    Returns:
+    - torch.Tensor: The output from the model as a PyTorch tensor, representing predictions for the input data.
+    """
+    model.eval()
+    with torch.no_grad():
+        return model(data)
+    
 
 def update_predictions(data_df, weather_data_df, stations_df):
     
