@@ -12,6 +12,8 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 
+from data import update_csv_on_github, read_csv_from_github
+
 
 # --- Logging ---
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -30,51 +32,51 @@ NAME_REPO = "Claas99/sprottenflotte_pred_tool"
     
 
 # --- Functions ---
-def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
-    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
-    headers = {'Authorization': f'token {token}'}
+# def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
+#     url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+#     headers = {'Authorization': f'token {token}'}
 
-    # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
-    r = requests.get(url, headers=headers)
-    if r.status_code != 200:
-        log.error(f"Failed to get file info: {r.content}")
-        return
+#     # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
+#     r = requests.get(url, headers=headers)
+#     if r.status_code != 200:
+#         log.error(f"Failed to get file info: {r.content}")
+#         return
     
-    old_content = r.json()
-    sha = old_content['sha']
+#     old_content = r.json()
+#     sha = old_content['sha']
 
-    # Update vorbereiten
-    content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
-    payload = {
-        "message": f"Update {filepath} file",
-        "content": content_base64,
-        "sha": sha,
-        "branch": branch,
-    }
+#     # Update vorbereiten
+#     content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
+#     payload = {
+#         "message": f"Update {filepath} file",
+#         "content": content_base64,
+#         "sha": sha,
+#         "branch": branch,
+#     }
 
-    # Update durchführen
-    r = requests.put(url, json=payload, headers=headers)
-    if r.status_code == 200:
-        log.info(f"----- Prediction file {filepath} updated successfully on GitHub -----")
-    else:
-        log.error(f"----- Failed to update Prediction file {filepath} on GitHub: {r.content} ------")
+#     # Update durchführen
+#     r = requests.put(url, json=payload, headers=headers)
+#     if r.status_code == 200:
+#         log.info(f"----- Prediction file {filepath} updated successfully on GitHub -----")
+#     else:
+#         log.error(f"----- Failed to update Prediction file {filepath} on GitHub: {r.content} ------")
 
 
-def read_csv_from_github(filepath, repo, token, branch="main"):
-    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
-    headers = {'Authorization': f'token {token}'}
+# def read_csv_from_github(filepath, repo, token, branch="main"):
+#     url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+#     headers = {'Authorization': f'token {token}'}
 
-    r = requests.get(url, headers=headers)
-    if r.status_code != 200:
-        log.error(f"----- Failed to get Prediction file {filepath} from Github: {r.content} ------")
-        return None
+#     r = requests.get(url, headers=headers)
+#     if r.status_code != 200:
+#         log.error(f"----- Failed to get Prediction file {filepath} from Github: {r.content} ------")
+#         return None
 
-    file_content = r.json()['content']
-    decoded_content = base64.b64decode(file_content).decode('utf-8')
+#     file_content = r.json()['content']
+#     decoded_content = base64.b64decode(file_content).decode('utf-8')
     
-    # Convert the decoded content into a pandas DataFrame
-    df = pd.read_csv(StringIO(decoded_content))
-    return df
+#     # Convert the decoded content into a pandas DataFrame
+#     df = pd.read_csv(StringIO(decoded_content))
+#     return df
 
 
 def inverse_scale_target(scaler, scaled_target, target_feature_index, original_feature_count):
