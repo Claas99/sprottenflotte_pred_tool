@@ -15,19 +15,23 @@ import requests
 import streamlit as st
 
 
+# --- Logging ---
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 log = logging.getLogger()
 
 
-### Configurations
+# --- Configurations ---
+# --- Addix ---
 PASSWORD = st.secrets['PASSWORD']
 CLIENT_SECRET = st.secrets['CLIENT_SECRET']
 USERNAME_EMAIL = st.secrets['USERNAME_EMAIL']
+access_token_cache = {'token': None, 'expires_at': None}
+# --- Github ---
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
 NAME_REPO = "Claas99/sprottenflotte_pred_tool"
-
+# --- Data ---
 DATA_FILENAME = 'data/data_temp.csv'
-STATIONS_FILENAME = 'data/stations.csv' # station ids from file einlesen, um änderungen zu haben
+STATIONS_FILENAME = 'data/stations.csv'
 BASE_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:BikeHireDockingStation:KielRegion:"
 
 WEATHER_DATA_FILENAME = 'data/weather_data_temp.csv'
@@ -35,37 +39,78 @@ WEATHER_STATIONS_FILENAME  = 'data/weather_stations.csv'
 WEATHER_URL = "https://apis.kielregion.addix.io/ql/v2/entities/urn:ngsi-ld:WeatherObserved:OWM:"
 
 
-### Global variable to store the access token and its expiration time
-access_token_cache = {
-    'token': None,
-    'expires_at': None
-}
+# --- Functions ---
+def read_csv_from_github(filepath, repo, token, branch="main"):
+    """
+    Fetches a CSV file from a specified GitHub repository and returns it as a pandas DataFrame.
 
+    Parameters:
+    - filepath (str): The path to the CSV file within the GitHub repository.
+    - repo (str): The GitHub repository in the format 'username/repository'.
+    - token (str): GitHub personal access token for authentication.
+    - branch (str, optional): The branch of the repository from which to fetch the file. Defaults to "main".
 
-### Functions
-def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
-    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
+    Returns:
+    - df (pandas.DataFrame): DataFrame constructed from the CSV file on GitHub. Returns None if the request fails.
+    """
+    # Construct the full URL to access the file on GitHub
+    url = f'https://api.github.com/repos/{repo}/contents/{filepath}?ref={branch}'
+    # Set up authentication headers with the provided GitHub token
     headers = {'Authorization': f'token {token}'}
 
-    # Zuerst die alte Dateiinformation laden, um den SHA zu bekommen
+    # Make an HTTP GET request to the GitHub API
+    r = requests.get(url, headers=headers)
+    # Check if the request was successful
+    if r.status_code != 200:
+        log.error(f"----- Failed to get Data file from GitHub: {r.content} ------")
+        return None
+
+    # Decode the content from the response and load it into a DataFrame
+    file_content = r.json()['content']
+    decoded_content = base64.b64decode(file_content).decode('utf-8')
+    
+    # Read the CSV data into a DataFrame
+    df = pd.read_csv(StringIO(decoded_content))
+    return df
+
+
+def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
+    """
+    Updates a CSV file on GitHub by overwriting the existing file with new content.
+
+    Parameters:
+    - new_content (str): The new CSV formatted data to upload as string.
+    - filepath (str): The path to the CSV file within the GitHub repository.
+    - repo (str): The GitHub repository in the format 'username/repository'.
+    - token (str): GitHub personal access token for authentication.
+    - branch (str, optional): The branch of the repository where the file is located. Defaults to "main".
+
+    Returns:
+    - None: A return value is not provided but exceptions and logs indicate failure or success of the operation.
+    """
+    # Construct the URL to access the specific file in the GitHub repository
+    url = f'https://api.github.com/repos/{repo}/contents/{filepath}?ref={branch}'
+    headers = {'Authorization': f'token {token}'}
+
+    # Initial request to get the current file SHA to enable update
     r = requests.get(url, headers=headers)
     if r.status_code != 200:
         log.error(f"Failed to get file info: {r.content}")
         return
-    
+
     old_content = r.json()
     sha = old_content['sha']
 
-    # Update vorbereiten
+    # Prepare the data for updating: encode the new content to base64
     content_base64 = base64.b64encode(new_content.encode('utf-8')).decode('utf-8')
     payload = {
-        "message": f"Update {filepath} file",
-        "content": content_base64,
-        "sha": sha,
-        "branch": branch,
+        "message": f"Update {filepath} file",  # the commit message
+        "content": content_base64,             # new file content in base64
+        "sha": sha,                            # blob SHA of the file to update
+        "branch": branch,                      # branch where the file is located
     }
 
-    # Update durchführen
+    # Send a PUT request to update the file on GitHub
     r = requests.put(url, json=payload, headers=headers)
     if r.status_code == 200:
         log.info("----- Data file updated successfully on GitHub -----")
@@ -73,54 +118,37 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
         log.error(f"----- Failed to update Data file on GitHub: {r.content} ------")
 
 
-def read_csv_from_github(filepath, repo, token, branch="main"):
-    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
-    headers = {'Authorization': f'token {token}'}
-
-    r = requests.get(url, headers=headers)
-    if r.status_code != 200:
-        log.error(f"----- Failed to get Data file from Github: {r.content} ------")
-        return None
-
-    file_content = r.json()['content']
-    decoded_content = base64.b64decode(file_content).decode('utf-8')
-    
-    # Convert the decoded content into a pandas DataFrame
-    df = pd.read_csv(StringIO(decoded_content))
-    return df
-
-
 def request_access_token_if_needed():
     """
-    Requests and returns an access token, only if needed, based on expiration.
+    Checks if the current access token is valid and returns it; requests and returns a new one if the current token is expired.
 
-    This function checks if the current access token is valid and returns it.
-    If no valid token is present, it requests a new one.
+    Parameters:
+    - None
+
+    Returns:
+    - access_token (str): The valid access token to be used for further API requests.
     """
     global access_token_cache
+    current_time = time.time()  # Get the current time in seconds since epoch
 
-    # Current time in seconds
-    current_time = time.time()
-
-    # Check if cached token is valid
+    # If there is a token and it hasn't expired, use it
     if access_token_cache['token'] and current_time < access_token_cache['expires_at']:
-        expiration_time = datetime.fromtimestamp(access_token_cache['expires_at']).replace(microsecond=0)
+        expiration_time = datetime.fromtimestamp(access_token_cache['expires_at']).strftime('%Y-%m-%d %H:%M:%S')
         log.info(f"---------- Access Token valid until: {expiration_time}")
         return access_token_cache['token']
 
-    # If not, request a new token
+    # If the token is expired or not present, request a new one
     new_token = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
-
     if new_token:
-        # Token validity in seconds. Set similar to your OAuth provider's token lifespan
-        token_validity_duration = 86400  # 24 hours
+        # Assume the token validity period is 86400 seconds (24 hours); adjust as per your OAuth provider
+        token_validity_duration = 86400
 
-        # Update the cache with the new token and its expiry time
+        # Update the token cache with the new token and its expiry time
         access_token_cache['token'] = new_token
         access_token_cache['expires_at'] = current_time + token_validity_duration
 
-        expiration_time = datetime.fromtimestamp(access_token_cache['expires_at']).replace(microsecond=0)
-        log.info(f"---------- Access Token valid until: {expiration_time}")
+        expiration_time = datetime.fromtimestamp(access_token_cache['expires_at']).strftime('%Y-%m-%d %H:%M:%S')
+        log.info(f"---------- New Access Token valid until: {expiration_time}")
 
     return new_token
 
@@ -175,7 +203,21 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
     else:
         log.info(f"---------- Error requesting Access Token: {response.status_code}, {response.text}")
         return None
-    
+
+
+def get_current_dates():
+    """Calculate the current start and end dates for data fetching."""
+    # API mit UTC time steps
+    # Calculate the end date by rounding down to the closest whole hour in UTC !,
+    # to make sure to get hourly averages for whole hours with API request
+
+    # Calculate the end date as the current time rounded down to the nearest hour
+    end_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    # Set start_date as 24 hours before the end_date
+    start_date = end_date - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
+
+    return start_date, end_date
+
 
 def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
     """
@@ -308,20 +350,6 @@ def create_dataframe_from_api_data(data):
     df = df[column_order]
 
     return df
-
-
-def get_current_dates():
-    """Calculate the current start and end dates for data fetching."""
-    # API mit UTC time steps
-    # Calculate the end date by rounding down to the closest whole hour in UTC !,
-    # to make sure to get hourly averages for whole hours with API request
-
-    # Calculate the end date as the current time rounded down to the nearest hour
-    end_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
-    # Set start_date as 24 hours before the end_date
-    start_date = end_date - timedelta(days=1) # timedelta anpassen an model sliding window length (=24 hours)
-
-    return start_date, end_date
 
 
 def update_station_data():
@@ -653,13 +681,12 @@ def update_weather_data():
 # --- Easter Egg --->
 def update_random_bike_location(stations_df):
     """Select a random subarea and assign random coordinates."""
-    # Laden des existierenden DataFrame
     stations_df = pd.read_csv(STATIONS_FILENAME)
 
     if len(stations_df['subarea'].unique()) > 1:
         random_subarea = random.choice(stations_df['subarea'].unique())
-        new_lat = random.uniform(-90.0, 90.0)  # Globaler Bereich für Breitengrad
-        new_lon = random.uniform(-180.0, 180.0)  # Globaler Bereich für Längengrad
+        new_lat = random.uniform(-90.0, 90.0)
+        new_lon = random.uniform(-180.0, 180.0)
 
         return random_subarea, new_lat, new_lon
     
