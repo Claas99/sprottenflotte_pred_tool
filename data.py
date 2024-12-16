@@ -54,7 +54,7 @@ def read_csv_from_github(filepath, repo, token, branch="main"):
     - df (pandas.DataFrame): DataFrame constructed from the CSV file on GitHub. Returns None if the request fails.
     """
     # Construct the full URL to access the file on GitHub
-    url = f'https://api.github.com/repos/{repo}/contents/{filepath}?ref={branch}'
+    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'#?ref={branch}'
     # Set up authentication headers with the provided GitHub token
     headers = {'Authorization': f'token {token}'}
 
@@ -89,7 +89,7 @@ def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     - None: A return value is not provided but exceptions and logs indicate failure or success of the operation.
     """
     # Construct the URL to access the specific file in the GitHub repository
-    url = f'https://api.github.com/repos/{repo}/contents/{filepath}?ref={branch}'
+    url = f'https://api.github.com/repos/{repo}/contents/{filepath}'#?ref={branch}'
     headers = {'Authorization': f'token {token}'}
 
     # Initial request to get the current file SHA to enable update

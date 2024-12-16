@@ -13,20 +13,23 @@ import numpy as np
 import streamlit as st
 
 
+# --- Logging ---
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 log = logging.getLogger()
 
 
-### Configurations
+# --- Configurations ---
+# --- Data/Models ---
 DATA_FILENAME = 'data/data_temp.csv'
 MODEL_FILENAME = 'models/model_rf.joblib'
 SCALER_FILENAME = 'models/scaler_rf.joblib'
 PREDICTIONS_FILENAME = 'data/predictions_rf.csv'
+# --- Github ---
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
 NAME_REPO = "Claas99/sprottenflotte_pred_tool"
     
 
-### Functions
+# --- Functions ---
 def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
     headers = {'Authorization': f'token {token}'}

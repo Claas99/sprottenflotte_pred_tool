@@ -14,21 +14,24 @@ import torch.nn as nn
 import streamlit as st
 
 
+# --- Logging ---
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 log = logging.getLogger()
 
 
-### Configurations
+# --- Configurations ---
+# --- Data/Models ---
 DATA_FILENAME = 'data/data_temp.csv'
 MODEL_FILENAME = 'models/5pred_biLSTM_whole_ver2_weights.pth'
 SCALER_X_FILENAME = 'models/scaler_X_ver2.joblib'
 SCALER_Y_FILENAME = 'models/scaler_y_ver2.joblib'
 PREDICTIONS_FILENAME = 'data/predictions_dl.csv'
+# --- Github ---
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
 NAME_REPO = "Claas99/sprottenflotte_pred_tool"
 
 
-### Initialize the Bidirectional LSTM model
+# --- initialisation of the Bidirectional LSTM model --- 
 input_size = 10  # Number of features
 hidden_size = 8
 num_stacked_layers = 2
@@ -65,7 +68,7 @@ class BiLSTM(nn.Module):
         return out
 
 
-### Functions
+# --- Functions ---
 def update_csv_on_github(new_content, filepath, repo, token, branch="main"):
     url = f'https://api.github.com/repos/{repo}/contents/{filepath}'
     headers = {'Authorization': f'token {token}'}
