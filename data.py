@@ -250,7 +250,7 @@ def fetch_station_data(station_id, from_date, to_date, BASE_URL, ACCESS_TOKEN):
     - Exception: If the response from the server is unsuccessful, logs the error status and message.
     """
     # Construct the full API endpoint URL
-    url = f"{BASE_URL}/{station_id}"
+    url = f"{BASE_URL}{station_id}"
     # Set headers including the authorization token
     headers = {
         'NGSILD-Tenant': 'infoportal',
