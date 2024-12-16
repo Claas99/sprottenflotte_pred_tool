@@ -104,7 +104,7 @@ def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
     - The function assumes that the 'time_utc' in the `data_df` and `weather_data_df` are aligned and the 'entityId' in 
       `data_df` matches with 'entityId' in `stations_df` for correct data merging.
     """
-    # TODO: make it so that it is the neares station
+    # TODO: make the weather data adjust on the bike stations and the nearest weather stationn
     # Filter weather data for a specific station
     specific_weather_data = weather_data_df[weather_data_df['entityId'] == 5423951]
 
