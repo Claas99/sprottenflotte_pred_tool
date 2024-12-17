@@ -106,7 +106,7 @@ def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
     """
     # TODO: make the weather data adjust on the bike stations and the nearest weather stationn
     # Filter weather data for a specific station
-    specific_weather_data = weather_data_df[weather_data_df['entityId'] == 5423951]
+    specific_weather_data = weather_data_df[weather_data_df['entityId'] == 54331015] # Düsternbrook
 
     # Merge general data with specific weather conditions based on Universal Coordinate Time (UTC)
     combined_df = pd.merge(data_df, specific_weather_data[['time_utc', 'precipitation', 'temperature', 'windSpeed']], on='time_utc', how='left')
