@@ -148,21 +148,6 @@ def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
 
     final_df = final_df[['entityId', 'time_utc', 'availableBikeNumber', 'precipitation', 'temperature', 'windSpeed', 'latitude', 'longitude']]
 
-
-
-
-
-    # # Merge general data with specific weather conditions based on Universal Coordinate Time (UTC)
-    # combined_df = pd.merge(data_df, specific_weather_data[['time_utc', 'precipitation', 'temperature', 'windSpeed']], on='time_utc', how='left')
-    
-    # # Further merge combined data with station data to add geographical coordinates
-    # final_df = pd.merge(combined_df, stations_df[['entityId', 'latitude', 'longitude']], on='entityId', how='left')
-    
-    # # Ensure the final DataFrame presents specific columns in an orderly manner
-    # final_df = final_df[['entityId', 'time_utc', 'availableBikeNumber', 'precipitation', 'temperature', 'windSpeed', 'latitude', 'longitude']]
-    
-
-
     # Constants representing seconds in a day and a year
     day = 24 * 60 * 60  # Total seconds in a day
     year = 365.2425 * day  # Approximate total seconds in a year
