@@ -49,9 +49,23 @@ Data management is handled by `data.py`, which retrieves and synchronizes data f
 
 ## Usage
 
-1. Clone the repository.
-2. Set up your environment using the `devcontainer.json` or manually install required dependencies.
-3. Run `app.py` using Streamlit to launch the application interface.
+To add a new station provide a new row in the `stations.csv` file with all column infos.
+
+Used Subareas are:
+
+- Eckernförde
+- Eckernförde Umland Norden
+- Felde
+- Kiel Innenstadt
+- Kiel Norden
+- Kiel Osten
+- Kiel Umland
+- Kiel Westen
+- Owschlag
+- Plön
+- Preetz
+- Rendsburg
+- Schönberg
 
 ## Requirements
 
