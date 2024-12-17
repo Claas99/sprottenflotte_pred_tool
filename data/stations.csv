@@ -1,7 +1,7 @@
 entityId,station_name,maximum_capacity,latitude,longitude,subarea
 30434,Felde Gemeindezentrum,18,54.299552,9.933817,Felde
 30207,Sporthalle Saxtorfer Weg,15,54.487005,9.835833,Eckernförde
-30151,Eiche Daenischenhagen,15,54.424663,10.127872,Kiel Nord
+30151,Eiche Daenischenhagen,15,54.424663,10.127872,Kiel Norden
 30147,Bushaltestelle Eiderbruecke,15,54.289706,10.090042,Kiel Umland
 30146,Herzog Friedrich Strasse  ZOB ,25,54.317114,10.133099,Kiel Innenstadt
 30145,Rondeel,15,54.308532,10.125048,Kiel Innenstadt
@@ -20,28 +20,28 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 29347,Hollerstrasse Nord,15,54.322111,9.692483,Rendsburg
 29346,Wilhelmstrasse,15,54.315754,9.68073,Rendsburg
 29345,Rathaus Buedelsdorf,15,54.315943,9.670588,Rendsburg
-29253,Rieseby Alte Post ,15,54.542271,9.818097,Eckernförde Umland Nord
+29253,Rieseby Alte Post ,15,54.542271,9.818097,Eckernförde Umland Norden
 29200,REWE digital am Wissenschaftszentrum,15,54.341647,10.122253,Kiel Westen
 29112,Felde Dorfplatz,15,54.303857,9.93739,Felde
 29109,Felde Bahnhof ,15,54.309801,9.946644,Felde
 29049,Falkemedia,15,54.339302,10.215208,Kiel Osten
 28932,Gammelby Ort ,15,54.500261,9.794275,Eckernförde
-28813,Langholz,15,54.516477,9.979997,Eckernförde Umland Nord
-28804,Karby   Am Ring,15,54.62363,9.97642,Eckernförde Umland Nord
+28813,Langholz,15,54.516477,9.979997,Eckernförde Umland Norden
+28804,Karby   Am Ring,15,54.62363,9.97642,Eckernförde Umland Norden
 28803,Windeby   Friedland,15,54.458961,9.784161,Eckernförde
 28802,Kochendorf,15,54.474377,9.774602,Eckernförde
-28801,Waabs   Seestrasse ,15,54.551866,9.993341,Eckernförde Umland Nord
-28800,Waabs   Muehlenstrasse,15,54.532688,9.984947,Eckernförde Umland Nord
-28799,Waabs Haltestelle Abzw  Langholz,15,54.526682,9.968479,Eckernförde Umland Nord
-28798,Rieseby Bahnhof,15,54.541178,9.820676,Eckernförde Umland Nord
-28797,Loose,15,54.52195,9.88207,Eckernförde Umland Nord
+28801,Waabs   Seestrasse ,15,54.551866,9.993341,Eckernförde Umland Norden
+28800,Waabs   Muehlenstrasse,15,54.532688,9.984947,Eckernförde Umland Norden
+28799,Waabs Haltestelle Abzw  Langholz,15,54.526682,9.968479,Eckernförde Umland Norden
+28798,Rieseby Bahnhof,15,54.541178,9.820676,Eckernförde Umland Norden
+28797,Loose,15,54.52195,9.88207,Eckernförde Umland Norden
 28796,Kosel Ort,6,54.5042,9.75402,Eckernförde
-28795,Holzdorf ,15,54.55162,9.89846,Eckernförde Umland Nord
-28794,Holzdorf   Neu Seeholz,15,54.55693,9.90928,Eckernförde Umland Nord
+28795,Holzdorf ,15,54.55162,9.89846,Eckernförde Umland Norden
+28794,Holzdorf   Neu Seeholz,15,54.55693,9.90928,Eckernförde Umland Norden
 28793,Goosefeld,15,54.43037,9.8141,Eckernförde
 28792,Goetheby Holm,15,54.484311,9.713093,Eckernförde
 28791,Fleckeby   Schmiederedder,15,54.481444,9.695621,Eckernförde
-28790,ZOB Vogelsang Gruenholz,15,54.571396,9.955614,Eckernförde Umland Nord
+28790,ZOB Vogelsang Gruenholz,15,54.571396,9.955614,Eckernförde Umland Norden
 28789,Mehrzweckhalle Barkelsby,15,54.50248,9.83552,Eckernförde
 28738,Prasdorf,15,54.378964,10.295342,Schönberg
 28264,Freudenholm,20,54.216857,10.312672,Preetz
@@ -71,7 +71,7 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 27374,Osterby,15,54.453385,9.753969,Eckernförde
 27373,Sehestedt Markttreff,15,54.365043,9.817198,Rendsburg
 27372,Gross Wittensee,15,54.404468,9.769934,Eckernförde
-27183,Schilksee Olympiazentrum,30,54.425453,10.168224,Kiel Nord
+27183,Schilksee Olympiazentrum,30,54.425453,10.168224,Kiel Norden
 26889,Wilhelmplatz,30,54.322734,10.121238,Kiel Innenstadt
 26805,Amt Molfsee,15,54.281617,10.079457,Kiel Umland
 26730,Schoenberger Strand,30,54.412817,10.414665,Schönberg
@@ -79,8 +79,8 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 26724,Bahnhof Schoenberg,20,54.387004,10.374004,Schönberg
 26708,Schule Mielkendorf,25,54.284455,10.037526,Kiel Umland
 26653,Feuerwehrhaus Schoenberg,15,54.394614,10.372594,Schönberg
-26224, Wik  Kanalfaehre   Busstation,20,54.365507,10.131589,Kiel Nord
-26209,Kanalfaehre Holtenau,20,54.368794,10.133953,Kiel Nord
+26224, Wik  Kanalfaehre   Busstation,20,54.365507,10.131589,Kiel Norden
+26209,Kanalfaehre Holtenau,20,54.368794,10.133953,Kiel Norden
 24482,Markt Preetz,30,54.23567,10.28186,Preetz
 24481,Kieler Innovations  und Technologiezentrum,20,54.334639,10.119389,Kiel Westen
 24479,Klinik Preetz,20,54.23905,10.27956,Preetz
@@ -148,19 +148,19 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 24415,KVG Betriebshof Diedrichstrasse,20,54.302799,10.136963,Kiel Osten
 24414,Kuhlacker,20,54.285725,10.143565,Kiel Umland
 24413,Bernhard Minetti Platz,20,54.337864,10.133126,Kiel Westen
-24412,MEKUN Olympiahochhaus,30,54.355269,10.131253,Kiel Nord
+24412,MEKUN Olympiahochhaus,30,54.355269,10.131253,Kiel Norden
 24411,Grot Steenbusch,20,54.2832,10.130672,Kiel Umland
 24410,Bunsenstrasse,20,54.27697,10.158649,Kiel Umland
 24409,Braunstrasse,20,54.280427,10.1456,Kiel Umland
 24408,thyssenkrupp Marine Systems,27,54.316436,10.15131,Kiel Osten
-24407,Rathaus Altenholz,20,54.386203,10.136875,Kiel Nord
+24407,Rathaus Altenholz,20,54.386203,10.136875,Kiel Norden
 24406,Bahnhof Oppendorf,20,54.326055,10.207911,Kiel Osten
 24405,Marine Ehrenmal,20,54.411667,10.228306,Schönberg
 24404,Bullbruecke,20,54.397494,10.233223,Kiel Osten
 24403,Hafen Laboe,30,54.40336,10.219689,Schönberg
-24402,Stadtteilzentrum Pries,21,54.395459,10.173146,Kiel Nord
-24401,Dataport FHVD,30,54.401894,10.129012,Kiel Nord
-24400,Anleger Friedrichsort,30,54.390373,10.177173,Kiel Nord
+24402,Stadtteilzentrum Pries,21,54.395459,10.173146,Kiel Norden
+24401,Dataport FHVD,30,54.401894,10.129012,Kiel Norden
+24400,Anleger Friedrichsort,30,54.390373,10.177173,Kiel Norden
 24399,Exerzierplatz,30,54.321583,10.128389,Kiel Innenstadt
 24398,Rathausplatz,30,54.322361,10.133861,Kiel Innenstadt
 24397,Hauptbahnhof,42,54.315972,10.132278,Kiel Innenstadt
@@ -196,4 +196,4 @@ entityId,station_name,maximum_capacity,latitude,longitude,subarea
 30023,Freibad Raisdorf  saisonal bis 22 09 24 ,15,54.285998,10.246081,Kiel Umland
 30515,Alte Luebecker Chaussee,15,54.3045643,10.1254699,Kiel Innenstadt
 24470,Fegetasche,20,54.153741,10.449131,Plön
-28814,Waabs Strand,15,54.525,9.999951,Eckernförde Umland Nord
+28814,Waabs Strand,15,54.525,9.999951,Eckernförde Umland Norden
