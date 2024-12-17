@@ -106,17 +106,63 @@ def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
     """
     # TODO: make the weather data adjust on the bike stations and the nearest weather stationn
     # Filter weather data for a specific station
-    specific_weather_data = weather_data_df[weather_data_df['entityId'] == 54331015] # Düsternbrook
+    # specific_weather_data = weather_data_df[weather_data_df['entityId'] == 54331015] # Düsternbrook
 
-    # Merge general data with specific weather conditions based on Universal Coordinate Time (UTC)
-    combined_df = pd.merge(data_df, specific_weather_data[['time_utc', 'precipitation', 'temperature', 'windSpeed']], on='time_utc', how='left')
-    
-    # Further merge combined data with station data to add geographical coordinates
-    final_df = pd.merge(combined_df, stations_df[['entityId', 'latitude', 'longitude']], on='entityId', how='left')
-    
-    # Ensure the final DataFrame presents specific columns in an orderly manner
+    # Get unique subareas and assign specific weather stations
+    weather_station_mapping = {
+        'Eckernförde': weather_data_df[weather_data_df['entityId'] == 5433971],
+        'Eckernförde Umland Norden': weather_data_df[weather_data_df['entityId'] == 5465941],
+        'Felde': weather_data_df[weather_data_df['entityId'] == 54331021],
+        'Kiel Innenstadt': weather_data_df[weather_data_df['entityId'] == 54331015],
+        'Kiel Norden': weather_data_df[weather_data_df['entityId'] == 54331015],
+        'Kiel Osten': weather_data_df[weather_data_df['entityId'] == 54331021],
+        'Kiel Umland': weather_data_df[weather_data_df['entityId'] == 54331021],
+        'Kiel Westen': weather_data_df[weather_data_df['entityId'] == 54351009],
+        'Owschlag': weather_data_df[weather_data_df['entityId'] == 5430967],
+        'Plön': weather_data_df[weather_data_df['entityId'] == 54331021],
+        'Preetz': weather_data_df[weather_data_df['entityId'] == 54331021],
+        'Rendsburg': weather_data_df[weather_data_df['entityId'] == 5430967],
+        'Schönberg': weather_data_df[weather_data_df['entityId'] == 54331021],
+    }
+
+    all_combined_df = []
+
+    # Process each subarea separately
+    for subarea, subarea_stations in stations_df.groupby('subarea'):
+        specific_weather_data = weather_station_mapping.get(subarea)
+        if specific_weather_data is not None:
+            combined_subarea_df = pd.merge(
+                data_df[data_df['entityId'].isin(subarea_stations['entityId'])],
+                specific_weather_data[['time_utc', 'precipitation', 'temperature', 'windSpeed']],
+                on='time_utc', how='left'
+            )
+            final_subarea_df = pd.merge(
+                combined_subarea_df,
+                subarea_stations[['entityId', 'latitude', 'longitude']],
+                on='entityId', how='left'
+            )
+            all_combined_df.append(final_subarea_df)
+
+    # Concatenate all subarea DataFrames into a final DataFrame
+    final_df = pd.concat(all_combined_df)
+
     final_df = final_df[['entityId', 'time_utc', 'availableBikeNumber', 'precipitation', 'temperature', 'windSpeed', 'latitude', 'longitude']]
+
+
+
+
+
+    # # Merge general data with specific weather conditions based on Universal Coordinate Time (UTC)
+    # combined_df = pd.merge(data_df, specific_weather_data[['time_utc', 'precipitation', 'temperature', 'windSpeed']], on='time_utc', how='left')
     
+    # # Further merge combined data with station data to add geographical coordinates
+    # final_df = pd.merge(combined_df, stations_df[['entityId', 'latitude', 'longitude']], on='entityId', how='left')
+    
+    # # Ensure the final DataFrame presents specific columns in an orderly manner
+    # final_df = final_df[['entityId', 'time_utc', 'availableBikeNumber', 'precipitation', 'temperature', 'windSpeed', 'latitude', 'longitude']]
+    
+
+
     # Constants representing seconds in a day and a year
     day = 24 * 60 * 60  # Total seconds in a day
     year = 365.2425 * day  # Approximate total seconds in a year
