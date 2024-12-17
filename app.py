@@ -47,6 +47,8 @@ def main():
             ("Random Forest", "Deep Learning Model"),
             index=0
         )
+
+        st.write("Random Forest ist ein Machine Learning Algorithmus, der sehr schnell Vorhersagen berechnen kann, aber dafür weniger trainiert wurde. Das Deep Learning Model wurde sehr aufwendig trainiert und braucht deshalb länger bei den Vorhersagen, sollte aber langfristig präziser sein.")
     # Display the selected model
     st.write(f"Ausgewähltes Modell: {model_selection}")
 
