@@ -104,10 +104,7 @@ def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
     - The function assumes that the 'time_utc' in the `data_df` and `weather_data_df` are aligned and the 'entityId' in 
       `data_df` matches with 'entityId' in `stations_df` for correct data merging.
     """
-    # TODO: make the weather data adjust on the bike stations and the nearest weather stationn
     # Filter weather data for a specific station
-    # specific_weather_data = weather_data_df[weather_data_df['entityId'] == 54331015] # Düsternbrook
-
     # Get unique subareas and assign specific weather stations
     weather_station_mapping = {
         'Eckernförde': weather_data_df[weather_data_df['entityId'] == 5433971],
@@ -130,6 +127,9 @@ def make_dataframe_for_prediction_model(data_df, weather_data_df, stations_df):
     # Process each subarea separately
     for subarea, subarea_stations in stations_df.groupby('subarea'):
         specific_weather_data = weather_station_mapping.get(subarea)
+        if specific_weather_data is None:
+            specific_weather_data = weather_data_df[weather_data_df['entityId'] == 54331015]
+
         if specific_weather_data is not None:
             combined_subarea_df = pd.merge(
                 data_df[data_df['entityId'].isin(subarea_stations['entityId'])],
