@@ -173,7 +173,8 @@ def main():
     selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
     # initialise tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["Prioritäten-Tabelle", "Aktuelle Daten", "Vorhersage Daten", "Analyse"])
+    # tab1, tab2, tab3, tab4 = st.tabs(["Prioritäten-Tabelle", "Aktuelle Daten", "Vorhersage Daten", "Analyse"])
+    tab1, tab2, tab3 = st.tabs(["Prioritäten-Tabelle", "Aktuelle Daten", "Vorhersage Daten"])
 
 
     # --- tab 1 - Subarea Prio ---
@@ -543,116 +544,114 @@ def main():
         st.dataframe(applied_style, use_container_width=True)
 
     # --- tab 4 - Analytics ---
-    with tab4:
-        with st.expander("Weniger wichtiger Tab"):
-            st.write("Inhalt des weniger wichtigen Tabs")
-            st.write("### Analyse")
+    # with tab4:
+    #     st.write("### Analyse")
 
-            # Option for all
-            if selected_option == 'Alle':
-                subarea_df = full_df
-                
-            # Use the selected subarea
-            else:
-                subarea_df = full_df[full_df['subarea'] == selected_option]
-            subarea_df = subarea_df.copy()
-            subarea_df['Station'] = subarea_df['station_name']
-
-            # Lineplot that shows the full 29h range for each station in the subarea
-            fig = px.line(
-                subarea_df,
-                x='deutsche_timezone',
-                y='availableBikeNumber',
-                color='station_name',
-                title=f"Verfügbare Fahrräder im Teilgebiet {selected_option}",
-                labels={
-                    "deutsche_timezone": "Uhrzeit",
-                    "availableBikeNumber": "Verfügbare Fahrräder",
-                    "station_name": "Station"
-                }
-            )
-
-            # Customize the layout
-            fig.update_layout(
-                xaxis_title="Uhrzeit",
-                yaxis_title="Verfügbare Fahrräder",
-                legend_title="Station",
-                template="plotly_white",
-                yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot')
-        )    
-            # Add vertical line for point of predictions
-            fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-6]}", line_width=2, line_dash="dash", line_color="black")  
-            # Add annotation for the vertical line
-            fig.add_annotation(
-                x=f"{subarea_df['deutsche_timezone'].iloc[-6]}",
-                y=max(subarea_df['availableBikeNumber']),  # Adjust y position as necessary
-                text=" Predictions",
-                showarrow=False,
-                xanchor="left"  # Align text to the left of the vertical line
-            )
-            # Show the plot
-            st.plotly_chart(fig)
-
-            st.write("***")
-            st.write(f"Zeitdaten der Stationen von {selected_option}")
-            # st.dataframe(subarea_df[['entityId', 'station_name', 'availableBikeNumber', 'deutsche_timezone']], use_container_width=True)
-            st.dataframe(subarea_df.pivot(index='Station', columns='deutsche_timezone', values='availableBikeNumber').round())
-
-            # Filter too low and too high data
-            too_low_df = subarea_df[subarea_df['availableBikeNumber'] <= 0.2 * subarea_df['maximum_capacity']]
-            too_high_df = subarea_df[subarea_df['availableBikeNumber'] >= 0.8 * subarea_df['maximum_capacity']]
+    #     # Option for all
+    #     if selected_option == 'Alle':
+    #         subarea_df = full_df
             
-            # Get value counts and convert to DataFrame
-            too_low_df = too_low_df['station_name'].value_counts().reset_index()
-            too_low_df.columns = ['station_name', 'count']
-            
-            too_high_df = too_high_df['station_name'].value_counts().reset_index()
-            too_high_df.columns = ['station_name', 'count']
-            
-            # Set fixed dimensions for the plots
-            plot_width = 800  # Adjust width as needed
-            plot_height = 600  # Adjust height as needed
-            
-            # Create Streamlit columns
-            col1, col2 = st.columns(2)
+    #     # Use the selected subarea
+    #     else:
+    #         subarea_df = full_df[full_df['subarea'] == selected_option]
+    #     subarea_df = subarea_df.copy()
+    #     subarea_df['Station'] = subarea_df['station_name']
 
-            # First column for showing the stations has been too full
-            with col1:
-                fig_high = px.bar(
-                    too_high_df,
-                    x='station_name',
-                    y='count',
-                    color='count',
-                    title=f"Anzahl Stunden zu voll pro Station in {selected_option}",
-                    labels={
-                        "station_name": "Station",
-                        "count": "Anzahl Stunden"
-                    },
-                    width=plot_width,
-                    height=plot_height,
-                    color_continuous_scale='Blues'  # This sets all bars to red
-                )
-                fig_high.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
-                st.plotly_chart(fig_high)
+    #     # Lineplot that shows the full 29h range for each station in the subarea
+    #     fig = px.line(
+    #         subarea_df,
+    #         x='deutsche_timezone',
+    #         y='availableBikeNumber',
+    #         color='station_name',
+    #         title=f"Verfügbare Fahrräder im Teilgebiet {selected_option}",
+    #         labels={
+    #             "deutsche_timezone": "Uhrzeit",
+    #             "availableBikeNumber": "Verfügbare Fahrräder",
+    #             "station_name": "Station"
+    #         }
+    #     )
 
-            # Second column for showing the stations has been empty
-            with col2:
-                fig_low = px.bar(
-                    too_low_df,
-                    x='station_name',
-                    y='count',
-                    color='count',
-                    title=f"Anzahl Stunden zu leer pro Station in {selected_option}",
-                    labels={
-                        "station_name": "Station",
-                        "count": "Anzahl Stunden"
-                    },
-                    width=plot_width,
-                    height=plot_height,
-                    color_continuous_scale='Reds'  # This sets all bars to red
-                )
-                fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
-                st.plotly_chart(fig_low)
+    #     # Customize the layout
+    #     fig.update_layout(
+    #         xaxis_title="Uhrzeit",
+    #         yaxis_title="Verfügbare Fahrräder",
+    #         legend_title="Station",
+    #         template="plotly_white",
+    #         yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot')
+    # )    
+    #     # Add vertical line for point of predictions
+    #     fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-6]}", line_width=2, line_dash="dash", line_color="black")  
+    #     # Add annotation for the vertical line
+    #     fig.add_annotation(
+    #         x=f"{subarea_df['deutsche_timezone'].iloc[-6]}",
+    #         y=max(subarea_df['availableBikeNumber']),  # Adjust y position as necessary
+    #         text=" Predictions",
+    #         showarrow=False,
+    #         xanchor="left"  # Align text to the left of the vertical line
+    #     )
+    #     # Show the plot
+    #     st.plotly_chart(fig)
+
+    #     st.write("***")
+    #     st.write(f"Zeitdaten der Stationen von {selected_option}")
+    #     # st.dataframe(subarea_df[['entityId', 'station_name', 'availableBikeNumber', 'deutsche_timezone']], use_container_width=True)
+    #     st.dataframe(subarea_df.pivot(index='Station', columns='deutsche_timezone', values='availableBikeNumber').round())
+
+    #     # Filter too low and too high data
+    #     too_low_df = subarea_df[subarea_df['availableBikeNumber'] <= 0.2 * subarea_df['maximum_capacity']]
+    #     too_high_df = subarea_df[subarea_df['availableBikeNumber'] >= 0.8 * subarea_df['maximum_capacity']]
+        
+    #     # Get value counts and convert to DataFrame
+    #     too_low_df = too_low_df['station_name'].value_counts().reset_index()
+    #     too_low_df.columns = ['station_name', 'count']
+        
+    #     too_high_df = too_high_df['station_name'].value_counts().reset_index()
+    #     too_high_df.columns = ['station_name', 'count']
+        
+    #     # Set fixed dimensions for the plots
+    #     plot_width = 800  # Adjust width as needed
+    #     plot_height = 600  # Adjust height as needed
+        
+    #     # Create Streamlit columns
+    #     col1, col2 = st.columns(2)
+
+    #     # First column for showing the stations has been too full
+    #     with col1:
+    #         fig_high = px.bar(
+    #             too_high_df,
+    #             x='station_name',
+    #             y='count',
+    #             color='count',
+    #             title=f"Anzahl Stunden zu voll pro Station in {selected_option}",
+    #             labels={
+    #                 "station_name": "Station",
+    #                 "count": "Anzahl Stunden"
+    #             },
+    #             width=plot_width,
+    #             height=plot_height,
+    #             color_continuous_scale='Blues'  # This sets all bars to red
+    #         )
+    #         fig_high.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
+    #         st.plotly_chart(fig_high)
+
+    #     # Second column for showing the stations has been empty
+    #     with col2:
+    #         fig_low = px.bar(
+    #             too_low_df,
+    #             x='station_name',
+    #             y='count',
+    #             color='count',
+    #             title=f"Anzahl Stunden zu leer pro Station in {selected_option}",
+    #             labels={
+    #                 "station_name": "Station",
+    #                 "count": "Anzahl Stunden"
+    #             },
+    #             width=plot_width,
+    #             height=plot_height,
+    #             color_continuous_scale='Reds'  # This sets all bars to red
+    #         )
+    #         fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
+    #         st.plotly_chart(fig_low)
 
     # Reset the app
     st.button("Reset App/Reload", on_click=reset_app, key="reset_button")
