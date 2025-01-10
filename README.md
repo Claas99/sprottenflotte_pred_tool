@@ -90,7 +90,7 @@ Used Subareas are:
 ## Requirements
 
 - Python 3.10 or above.
-- Peotry is used for requirements settings
+- Poetry is used for requirements settings
 - Streamlit, Pandas, NumPy, PyTorch, etc., are specified in `pyproject.toml`.
 
 ## Contributing
