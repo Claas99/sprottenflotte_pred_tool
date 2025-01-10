@@ -173,7 +173,7 @@ def main():
     selected_option = st.selectbox("Wähle ein Teilgebiet aus:", ss['subareas'], index=0)
 
     # initialise tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["Tabellenansicht", "Kartenansicht", "Predictions", "Analyse"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Prioritäten-Tabelle", "Aktuelle Daten", "Vorhersage Daten", "Analyse"])
 
 
     # --- tab 1 - Subarea Prio ---
@@ -206,7 +206,7 @@ def main():
 
     # --- tab 2 - Historic Data ---
     with tab2:
-        st.write("### Historische Analyse")
+        # st.write("### Aktuelle Daten")
         # app_functions.print_message(weather_data_message_type, weather_data_message_text)
         app_functions.print_message(data_message_type, data_message_text)
 
@@ -333,7 +333,7 @@ def main():
 
     # --- tab 3 - Predictions ---
     with tab3:
-        st.write("### Predictions")
+        # st.write("### Vorhersage Daten")
         app_functions.print_message(pred_message_type, pred_message_text)
 
         # Give more information about the colors of the points
