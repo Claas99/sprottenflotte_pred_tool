@@ -237,7 +237,7 @@ def main():
                 yaxis_title="Verfügbare Fahrräder",
                 legend_title="Station",
                 template="plotly_white",
-                yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot', range=[0, None]) # Ensures y-axis starts at 0 and auto-adjusts max value
+                yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot')
         )    
             # Add vertical line for point of predictions
             fig.add_vline(x=f"{subarea_df['deutsche_timezone'].iloc[-6]}", line_width=2, line_dash="dash", line_color="black")  
@@ -292,7 +292,7 @@ def main():
                     color_continuous_scale='Blues'  # This sets all bars to red
                 )
                 fig_high.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)),
-                                       yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot', range=[0, None]))
+                                       yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot'))
                 st.plotly_chart(fig_high)
 
             # Second column for showing the stations has been empty
@@ -311,7 +311,8 @@ def main():
                     height=plot_height,
                     color_continuous_scale='Reds'  # This sets all bars to red
                 )
-                fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)))
+                fig_low.update_layout(xaxis_tickangle=45, xaxis=dict(tickfont=dict(size=12)),
+                                      yaxis=dict(showgrid=True, gridcolor='lightgrey', gridwidth=1, griddash='dot'))
                 st.plotly_chart(fig_low)
 
     # --- tab 2 - Historic Data ---
