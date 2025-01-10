@@ -436,12 +436,9 @@ def main():
 
     # --- tab 4 - Analytics ---
     with tab4:
-        # Weniger wichtiger Bereich
-        st.divider()  # Trennlinie einfügen
-        st.caption("Zusätzlicher Bereich")  # Hinweistext
-        less_important_tab = st.tabs(["Weniger wichtiger Tab"])[0]
+        # less_important_tab = st.tabs(["Weniger wichtiger Tab"])[0]
 
-        with less_important_tab:
+        with st.expander("Weniger wichtiger Tab"):
             st.write("Inhalt des weniger wichtigen Tabs")
             st.write("### Analyse")
 
