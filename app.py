@@ -434,9 +434,15 @@ def main():
         # Show colored dataframe with predictions
         st.dataframe(applied_style, use_container_width=True)
 
+    # Weniger wichtiger Bereich
+    st.divider()  # Trennlinie einfügen
+    st.caption("Zusätzlicher Bereich")  # Hinweistext
+    less_important_tab = st.tabs(["Weniger wichtiger Tab"])[0]
 
+    with less_important_tab:
+        st.write("Inhalt des weniger wichtigen Tabs")
     # --- tab 4 - Analytics ---
-    with tab4:
+    # with tab4:
         st.write("### Analyse")
 
         # Option for all
