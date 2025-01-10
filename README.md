@@ -52,6 +52,19 @@ Data management is handled by `data.py`, which retrieves and synchronizes data f
 Here are some functionalities of the backend of the Application:
 
 - To add a new station, insert a new line in the stations.csv file with all the column information. The data is automatically requested and integrated into the application
+  - Go to the `data/stations.csv` file on github
+  - Press `e` or click the pen in the top right corner
+  - Add a newline with comma separeted values of:
+    - entityId: the ID for the request to the addix server
+    - station_name: the name od the station, which will be displayed
+    - maximum_capacity: the maximum capacity of the station, which is used for calculating priority
+    - latitude: the latitude of the station
+    - longitude: the longitude of the station
+    - subarea: choose a appropriate subarea for the station, which is used to display the station
+  - Click the green button `commit changes` in the top right corner
+  - You can add a commit message like `Added Station x` and a description
+  - Choose `Commit directly to the main branch`
+  - Click the green button `commit changes` in the bottom right corner
 - Data is only stored for the last 24 hours and forecasts are only made for the next 5 hours
 - Data is only requested once per hour and forecasts are also only created once per hour
 - The user can choose between two forecast models
