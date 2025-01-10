@@ -36,7 +36,7 @@ def reset_app():
 def main():
     # --- initialise ---
     # Initialise Streamlit Interface
-    st.image(logo_filename, caption="Kiel Region")#, use_column_width=True)
+    st.image(logo_filename, caption="Kiel Region", use_column_width=True)
     st.title("Sprottenflotte Vorhersagemodell 🚲 x 🤖")
     st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodell! Das Modell befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
              Bitte sende jegliches Feedback gerne an mobil@kielregion.de.""")
