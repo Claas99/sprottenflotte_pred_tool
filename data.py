@@ -183,7 +183,7 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
     }
     # data = {
     #     'grant_type': 'client_credentials',
-    #     'client_id': 'quantumleap',
+    #     'client_id': 'prediction_model_sprottenflotte',
     #     'client_secret': CLIENT_SECRET   # abfragen, oder gilt der dann immer?
     # }
 
