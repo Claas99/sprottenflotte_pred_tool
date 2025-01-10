@@ -36,15 +36,6 @@ def reset_app():
 def main():
     # --- initialise ---
     # Initialise Streamlit Interface
-    col1, col2, col3 = st.columns([1, 2, 1])
-
-    # Logo oben zentrieren
-    with col1:
-        st.empty()  # Leerer Platz links
-    with col2:
-        st.image(logo_filename, use_column_width=False, width=150)
-    with col3:
-        st.empty()  # Leerer Platz rechts
     st.image(logo_filename, use_column_width=False, width=150)
     st.title("Sprottenflotte Vorhersagemodell 🚲 x 🤖")
     st.write("""Herzlich Willkommen beim Sprottenflotte Vorhersagemodell! Das Modell befindet sich immer noch in Beta - Wir freuen uns auf deine Rückmeldung.
