@@ -442,7 +442,7 @@ def main():
     with less_important_tab:
         st.write("Inhalt des weniger wichtigen Tabs")
     # --- tab 4 - Analytics ---
-    # with tab4:
+    with tab4:
         st.write("### Analyse")
 
         # Option for all
