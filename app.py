@@ -71,7 +71,7 @@ def main():
         Dieses Projekt haben Studierende der FH Kiel gemeinsam mit dem Mobilitätsteam der KielRegion konzipiert und umgesetzt.
 
         Ausgewähltes Modell: {model_selection}
-        
+
         Stand: {current_hour - 1} - {current_hour} Uhr
         """)
 
@@ -133,7 +133,10 @@ def main():
         predictions_df = ss.get('predictions_df')
         pred_message_type = None # 'info'
         pred_message_text = None # 'Es sind bereits Predictions für alle Stationen vorhanden.'
-        
+    
+    app_functions.print_message(data_message_type, data_message_text) # neu (Anmerkungen KielRegion)
+    app_functions.print_message(pred_message_type, pred_message_text)
+
     # Get the latest prediction file, if there are no new hours
     if predictions_df is None:
         predictions_df = pd.read_csv(predictions_file)
@@ -204,19 +207,19 @@ def main():
         st.dataframe(prio_df[['Teilgebiet']].style.apply(lambda x: ['background-color: indianred' if i < 2 else 'background-color: lightcoral' if i < 3 else '' for i in range(len(x))], axis=0), use_container_width=True)
 
         # Give more information about the prio measurements
-        with st.expander("ℹ️ Mehr Informationen zu der Berechnung der Prio anzeigen"):
+        with st.expander("ℹ️ Mehr Informationen zu der Berechnung des Handlungsbedarfs anzeigen"):
             st.write("""
                         Grundsätzlich unterscheiden wir bei der Berechnung zwischen zwei Fällen: Eine Station hat mehr als 80% seiner maximalen Kapazität und ist daher zu voll.
-                        Oder eine Station hat weniger als 20% seiner maximalen Kapazität und ist daher zu leer. Je nachdem wie lange dieser Zustand anhält wird die Priorisierung erhöht.
+                        Oder eine Station hat weniger als 20% seiner maximalen Kapazität und ist daher zu leer. Je nachdem wie lange dieser Zustand anhält wird der Handlungsbedarf erhöht.
                         
-                        **Im Detail wird die Prio der Subareas wie folgt berechnet**: 
+                        **Im Detail wird der Handlungsbedarf der Teilgebiete wie folgt berechnet**: 
             
-                        - **Case 1** - Station X wird in 5h überfüllt/leer sein = Prio + 0.5
-                        - **Case 2** - Station X wird 4h lang überfüllt/leer sein = Prio + 0.5
-                        - **Case 3** - Station X wird 8h lang überfüllt/leer sein = Prio + 0.5
-                        - **Case 4** - Station X wird 24h lang überfüllt/leer sein = Prio + 1
+                        - **Case 1** - Station X wird in 5h überfüllt/leer sein = Handlungsbedarf + 0.5
+                        - **Case 2** - Station X wird 4h lang überfüllt/leer sein = Handlungsbedarf + 0.5
+                        - **Case 3** - Station X wird 8h lang überfüllt/leer sein = Handlungsbedarf + 0.5
+                        - **Case 4** - Station X wird 24h lang überfüllt/leer sein = Handlungsbedarf + 1
                         
-                        Aus allen Stationen wird dann der Durchschnitt pro Teilgebiet berechnet und hiernach sortiert.""")
+                        Aus allen Stationen wird dann der Durchschnitt des Handlungsbedarfs pro Teilgebiet berechnet und hiernach sortiert.""")
 
     # # --- tab 2 - Historic Data ---
     # with tab2:
@@ -348,8 +351,8 @@ def main():
     # --- tab 3 - Predictions ---
     with tab3:
         # st.write("### Vorhersage Daten")
-        app_functions.print_message(data_message_type, data_message_text) # neu (Anmerkungen KielRegion)
-        app_functions.print_message(pred_message_type, pred_message_text)
+        # app_functions.print_message(data_message_type, data_message_text) # neu (Anmerkungen KielRegion)
+        # app_functions.print_message(pred_message_type, pred_message_text)
 
         # Create dataframe
         subarea_df = app_functions.make_dataframe_of_subarea(selected_option, stations_df)
@@ -423,7 +426,7 @@ def main():
         # Give more information about the colors of the points
         with st.expander("ℹ️ Mehr Informationen zur Karte anzeigen"):
             st.write("""
-                     Als Default ist hier das Teilgebiet ausgewählt, welches die höchste Prio hat. Die restlichen Teilgebiete sind nach absteigender Prio sortiert.
+                     Als Default ist hier das Teilgebiet ausgewählt, welches den höchsten Handlungsbedarf hat. Die restlichen Teilgebiete sind nach absteigendem Handlungsbedarf sortiert.
 
                      In Zukunft bedeutet bei Stunde 5 der Predictions.
 
