@@ -637,7 +637,7 @@ def main():
     #         st.plotly_chart(fig_low)
 
     # Reset the app
-    st.button("Reset App/Reload", icon="⟳", on_click=reset_app, key="reset_button")
+    st.button("Reset App/Reload", icon="🔥", on_click=reset_app, key="reset_button")
 
 # --- Entry Point ---
 if __name__ == "__main__":
