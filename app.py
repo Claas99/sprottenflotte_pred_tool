@@ -42,13 +42,7 @@ def main():
     #          Bitte sende jegliches Feedback gerne an mobil@kielregion.de.""")
     # st.write("""Die Daten können stündlich neu geladen und neu vorhergesagt werden, indem man das Fenster aktualisiert. Dies kann ein paar Minuten dauern.""")
 
-    st.title("Verfügbarkeitsmonitor|Sprottenflotte") # neu (Anmerkungen KielRegion)
-    with st.expander("Information"): # neu (Anmerkungen KielRegion)
-        st.write("""
-        Der Verfügbarkeitsmonitor|Sprottenflotte ist eine Anwendung, die dir die aktuelle und vorhergesagte Verfügbarkeit von Leihfahrrädern der Sprottenflotte anzeigt. Mittels ausgewählte Kartendarstellungen und Charts kannst du dir rasch ein Bild machen. Insbesondere wurde die Anwendung als Hilfsmittel für Servicemitarbeiter*innen von Donkey Republik entwickelt, wenn sie sich darum kümmern, dass auch in deiner Nähe stets eine Mindestverfügbarkeit von Sprotten sichergestellt ist.
-
-        Dieses Projekt haben Studierende der FH Kiel gemeinsam mit dem Mobilitätsteam der KielRegion konzipiert und umgesetzt.
-        """)
+    st.title("Verfügbarkeitsmonitor | Sprottenflotte") # neu (Anmerkungen KielRegion)
     
     # Create sidebar to choose between Random Forest and DL Model
     with st.sidebar:
@@ -60,17 +54,27 @@ def main():
 
         st.write("Random Forest ist ein Machine Learning Algorithmus, der sehr schnell Vorhersagen berechnen kann, aber dafür weniger trainiert wurde. Das Deep Learning Model wurde sehr aufwendig trainiert und braucht deshalb länger bei den Vorhersagen, sollte aber langfristig präziser sein.")
     # Display the selected model
-    st.write(f"Ausgewähltes Modell: {model_selection}")
+    # st.write(f"Ausgewähltes Modell: {model_selection}")
 
     # Display the latest point of time in the data
     current_hour = pd.Timestamp.now(tz="Europe/Berlin").hour
-    st.write(f"Stand: {current_hour - 1} - {current_hour} Uhr")
+    # st.write(f"Stand: {current_hour - 1} - {current_hour} Uhr")
         
     # Initialize the session state for the model
     if 'last_model_selection' not in ss:
         ss['last_model_selection'] = model_selection
 
-    st.write("***")
+    with st.expander("Information"): # neu (Anmerkungen KielRegion)
+        st.write(f"""
+        Der Verfügbarkeitsmonitor|Sprottenflotte ist eine Anwendung, die dir die aktuelle und vorhergesagte Verfügbarkeit von Leihfahrrädern der Sprottenflotte anzeigt. Mittels ausgewählte Kartendarstellungen und Charts kannst du dir rasch ein Bild machen. Insbesondere wurde die Anwendung als Hilfsmittel für Servicemitarbeiter*innen von Donkey Republik entwickelt, wenn sie sich darum kümmern, dass auch in deiner Nähe stets eine Mindestverfügbarkeit von Sprotten sichergestellt ist.
+
+        Dieses Projekt haben Studierende der FH Kiel gemeinsam mit dem Mobilitätsteam der KielRegion konzipiert und umgesetzt.
+
+        Ausgewähltes Modell: {model_selection}
+        Stand: {current_hour - 1} - {current_hour} Uhr
+        """)
+
+    # st.write("***")
 
     # load station info
     stations_df = pd.read_csv(stations_filename)
