@@ -71,6 +71,7 @@ def main():
         Dieses Projekt haben Studierende der FH Kiel gemeinsam mit dem Mobilitätsteam der KielRegion konzipiert und umgesetzt.
 
         Ausgewähltes Modell: {model_selection}
+        
         Stand: {current_hour - 1} - {current_hour} Uhr
         """)
 
