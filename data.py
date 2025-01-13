@@ -22,9 +22,7 @@ log = logging.getLogger()
 
 # --- Configurations ---
 # --- Addix ---
-# PASSWORD = st.secrets['PASSWORD']
 CLIENT_SECRET = st.secrets['CLIENT_SECRET']
-# USERNAME_EMAIL = st.secrets['USERNAME_EMAIL']
 access_token_cache = {'token': None, 'expires_at': None}
 # --- Github ---
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
@@ -138,7 +136,6 @@ def request_access_token_if_needed():
         return access_token_cache['token']
 
     # If the token is expired or not present, request a new one
-    # new_token = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
     new_token = request_access_token(CLIENT_SECRET)
     if new_token:
         # Assume the token validity period is 86400 seconds (24 hours); adjust as per your OAuth provider
@@ -157,14 +154,12 @@ def request_access_token_if_needed():
 # def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
 def request_access_token(CLIENT_SECRET):
     """
-    Requests an access token using user credentials and client information from an authorization server.
+    Requests an access token using client credentials from an authorization server.
 
-    This function posts user credentials and client details to the specified token URL of an OAuth authentication server,
+    This function posts client credentials details to the specified token URL of an OAuth authentication server,
     and tries to retrieve an access token. If successful, the access token is returned.
 
     Parameters:
-    - USERNAME_EMAIL (str): The username or email associated with the user account.
-    - PASSWORD (str): The password for the user account.
     - CLIENT_SECRET (str): The secret key associated with the client application.
 
     Returns:
