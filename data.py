@@ -22,9 +22,9 @@ log = logging.getLogger()
 
 # --- Configurations ---
 # --- Addix ---
-PASSWORD = st.secrets['PASSWORD']
+# PASSWORD = st.secrets['PASSWORD']
 CLIENT_SECRET = st.secrets['CLIENT_SECRET']
-USERNAME_EMAIL = st.secrets['USERNAME_EMAIL']
+# USERNAME_EMAIL = st.secrets['USERNAME_EMAIL']
 access_token_cache = {'token': None, 'expires_at': None}
 # --- Github ---
 GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
@@ -138,7 +138,8 @@ def request_access_token_if_needed():
         return access_token_cache['token']
 
     # If the token is expired or not present, request a new one
-    new_token = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
+    # new_token = request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET)
+    new_token = request_access_token(CLIENT_SECRET)
     if new_token:
         # Assume the token validity period is 86400 seconds (24 hours); adjust as per your OAuth provider
         token_validity_duration = 86400
@@ -153,7 +154,8 @@ def request_access_token_if_needed():
     return new_token
 
 
-def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
+# def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
+def request_access_token(CLIENT_SECRET):
     """
     Requests an access token using user credentials and client information from an authorization server.
 
@@ -174,18 +176,18 @@ def request_access_token(USERNAME_EMAIL, PASSWORD, CLIENT_SECRET):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
+    # data = {
+    #     'grant_type': 'password',
+    #     'username': USERNAME_EMAIL, 
+    #     'password': PASSWORD,
+    #     'client_id': 'quantumleap',
+    #     'client_secret': CLIENT_SECRET
+    # }
     data = {
-        'grant_type': 'password',
-        'username': USERNAME_EMAIL, 
-        'password': PASSWORD,
-        'client_id': 'quantumleap',
+        'grant_type': 'client_credentials',
+        'client_id': 'prediction_model_sprottenflotte',
         'client_secret': CLIENT_SECRET
     }
-    # data = {
-    #     'grant_type': 'client_credentials',
-    #     'client_id': 'prediction_model_sprottenflotte',
-    #     'client_secret': CLIENT_SECRET   # abfragen, oder gilt der dann immer?
-    # }
 
     # Performing the HTTP POST request to get the access token
     response = requests.post(token_url, headers=headers, data=data)
