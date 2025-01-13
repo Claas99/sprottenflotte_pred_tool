@@ -133,9 +133,6 @@ def main():
         predictions_df = ss.get('predictions_df')
         pred_message_type = None # 'info'
         pred_message_text = None # 'Es sind bereits Predictions für alle Stationen vorhanden.'
-    
-    app_functions.print_message(data_message_type, data_message_text) # neu (Anmerkungen KielRegion)
-    app_functions.print_message(pred_message_type, pred_message_text)
 
     # Get the latest prediction file, if there are no new hours
     if predictions_df is None:
@@ -351,8 +348,8 @@ def main():
     # --- tab 3 - Predictions ---
     with tab3:
         # st.write("### Vorhersage Daten")
-        # app_functions.print_message(data_message_type, data_message_text) # neu (Anmerkungen KielRegion)
-        # app_functions.print_message(pred_message_type, pred_message_text)
+        app_functions.print_message(data_message_type, data_message_text) # neu (Anmerkungen KielRegion)
+        app_functions.print_message(pred_message_type, pred_message_text)
 
         # Create dataframe
         subarea_df = app_functions.make_dataframe_of_subarea(selected_option, stations_df)
