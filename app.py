@@ -442,8 +442,7 @@ def main():
         st.markdown(f"[Klicken Sie hier, um {selected_station} in Google Maps zu öffnen]({google_maps_url})")
 
         st.write("***")
-        st.write(f"Daten der Stationen von {selected_option}")
-        st.subheader("Meine Tabelle")
+        st.subheader(f"Daten der Stationen von {selected_option}")
 
         # Add german column names
         subarea_df['Teilgebiet'], subarea_df['Station'], subarea_df['Fahrräder Aktuell'], subarea_df['Maximale Kapazität'], subarea_df['Info'] = subarea_df['subarea'], subarea_df['station_name'], subarea_df['current_capacity'], subarea_df['maximum_capacity'], subarea_df['color_info_predictions']
