@@ -9,13 +9,13 @@ The Sprottenflotte Prediction Tool is an advanced application built using Stream
 ## Structure
 
 ```
-.streamlit
- └── config.toml		- UI theming and configuration
 .devcontainer
  └── devcontainer.json		- Sets up a consistent development environment
+.streamlit
+ └── config.toml		- UI theming and configuration
 data
- ├── bike_to_weather_station.csv
  ├── data_temp.csv			- Stores temporary station data fetched from the API
+ ├── logo-kielregion.png		- Logo of the KielRegion
  ├── predictions_dl.csv			- Contains prediction data from the deep learning model
  ├── predictions_rf.csv			- Contains prediction data from the random forest model
  ├── stations.csv			- Contains metadata about each bike station, such as location and capacity
@@ -25,8 +25,8 @@ models
  ├── 5pred_biLSTM_whole_weights.pth	- Weights for the Bidirectional LSTM model used in predictions
  ├── model_rf.joblib			- Serialized Random Forest model for making predictions
  ├── scaler_rf.joblib			- Scaler for Random Forest data used in predictions
- ├── scaler_X.joblib			- Scaler for LSTM feature data used in predictions
- └── scaler_y.joblib			- Scaler for LSTM target data used in predictions
+ ├── scaler_X_ver2.joblib		- Scaler for LSTM feature data used in predictions
+ └── scaler_y_ver2.joblib		- Scaler for LSTM target data used in predictions
 
 app_functions.py		- Collection of helper functions for data manipulation and UI functions
 app.py				- Main application script to launch the Streamlit app
