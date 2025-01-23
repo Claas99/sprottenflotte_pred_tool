@@ -205,6 +205,7 @@ def main():
 
     # --- tab 2 - Predictions - Auswahl erkunden ---
     with tab2:
+        app_functions.print_message(weather_data_message_type, weather_data_message_text)
         app_functions.print_message(data_message_type, data_message_text)
         app_functions.print_message(pred_message_type, pred_message_text)
 
